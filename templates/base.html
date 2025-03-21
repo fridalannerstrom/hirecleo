@@ -60,7 +60,7 @@
                             <div class="collapse" id="collapseCandidates" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link" href="{{ url_for('your_candidates') }}">Your Candidates</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Upload Candidates</a>
+                                    <a class="nav-link" href="{{ url_for('upload_candidates') }}">Upload Candidates</a>
                                 </nav>
                             </div>
 
@@ -128,6 +128,7 @@
                     </div>
                 </nav>
             </div>
+            <div id="layoutSidenav_content">
             {% block content %}
             {% endblock %}
             <footer class="py-4 bg-light mt-auto">

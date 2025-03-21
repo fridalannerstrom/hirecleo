@@ -18,6 +18,10 @@ def index():
 def about():
     return render_template("about.html")
 
+@app.route("/upload-candidates")
+def upload_candidates():
+    return render_template("upload-candidates.html")
+
 
 @app.route("/jobad-generator")
 def jobad():
