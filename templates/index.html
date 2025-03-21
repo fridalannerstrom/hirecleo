@@ -8,7 +8,36 @@
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
 
-                        {{ candidates[1]["name"] }}
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                DataTable Example
+                            </div>
+                            <div class="card-body">
+                                <table id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Title</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for candidate in candidates %}
+                                        <tr>
+                                            <td><img src="{{ candidate.image_source }}" alt="" width="40px" height="40px"></td>
+                                            <td>{{ candidate.name }}</td>
+                                            <td>{{ candidate.email }}</td>
+                                            <td>{{ candidate.title }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
 
                         <div class="row">
                             <div class="col-xl-3 col-md-6">
