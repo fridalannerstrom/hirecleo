@@ -37,7 +37,7 @@ def about_candidate(candidate_name):
         for obj in data:
             if obj["url"] == candidate_name:
                 candidate = obj
-    return render_template("candidates.html", candidate=candidate)
+    return render_template("candidate.html", candidate=candidate)
 
 
 if __name__ == "__main__":
