@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Candidates</h1>
+                        <p>List of candidates</p>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                DataTable Example
+                            </div>
+                            <div class="card-body">
+                                <table id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Title</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for candidate in candidates %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td><img src="{{ candidate.image_source }}" alt="" width="40px" height="40px"></td>
+                                            <td><a href="/your-candidates/{{ candidate.url }}">{{ candidate.name }}</a></td>
+                                            <td>{{ candidate.email }}</td>
+                                            <td>{{ candidate.title }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+{% endblock %}
