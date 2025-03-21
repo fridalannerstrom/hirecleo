@@ -15,6 +15,11 @@ def about():
     return render_template("about.html")
 
 
+@app.route("/jobad-generator")
+def jobad():
+    return render_template("jobad-generator.html")
+
+
 if __name__ == "__main__":
     app.run(
         host=os.environ.get("IP", "0.0.0.0"),
