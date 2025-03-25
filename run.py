@@ -5,7 +5,7 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
-
+# Index route with candidate database
 @app.route("/")
 def index():
     data = []
@@ -14,20 +14,25 @@ def index():
     return render_template("index.html", candidates=data)
 
 
+# About route
 @app.route("/about")
 def about():
     return render_template("about.html")
 
+
+# upload candidates route
 @app.route("/upload-candidates")
 def upload_candidates():
     return render_template("upload-candidates.html")
 
 
+# jobad generator route
 @app.route("/jobad-generator")
 def jobad():
     return render_template("jobad-generator.html")
 
 
+# your candidates route
 @app.route("/your-candidates")
 def your_candidates():
     data = []
@@ -36,6 +41,7 @@ def your_candidates():
     return render_template("your-candidates.html", candidates=data)
 
 
+# candidate page route
 @app.route("/your-candidates/<candidate_name>")
 def about_candidate(candidate_name):
     candidate = {}
