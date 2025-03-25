@@ -1,8 +1,7 @@
 import os
 import json
 from flask import Flask, render_template, request, flash
-from cleo import app, db
-from cleo.models import Candidate, Job
+from cleo import app
 import re
 import unicodedata
 
