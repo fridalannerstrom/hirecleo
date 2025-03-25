@@ -1,4 +1,5 @@
 import os
+from cleo import db
 
 class Candidate(db.Model):
     # schema for the Category model
