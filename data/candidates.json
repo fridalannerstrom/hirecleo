@@ -1,69 +1,79 @@
 [
     {
-        "name": "Emma Johansson",
+        "first_name": "Emma",
+        "last_name": "Johansson",
         "email": "emma.johansson@example.com",
         "title": "Webbutvecklare",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "emma-johansson"
     },
     {
-        "name": "Liam Eriksson",
+        "first_name": "Liam",
+        "last_name": "Eriksson",
         "email": "liam.eriksson@example.com",
         "title": "Dataanalytiker",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "liam-eriksson"
     },
     {
-        "name": "Sofia Andersson",
+        "first_name": "Sofia",
+        "last_name": "Andersson",
         "email": "sofia.andersson@example.com",
         "title": "Projektledare",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "sofia-andersson"
     },
     {
-        "name": "Noah Lindström",
+        "first_name": "Noah",
+        "last_name": "Lindström",
         "email": "noah.lindstrom@example.com",
         "title": "IT-supporttekniker",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "noah-lindström"
     },
     {
-        "name": "Olivia Karlsson",
+        "first_name": "Olivia",
+        "last_name": "Karlsson",
         "email": "olivia.karlsson@example.com",
         "title": "Marknadskoordinator",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "olivia-karlsson"
     },
     {
-        "name": "William Svensson",
+        "first_name": "William",
+        "last_name": "Svensson",
         "email": "william.svensson@example.com",
         "title": "Fullstackutvecklare",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "william-svensson"
     },
     {
-        "name": "Elin Viklund",
+        "first_name": "Elin",
+        "last_name": "Viklund",
         "email": "elin.viklund@example.com",
         "title": "HR-specialist",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "elin-viklund"
     },
     {
-        "name": "Alexander Nygren",
+        "first_name": "Alexander",
+        "last_name": "Nygren",
         "email": "alexander.nygren@example.com",
         "title": "Ekonom",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "alexander-nygren"
     },
     {
-        "name": "Maja Holm",
+        "first_name": "Maja",
+        "last_name": "Holm",
         "email": "maja.holm@example.com",
         "title": "UX-designer",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
         "url": "maja-holm"
     },
     {
-        "name": "Oscar Bergström",
+        "first_name": "Oscar",
+        "last_name": "Bergström",
         "email": "oscar.bergstrom@example.com",
         "title": "Säljchef",
         "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",
