@@ -2,6 +2,7 @@ import os
 import json
 from flask import Flask, render_template, request, flash
 from cleo import app, db
+from cleo.models import Candidate, Job
 
 # Index route with candidate database
 @app.route("/")
