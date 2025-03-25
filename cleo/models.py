@@ -3,7 +3,12 @@ from cleo import db
 class Candidate(db.Model):
     # schema for the Category model
     id = db.Column(db.Integer, primary_key=True)
-    candidate_name = db.Column(db.String(25), unique=True, nullable=False)
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    title = db.Column(db.String(100))
+    image_path = db.Column(db.String(200))
+    url = db.Column(db.String(100))  # om du använder URL:er i dina queries
     jobs = db.relationship("Job", backref="candidate", lazy=True)
 
     def __repr__(self):

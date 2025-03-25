@@ -3,6 +3,13 @@ import json
 from flask import Flask, render_template, request, flash
 from cleo import app, db
 from cleo.models import Candidate, Job
+import re
+import unicodedata
+
+def slugify(value):
+    value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
+    value = re.sub(r"[^\w\s-]", "", value).strip().lower()
+    return re.sub(r"[-\s]+", "-", value)
 
 # Index route with candidate database
 @app.route("/")
@@ -19,7 +26,6 @@ def about():
     return render_template("about.html")
 
 
-# upload candidates route
 @app.route("/upload-candidates", methods=["GET", "POST"])
 def upload_candidates():
     if request.method == "POST":
@@ -28,31 +34,37 @@ def upload_candidates():
         last_name = request.form.get("last_name")
         email = request.form.get("email")
         title = request.form.get("title")
-        image = request.files["image"]  # upload to server later
+        image = request.files.get("image_source")
 
-        # get candidate database
-        with open("data/candidates.json", "r") as json_data:
-            candidates = json.load(json_data)
+        # Spara bilden om den finns
+        if image:
+            filename = secure_filename(image.filename)
+            image_path = os.path.join("static/uploads", filename)
+            image.save(image_path)
+        else:
+            image_path = None
 
-        # create url field
-        url = f"{first_name.lower()}-{last_name.lower()}".replace("å", "a").replace("ä", "a").replace("ö", "o")
+        # skapa slug + se till att den är unik
+        base_slug = slugify(f"{first_name} {last_name}")
+        url_slug = base_slug
+        counter = 1
 
-        # create new candidate
-        new_candidate = {
-            "first_name": first_name,
-            "last_name": last_name,
-            "email": email,
-            "title": title,
-            "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",  # placeholderbild
-            "url": url
-        }
+        while Candidate.query.filter_by(url=url_slug).first():
+            counter += 1
+            url_slug = f"{base_slug}-{counter}"
 
-        # add the candidate
-        candidates.append(new_candidate)
+        # skapa kandidat
+        candidate = Candidate(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            title=title,
+            image_path=image_path,
+            url=url_slug
+        )
 
-        # save database
-        with open("data/candidates.json", "w") as json_file:
-            json.dump(candidates, json_file, indent=4, ensure_ascii=False)
+        db.session.add(candidate)
+        db.session.commit()
 
         flash(f"{first_name} har lagts till i databasen!")
 
