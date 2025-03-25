@@ -26,7 +26,39 @@ def about():
 @app.route("/upload-candidates", methods=["GET", "POST"])
 def upload_candidates():
     if request.method == "POST":
-        flash("Thanks {}, we have received your message!".format(request.form.get("first_name")))
+        # get data from form
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        email = request.form.get("email")
+        title = request.form.get("title")
+        image = request.files["image"]  # upload to server later
+
+        # get candidate database
+        with open("data/candidates.json", "r") as json_data:
+            candidates = json.load(json_data)
+
+        # create url field
+        url = f"{first_name.lower()}-{last_name.lower()}".replace("å", "a").replace("ä", "a").replace("ö", "o")
+
+        # create new candidate
+        new_candidate = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "title": title,
+            "image_source": "https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg",  # placeholderbild
+            "url": url
+        }
+
+        # add the candidate
+        candidates.append(new_candidate)
+
+        # save database
+        with open("data/candidates.json", "w") as json_file:
+            json.dump(candidates, json_file, indent=4, ensure_ascii=False)
+
+        flash(f"{first_name} har lagts till i databasen!")
+
     return render_template("upload-candidates.html")
 
 
