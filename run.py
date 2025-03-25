@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, flash
 
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY")
 
 # Index route with candidate database
 @app.route("/")
@@ -28,6 +29,8 @@ def upload_candidates():
         print(request.form.get("last_name"))
         print(request.form.get("image_source"))
         print(request.form["email"])
+        flash("Thanks {}, we have received your message!".format(
+            request.form.get("first_name")))
     return render_template("upload-candidates.html")
 
 
