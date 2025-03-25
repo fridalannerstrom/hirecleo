@@ -1,7 +1,8 @@
 import os
 import json
 from flask import Flask, render_template, request, flash
-
+if os.path.exists("env.py"):
+    import env
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -24,13 +25,8 @@ def about():
 # upload candidates route
 @app.route("/upload-candidates", methods=["GET", "POST"])
 def upload_candidates():
-        if request.method == "POST":
-        print(request.form.get("first_name"))
-        print(request.form.get("last_name"))
-        print(request.form.get("image_source"))
-        print(request.form["email"])
-        flash("Thanks {}, we have received your message!".format(
-            request.form.get("first_name")))
+    if request.method == "POST":
+        flash("Thanks {}, we have received your message!".format(request.form.get("first_name")))
     return render_template("upload-candidates.html")
 
 
