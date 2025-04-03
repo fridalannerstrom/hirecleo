@@ -23,23 +23,23 @@
                         <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_candidate', candidate_id=candidate.id) }}">
                             <div class="mb-3">
                                 <label for="first_name" class="form-label">Förnamn</label>
-                                <input type="text" class="form-control" id="first_name" name="first_name" required>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ candidate.first_name }}">
                             </div>
                             <div class="mb-3">
                                 <label for="last_name" class="form-label">Efternamn</label>
-                                <input type="text" class="form-control" id="last_name" name="last_name" required>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ candidate.last_name }}">
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">E-post</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ candidate.email }}">
                             </div>
                             <div class="mb-3">
                                 <label for="title" class="form-label">Jobbtitel</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
+                                <input type="text" class="form-control" id="title" name="title" value="{{ candidate.title }}">
                             </div>
                             <div class="mb-3">
                                 <label for="image" class="form-label">Profilbild</label>
-                                <input type="file" class="form-control" id="image_path" name="image_path" accept="image/*">
+                                <input type="file" class="form-control" id="image_path" name="image_path" accept="image/*" value="{{ candidate.image_path }}">
                             </div>
                             <button type="submit" class="btn btn-primary">Edit candidate</button>
                         </form>

@@ -72,10 +72,40 @@ def upload_candidates():
 @app.route("/edit_candidate/<int:candidate_id>", methods=["GET", "POST"])
 def edit_candidate(candidate_id):
     candidate = Candidate.query.get_or_404(candidate_id)
+
     if request.method == "POST":
-        candidate.first_name = request.form.get("first_name")
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        email = request.form.get("email")
+        title = request.form.get("title")
+        image_path = request.form.get("image_path")
+
+        # Validering
+        if not first_name or not last_name or not email or not title:
+            flash("All fields are required!", "error")
+            return redirect(url_for("edit_candidate", candidate_id=candidate.id))
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            flash("Invalid email address!", "error")
+            return redirect(url_for("edit_candidate", candidate_id=candidate.id))
+
+        # Kontrollera om e-postadressen används av någon annan kandidat
+        existing_candidate = Candidate.query.filter_by(email=email).first()
+        if existing_candidate and existing_candidate.id != candidate.id:
+            flash("Another candidate with this email already exists!", "error")
+            return redirect(url_for("edit_candidate", candidate_id=candidate.id))
+
+        # Uppdatera kandidatens data
+        candidate.first_name = first_name
+        candidate.last_name = last_name
+        candidate.email = email
+        candidate.title = title
+        candidate.image_path = image_path
+        candidate.url = slugify(f"{first_name}-{last_name}")
+
         db.session.commit()
+        flash("Candidate updated successfully!", "success")
         return redirect(url_for("your_candidates"))
+
     return render_template("edit-candidate.html", candidate=candidate)
 
 
