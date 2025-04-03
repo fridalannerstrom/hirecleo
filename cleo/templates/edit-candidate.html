@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Edit Candidate</h1>
+
+
+                                        {{ candidate.first_name }} {{ candidate.last_name }}
+                                        {{ candidate.email }}
+                                        {{ candidate.title }}
+
+                
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        <ul class="flashes">
+                            {% for message in messages %}
+                            <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% endwith %}
+
+                        <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_candidate', candidate_id=candidate.id) }}">
+                            <div class="mb-3">
+                                <label for="first_name" class="form-label">Förnamn</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="last_name" class="form-label">Efternamn</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-post</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Jobbtitel</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Profilbild</label>
+                                <input type="file" class="form-control" id="image_path" name="image_path" accept="image/*">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Edit candidate</button>
+                        </form>
+                    </div>
+                </main>
+{% endblock %}

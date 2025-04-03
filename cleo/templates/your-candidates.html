@@ -29,7 +29,7 @@
                                             <td><a href="/your-candidates/{{ candidate.url }}">{{ candidate.first_name }} {{ candidate.last_name }}</a></td>
                                             <td>{{ candidate.email }}</td>
                                             <td>{{ candidate.title }}</td>
-                                            <td>Edit Delete</td>
+                                            <td><a href="{{ url_for('edit_candidate', candidate_id=candidate.id) }}">Edit</a> Delete</td>
                                         </tr>
                                         {% endfor %}
                                     </tr>

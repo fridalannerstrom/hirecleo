@@ -68,6 +68,16 @@ def upload_candidates():
     
     return render_template("upload-candidates.html")
 
+# Edit candidate route
+@app.route("/edit_candidate/<int:candidate_id>", methods=["GET", "POST"])
+def edit_candidate(candidate_id):
+    candidate = Candidate.query.get_or_404(candidate_id)
+    if request.method == "POST":
+        candidate.first_name = request.form.get("first_name")
+        db.session.commit()
+        return redirect(url_for("your_candidates"))
+    return render_template("edit-candidate.html", candidate=candidate)
+
 
 # jobad generator route
 @app.route("/jobad-generator")
