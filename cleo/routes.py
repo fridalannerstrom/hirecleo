@@ -45,10 +45,8 @@ def jobad():
 # your candidates route
 @app.route("/your-candidates")
 def your_candidates():
-    data = []
-    with open("data/candidates.json", "r") as json_data:
-        data = json.load(json_data)
-    return render_template("your-candidates.html", candidates=data)
+    candidates = list(Candidate.query.order_by(Candidate.first_name).all())
+    return render_template("your-candidates.html", candidates=candidates)
 
 
 # candidate page route
