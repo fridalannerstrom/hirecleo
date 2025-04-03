@@ -14,26 +14,10 @@
                         {% endif %}
                         {% endwith %}
 
-                        <form method="POST" enctype="multipart/form-data">
+                        <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload_candidates') }}">
                             <div class="mb-3">
                                 <label for="first_name" class="form-label">Förnamn</label>
                                 <input type="text" class="form-control" id="first_name" name="first_name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="last_name" class="form-label">Efternamn</label>
-                                <input type="text" class="form-control" id="last_name" name="last_name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">E-post</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Jobbtitel</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="image" class="form-label">Profilbild</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Add candidate</button>
                         </form>

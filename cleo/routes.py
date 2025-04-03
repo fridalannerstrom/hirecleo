@@ -1,9 +1,10 @@
 import os
 import json
-from flask import Flask, render_template, request, flash
+from flask import Flask, render_template, request, flash, redirect, url_for
 from cleo import app
 import re
 import unicodedata
+from cleo.models import Candidate, Job
 
 def slugify(value):
     value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
@@ -28,45 +29,10 @@ def about():
 @app.route("/upload-candidates", methods=["GET", "POST"])
 def upload_candidates():
     if request.method == "POST":
-        # get data from form
-        first_name = request.form.get("first_name")
-        last_name = request.form.get("last_name")
-        email = request.form.get("email")
-        title = request.form.get("title")
-        image = request.files.get("image_source")
-
-        # Spara bilden om den finns
-        if image:
-            filename = secure_filename(image.filename)
-            image_path = os.path.join("static/uploads", filename)
-            image.save(image_path)
-        else:
-            image_path = None
-
-        # skapa slug + se till att den är unik
-        base_slug = slugify(f"{first_name} {last_name}")
-        url_slug = base_slug
-        counter = 1
-
-        while Candidate.query.filter_by(url=url_slug).first():
-            counter += 1
-            url_slug = f"{base_slug}-{counter}"
-
-        # skapa kandidat
-        candidate = Candidate(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            title=title,
-            image_path=image_path,
-            url=url_slug
-        )
-
-        db.session.add(candidate)
+        first_name = Candidate(first_name=request.form.get("first_name"))
+        db.session.add(first_name)
         db.session.commit()
-
-        flash(f"{first_name} har lagts till i databasen!")
-
+        return redirect(url_for("your_candidates"))
     return render_template("upload-candidates.html")
 
 
