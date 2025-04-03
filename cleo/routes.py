@@ -29,10 +29,43 @@ def about():
 @app.route("/upload-candidates", methods=["GET", "POST"])
 def upload_candidates():
     if request.method == "POST":
-        first_name = Candidate(first_name=request.form.get("first_name"))
-        db.session.add(first_name)
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        email = request.form.get("email")
+        title = request.form.get("title")
+        image_path = request.form.get("image_path")
+
+        new_candidate = Candidate(first_name=first_name, last_name=last_name, email=email, title=title, image_path=image_path)
+        new_candidate.url = slugify(f"{first_name}-{last_name}")
+        # Check if the candidate already exists
+        existing_candidate = Candidate.query.filter_by(email=email).first()
+        if existing_candidate:
+            flash("Candidate already exists!", "error")
+            return redirect(url_for("upload_candidates"))
+        # Add the new candidate to the database
+        if not first_name or not last_name or not email or not title:
+            flash("All fields are required!", "error")
+            return redirect(url_for("upload_candidates"))
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            flash("Invalid email address!", "error")
+            return redirect(url_for("upload_candidates"))
+        if not title:
+            flash("Title is required!", "error")
+            return redirect(url_for("upload_candidates"))
+        if not first_name:
+            flash("First name is required!", "error")
+            return redirect(url_for("upload_candidates"))
+        if not last_name:
+            flash("Last name is required!", "error")
+            return redirect(url_for("upload_candidates"))
+        if not email:
+            flash("Email is required!", "error")
+            return redirect(url_for("upload_candidates"))
+        db.session.add(new_candidate)
         db.session.commit()
+
         return redirect(url_for("your_candidates"))
+    
     return render_template("upload-candidates.html")
 
 
