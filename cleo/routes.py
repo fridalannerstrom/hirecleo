@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, flash, redirect, url_for
 from cleo import app
 import re
 import unicodedata
-from cleo.models import Candidate, Job
+from cleo.models import Candidate, Job, db
 
 def slugify(value):
     value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii")
