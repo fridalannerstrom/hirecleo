@@ -14,10 +14,10 @@
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Image</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
                                             <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Is Urgent</th>
+                                            <th>Due Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -29,7 +29,7 @@
                                             <td>{{ job.description }}</td>
                                             <td>{{ job.is_urgent }}</td>
                                             <td>{{ job.due_date }}</td>
-                                            <td><a href="#">Edit</a> <a href="#">Delete</a></td>
+                                            <td><a href="#">Edit</a> <a href="{{ url_for('delete_job', job_id=job.id) }}">Delete</a></td>
                                         </tr>
                                         {% endfor %}
                                     </tr>
