@@ -20,28 +20,36 @@
                                 <input type="text" class="form-control" id="title" name="title" required>
                             </div>
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <input type="text" class="form-control" id="description" name="description" required>
+                                <label for="description" class="form-label">Description</label><br>
+                                <textarea id="description" name="description" minlength="5" maxlength="200"
+                            type="text" required></textarea>
+                                
                             </div>
                             <div class="mb-3">
-                                <label for="is_urgent" class="form-label">is_urgent</label>
-                                <input type="text" class="form-control" id="is_urgent" name="is_urgent" required>
+                                <label for="is_urgent">
+                                    <input id="is_urgent" name="is_urgent" type="checkbox">
+                                    <span class="lever"></span>
+                                    Is Urgent
+                                </label>
                             </div>
                             <div class="mb-3">
                                 <label for="due_date" class="form-label">due_date</label>
-                                <input type="text" class="form-control" id="due_date" name="due_date" required>
+                                <input type="date" class="form-control" id="due_date" name="due_date" required>
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <i class="fas fa-folder-open prefix light-blue-text text-darken-4"></i>
+                                    <select id="candidate_id" name="candidate_id" required>
+                                        <option value="" disabled selected>Choose Candidate</option>
+                                        {% for candidate in candidates %}
+                                            <option value="{{ candidate.id }}">{{ candidate.first_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="candidate_id">candidate</label>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Add Job</button>
                         </form>
                     </div>
                 </main>
 {% endblock %}
-
-
-id = db.Column(db.Integer, primary_key=True)
-title = db.Column(db.String(50), unique=True, nullable=False)
-description = db.Column(db.Text, nullable=False)
-is_urgent = db.Column(db.Boolean, default=False, nullable=False)
-due_date = db.Column(db.Date, nullable=False)
-url = db.Column(db.String(100)) 
-candidate_id = db.Column(db.Integer, db.ForeignKey("candidate.id"), nullable=False)

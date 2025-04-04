@@ -25,7 +25,7 @@ def index():
 def about():
     return render_template("about.html")
 
-
+# Upload candidates route
 @app.route("/upload-candidates", methods=["GET", "POST"])
 def upload_candidates():
     if request.method == "POST":
@@ -133,8 +133,6 @@ def your_jobs():
     jobs = list(Job.query.order_by(Job.title).all())
     return render_template("your-jobs.html", jobs=jobs)
 
-
-
 # candidate page route
 @app.route("/your-candidates/<candidate_name>")
 def about_candidate(candidate_name):
@@ -145,6 +143,24 @@ def about_candidate(candidate_name):
             if obj["url"] == candidate_name:
                 candidate = obj
     return render_template("candidate.html", candidate=candidate)
+
+
+# Upload jobs route
+@app.route("/upload-jobs", methods=["GET", "POST"])
+def upload_jobs():
+    candidates = list(Candidate.query.order_by(Candidate.first_name).all())
+    if request.method == "POST":
+        job = Job(
+            title=request.form.get("title"),
+            description=request.form.get("description"),
+            is_urgent=bool(True if request.form.get("is_urgent") else False),
+            due_date=request.form.get("due_date"),
+            candidate_id=request.form.get("candidate_id")
+        )
+        db.session.add(job)
+        db.session.commit()
+        return redirect(url_for("your_jobs"))
+    return render_template("upload-jobs.html", candidates=candidates)
 
 @app.shell_context_processor
 def make_shell_context():
