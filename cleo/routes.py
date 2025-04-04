@@ -172,6 +172,32 @@ def upload_jobs():
         return redirect(url_for("your_jobs"))
     return render_template("upload-jobs.html", candidates=candidates)
 
+# Edit jobs route
+@app.route("/edit-job/<int:job_id>", methods=["GET", "POST"])
+def edit_job(job_id):
+    candidates = list(Candidate.query.order_by(Candidate.first_name).all())
+    job = Job.query.get_or_404(job_id)
+
+    if request.method == "POST":
+        title=request.form.get("title"),
+        description=request.form.get("description"),
+        is_urgent=bool(True if request.form.get("is_urgent") else False),
+        due_date=request.form.get("due_date"),
+
+        # Uppdatera kandidatens data
+        job.title = title
+        job.description = description
+        is_urgent = 'is_urgent' in request.form
+        job.due_date = due_date
+        job.url = slugify(f"{title}")
+
+        db.session.commit()
+        flash("Job updated successfully!", "success")
+        return redirect(url_for("your_jobs"))
+
+    return render_template("edit-job.html", job=job)
+
+
 @app.shell_context_processor
 def make_shell_context():
     return {

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Edit Job</h1>
+                
+                        {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        <ul class="flashes">
+                            {% for message in messages %}
+                            <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% endwith %}
+
+                        <form method="POST" enctype="multipart/form-data" action="{{ url_for('edit_job', job_id=job.id) }}">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" value="{{ job.title }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label><br>
+                                <textarea id="description" name="description" minlength="5" maxlength="200"
+                            type="text" value="{{ job.description }}" required></textarea>
+                                
+                            </div>
+                            <div class="mb-3">
+                                <label for="is_urgent">
+                                    <input id="is_urgent" name="is_urgent" type="checkbox" {% if job.is_urgent %} checked {% endif %}>
+                                    <span class="lever"></span>
+                                    Is Urgent
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="due_date" class="form-label">due_date</label>
+                                <input type="date" class="form-control" id="due_date" name="due_date" value="{{ job.due_date }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Job</button>
+                        </form>
+                    </div>
+                </main>
+{% endblock %}
