@@ -108,6 +108,12 @@ def edit_candidate(candidate_id):
 
     return render_template("edit-candidate.html", candidate=candidate)
 
+@app.route("/delete_candidate/<int:candidate_id>")
+def delete_candidate(candidate_id):
+    candidate = Candidate.query.get_or_404(candidate_id)
+    db.session.delete(candidate)
+    db.session.commit()
+    return redirect(url_for("your_candidates"))
 
 # jobad generator route
 @app.route("/jobad-generator")
