@@ -18,14 +18,15 @@ class Candidate(db.Model):
 
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    job_title = db.Column(db.String(50), unique=True, nullable=False)
-    job_description = db.Column(db.Text, nullable=False)
+    title = db.Column(db.String(50), unique=True, nullable=False)
+    description = db.Column(db.Text, nullable=False)
     is_urgent = db.Column(db.Boolean, default=False, nullable=False)
     due_date = db.Column(db.Date, nullable=False)
+    url = db.Column(db.String(100)) 
     candidate_id = db.Column(db.Integer, db.ForeignKey("candidate.id"), nullable=False)
 
     def __repr__(self):
         # __repr__ to represent itself in the form of a string
         return "#{0} - Job: {1} | Urgent: {2}".format(
-            self.id, self.job_title, self.is_urgent
+            self.id, self.title, self.is_urgent
         )

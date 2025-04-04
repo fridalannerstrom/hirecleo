@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+                <main>
+                    <div class="container-fluid px-4">
+                        <h1 class="mt-4">Your Jobs</h1>
+                        <p>List of jobs</p>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table me-1"></i>
+                                DataTable Example
+                            </div>
+                            <div class="card-body">
+                                <table id="datatablesSimple">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Image</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Title</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for job in jobs %}
+                                        <tr>
+                                            <td>{{ loop.index }}</td>
+                                            <td><a href="/your-jobs/{{ job.url }}">{{ job.title }} </a></td>
+                                            <td>{{ job.description }}</td>
+                                            <td>{{ job.is_urgent }}</td>
+                                            <td>{{ job.due_date }}</td>
+                                            <td><a href="#">Edit</a> <a href="#">Delete</a></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+{% endblock %}

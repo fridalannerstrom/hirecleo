@@ -127,6 +127,13 @@ def your_candidates():
     candidates = list(Candidate.query.order_by(Candidate.first_name).all())
     return render_template("your-candidates.html", candidates=candidates)
 
+# your jobs route
+@app.route("/your-jobs")
+def your_jobs():
+    jobs = list(Job.query.order_by(Job.title).all())
+    return render_template("your-jobs.html", jobs=jobs)
+
+
 
 # candidate page route
 @app.route("/your-candidates/<candidate_name>")
@@ -138,3 +145,11 @@ def about_candidate(candidate_name):
             if obj["url"] == candidate_name:
                 candidate = obj
     return render_template("candidate.html", candidate=candidate)
+
+@app.shell_context_processor
+def make_shell_context():
+    return {
+        'db': db,
+        'Candidate': Candidate,
+        'Job': Job,
+    }
