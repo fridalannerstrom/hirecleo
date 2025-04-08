@@ -8,6 +8,7 @@ class Job(models.Model):
     description = models.TextField()
     slug = models.SlugField(max_length=200, unique=True)
     created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -25,6 +26,7 @@ class Candidate(models.Model):
     jobs = models.ManyToManyField(Job, related_name="candidates")
     slug = models.SlugField(max_length=200, unique=True)
     created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

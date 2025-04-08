@@ -17,8 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from hello_world import views as index_views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('', index_views.index, name='index'),
     path('admin/', admin.site.urls),
+
+    # Login som startsida
+    path('', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+
+    # Logga ut, lösenordsåterställning m.m.
+    path('accounts/', include('django.contrib.auth.urls')),
+
+    # Appens egna vyer (dashboard, kandidater, jobb osv)
+      path('', include('hello_world.urls')), 
 ]
