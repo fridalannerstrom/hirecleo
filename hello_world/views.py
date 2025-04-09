@@ -5,9 +5,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-def index(request):
-    return HttpResponse("Hello, world! This is my first Django app.")   
-
 def dashboard(request):
     return render(request, 'dashboard.html')
 
@@ -45,3 +42,6 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     return render(request, 'dashboard.html')
+
+def account_profile(request):
+    return render(request, 'account-profile.html')
