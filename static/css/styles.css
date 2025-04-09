@@ -50,6 +50,12 @@
   max-height: 180px;
 }
 
+#basic-layout {
+  max-width: 1100px;
+}
+
+/* END CUSTOM CSS */
+
 :root {
   --bs-blue: #7459E3;
   --bs-indigo: #5800e8;
