@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
 
 # Create your views here.
 def index(request):
@@ -22,3 +24,15 @@ def upload_jobs(request):
 
 def jobad(request):
     return render(request, 'jobad.html')
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')  # eller 'email' om du använder det
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')  # namnet på din url
+        else:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+    return render(request, 'login.html')
