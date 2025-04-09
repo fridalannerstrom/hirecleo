@@ -1,5 +1,6 @@
 
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Dashboard - Cleo{% endblock %}
 {% block content %}
                     <!-- Main page content-->
@@ -29,9 +30,9 @@
                                                 <!-- Dynamisk profilbild -->
                                                 {% with user.profile as profile %}
                                                 {% if profile.image %}
-                                                    <img src="{{ profile.image.url }}" alt="Profile image">
+                                                    <img src="{{ user.profile.image.url }}" alt="Profile image" width="100" height="100" class="rounded-circle mb-2">
                                                 {% else %}
-                                                    <img src="{% static 'default-profile.png' %}" alt="No image">
+                                                    <img src="{% static 'assets/img/profiles/profile-1.png' %}" alt="No image">
                                                 {% endif %}
                                             {% endwith %}
                                                 
