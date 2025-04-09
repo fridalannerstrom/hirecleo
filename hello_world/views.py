@@ -60,15 +60,27 @@ def dashboard_view(request):
     Profile.objects.get_or_create(user=request.user)
     return render(request, 'dashboard.html')
 
+
 @login_required
 def account_profile(request):
+    user = request.user
+    profile = user.profile
+    form = ProfileImageForm(instance=profile)
+
     if request.method == 'POST':
-        print("POST received")
-        form = ProfileImageForm(request.POST, request.FILES, instance=request.user.profile)
+        form = ProfileImageForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('account_profile')  # Eller vilken vy som nu visar profilen
-    else:
-        form = ProfileImageForm(instance=request.user.profile)
 
-    return render(request, 'account-profile.html', {'form': form})
+        # Kolla om användarfälten finns innan vi sparar dem
+        if 'first_name' in request.POST:
+            user.first_name = request.POST.get('first_name', user.first_name)
+            user.last_name = request.POST.get('last_name', user.last_name)
+            user.email = request.POST.get('email', user.email)
+            user.save()
+
+        return redirect('account_profile')
+
+    return render(request, 'account-profile.html', {
+        'form': form
+    })
