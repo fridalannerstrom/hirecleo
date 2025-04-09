@@ -63,3 +63,15 @@ def dashboard_view(request):
     # Om profilen inte finns, skapa en
     Profile.objects.get_or_create(user=request.user)
     return render(request, 'dashboard.html')
+
+@login_required
+def account_profile(request):
+    if request.method == 'POST':
+        form = ProfileImageForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            return redirect('account_profile')  # Eller vilken vy som nu visar profilen
+    else:
+        form = ProfileImageForm(instance=request.user.profile)
+
+    return render(request, 'account-profile.html', {'form': form})

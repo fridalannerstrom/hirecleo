@@ -24,9 +24,10 @@
                                         <!-- Profile picture help block-->
                                         <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                                         <!-- Profile picture upload button-->
+
                                         <form method="POST" enctype="multipart/form-data">
                                             {% csrf_token %}
-                                            <div class="card-body text-center">
+                                            
                                                 <!-- Dynamisk profilbild -->
                                                 {% with user.profile as profile %}
                                                 {% if profile.image %}
@@ -35,15 +36,16 @@
                                                     <img src="{% static 'assets/img/profiles/profile-1.png' %}" alt="No image">
                                                 {% endif %}
                                             {% endwith %}
-                                                
-                                                <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
-                                                
-                                                <!-- File input från form -->
+                                        
+                                            <!-- File upload-fält -->
+                                            <div class="mb-3">
                                                 {{ form.image }}
-                                                
-                                                <button class="btn btn-primary mt-2" type="submit">Upload new image</button>
                                             </div>
+                                        
+                                            <!-- Ladda upp-knapp -->
+                                            <button class="btn btn-primary" type="submit">Upload new image</button>
                                         </form>
+
                                     </div>
                                 </div>
                             </div>
