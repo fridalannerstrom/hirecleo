@@ -10,6 +10,46 @@
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+
+/* CUSTOM CSS */
+
+.cleo-chat-card {
+  background: linear-gradient(to right, #130450, #08021E);
+}
+
+.cleo-chat-card h2 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.cleo-input {
+  max-width: 500px;
+  flex: 1;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
+
+.cleo-btn {
+  background-color: #7c5dff;
+  border: none;
+  color: white;
+  border-radius: 999px;
+  padding: 0.75rem 2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.cleo-btn:hover {
+  background-color: #6849e8;
+}
+
+.cleo-img {
+  max-height: 180px;
+}
+
 :root {
   --bs-blue: #7459E3;
   --bs-indigo: #5800e8;
@@ -19617,11 +19657,4 @@ pre[class*=language-] {
 
 .token.variable {
   color: #ff6666;
-}
-
-
-/* CUSTOM CSS */
-
-#cleo-dashboard-chat {
-  background: linear-gradient(to right, #130450, #08021E);
 }

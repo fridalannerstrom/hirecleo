@@ -1,5 +1,6 @@
 
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}Dashboard - Cleo{% endblock %}
 {% block content %}
         <!-- Custom page header alternative example-->
@@ -9,21 +10,30 @@
             </div>
         </div>
         <!-- Illustration dashboard card example-->
-        <div class="card card-waves mb-3 mt-3" id="cleo-dashboard-chat">
+        <div class="card mb-3 mt-3 border-0 cleo-chat-card">
             <div class="card-body p-5">
-                <div class="row align-items-center justify-content-between">
-                    <div class="col">
-                        <h2 class="text-primary">Welcome back, your dashboard is ready!</h2>
-                        <p class="text-gray-700">Great job, your affiliate dashboard is ready to go! You can view sales, generate links, prepare coupons, and download affiliate reports using this dashboard.</p>
-                        <a class="btn btn-primary p-3" href="#!">
-                            Get Started
-                            <i class="ms-1" data-feather="arrow-right"></i>
-                        </a>
-                    </div>
-                    <div class="col d-none d-lg-block mt-xxl-n4"><img class="img-fluid px-xl-4 mt-xxl-n5" src="assets/img/illustrations/statistics.svg" /></div>
+              <div class="row align-items-center justify-content-between">
+                
+                <!-- Text och formulär -->
+                <div class="col-lg-8 text-white">
+                  <h2>Cleo säger hej!</h2>
+                  <p class="mb-4">Chatta med Cleo, din AI-kollega inom rekrytering. Cleo kan bland annat hjälpa dig med intervju, screening och mer.</p>
+          
+                  <form class="d-flex gap-3 flex-wrap">
+                    <input type="text" class="form-control form-control-lg cleo-input" placeholder="Skriv ett meddelande...">
+                    <button type="submit" class="btn cleo-btn">Skicka</button>
+                  </form>
                 </div>
+          
+                <!-- Cleo-bild -->
+                <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end align-items-center mt-4 mt-lg-0">
+                  <img src="{% static 'assets/img/cleo-profile-pic.png' %}" class="img-fluid cleo-img" alt="Cleo">
+                </div>
+          
+              </div>
             </div>
         </div>
+          
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
                 <!-- Dashboard info widget 1-->
