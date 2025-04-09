@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from .forms import ProfileImageForm
 
 # Create your views here.
 def dashboard(request):
@@ -45,3 +46,20 @@ def dashboard_view(request):
 
 def account_profile(request):
     return render(request, 'account-profile.html')
+
+@login_required
+def profile_view(request):
+    if request.method == 'POST':
+        form = ProfileImageForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+    else:
+        form = ProfileImageForm(instance=request.user.profile)
+
+    return render(request, 'profile.html', {'form': form})
+
+@login_required
+def dashboard_view(request):
+    # Om profilen inte finns, skapa en
+    Profile.objects.get_or_create(user=request.user)
+    return render(request, 'dashboard.html')

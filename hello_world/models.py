@@ -30,3 +30,10 @@ class Candidate(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile_pics/', default='default.png')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'

@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from hello_world import views as index_views
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,3 +33,6 @@ urlpatterns = [
     # Appens egna vyer (dashboard, kandidater, jobb osv)
       path('', include('hello_world.urls')), 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -23,7 +23,26 @@
                                         <!-- Profile picture help block-->
                                         <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                                         <!-- Profile picture upload button-->
-                                        <button class="btn btn-primary" type="button">Upload new image</button>
+                                        <form method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <div class="card-body text-center">
+                                                <!-- Dynamisk profilbild -->
+                                                {% with user.profile as profile %}
+                                                {% if profile.image %}
+                                                    <img src="{{ profile.image.url }}" alt="Profile image">
+                                                {% else %}
+                                                    <img src="{% static 'default-profile.png' %}" alt="No image">
+                                                {% endif %}
+                                            {% endwith %}
+                                                
+                                                <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                                                
+                                                <!-- File input från form -->
+                                                {{ form.image }}
+                                                
+                                                <button class="btn btn-primary mt-2" type="submit">Upload new image</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
