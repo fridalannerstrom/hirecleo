@@ -10591,6 +10591,8 @@ textarea.form-control-lg {
 
 .fw-bolder {
   font-weight: bolder !important;
+  color: black !important;
+  letter-spacing: 0.5px;
 }
 
 .lh-1 {
