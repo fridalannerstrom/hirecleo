@@ -1,9 +1,10 @@
 /*!
-    * Start Bootstrap - SB Admin Pro v2.0.5 (https://shop.startbootstrap.com/product/sb-admin-pro)
-    * Copyright 2013-2023 Start Bootstrap
-    * Licensed under SEE_LICENSE (https://github.com/StartBootstrap/sb-admin-pro/blob/master/LICENSE)
-    */
-    window.addEventListener('DOMContentLoaded', event => {
+* Start Bootstrap - SB Admin Pro v2.0.5 (https://shop.startbootstrap.com/product/sb-admin-pro)
+* Copyright 2013-2023 Start Bootstrap
+* Licensed under SEE_LICENSE (https://github.com/StartBootstrap/sb-admin-pro/blob/master/LICENSE)
+*/
+
+window.addEventListener('DOMContentLoaded', event => {
     // Activate feather
     feather.replace();
 
@@ -73,4 +74,16 @@
         }
         targetAnchor.classList.add('active');
     });
+
+    // 🔁 Automatisk uppladdning av profilbild efter val
+    const fileInput = document.getElementById('imageInput');
+    const form = document.getElementById('profileImageForm');
+
+    if (fileInput && form) {
+        fileInput.addEventListener('change', function () {
+            if (fileInput.files.length > 0) {
+                form.submit();
+            }
+        });
+    }
 });

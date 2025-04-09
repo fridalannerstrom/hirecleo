@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
@@ -44,9 +43,6 @@ def logout_view(request):
 def dashboard_view(request):
     return render(request, 'dashboard.html')
 
-def account_profile(request):
-    return render(request, 'account-profile.html')
-
 @login_required
 def profile_view(request):
     if request.method == 'POST':
@@ -67,6 +63,7 @@ def dashboard_view(request):
 @login_required
 def account_profile(request):
     if request.method == 'POST':
+        print("POST received")
         form = ProfileImageForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
