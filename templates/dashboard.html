@@ -3,458 +3,305 @@
 {% block title %}Dashboard - Cleo{% endblock %}
 {% block content %}
 <main>
-    <header class="page-header page-header-dark bg-gradient-primary-to-secondary pb-10">
-        <div class="container-xl px-4">
-            <div class="page-header-content pt-4">
+    <!-- Main page content-->
+    <div class="container-xl px-4 mt-5">
+        <!-- Custom page header alternative example-->
+        <div class="d-flex justify-content-between align-items-sm-center flex-column flex-sm-row mb-2">
+            <div class="me-4 mb-3 mb-sm-0">
+                <h1 class="mb-0">Välkommen, {{ user.first_name }}! </h1>
+            </div>
+        </div>
+        <!-- Illustration dashboard card example-->
+        <div class="card card-waves mb-3 mt-3" id="cleo-dashboard-chat">
+            <div class="card-body p-5">
                 <div class="row align-items-center justify-content-between">
-                    <div class="col-auto mt-4">
-                        <h1 class="page-header-title">
-                            <div class="page-header-icon"><i data-feather="activity"></i></div>
-                            Dashboard
-                        </h1>
-                        <div class="page-header-subtitle">Example dashboard overview and content summary</div>
+                    <div class="col">
+                        <h2 class="text-primary">Welcome back, your dashboard is ready!</h2>
+                        <p class="text-gray-700">Great job, your affiliate dashboard is ready to go! You can view sales, generate links, prepare coupons, and download affiliate reports using this dashboard.</p>
+                        <a class="btn btn-primary p-3" href="#!">
+                            Get Started
+                            <i class="ms-1" data-feather="arrow-right"></i>
+                        </a>
                     </div>
-                    <div class="col-12 col-xl-auto mt-4">
-                        <div class="input-group input-group-joined border-0" style="width: 16.5rem">
-                            <span class="input-group-text"><i class="text-primary" data-feather="calendar"></i></span>
-                            <input class="form-control ps-0 pointer" id="litepickerRangePlugin" placeholder="Select date range..." />
+                    <div class="col d-none d-lg-block mt-xxl-n4"><img class="img-fluid px-xl-4 mt-xxl-n5" src="assets/img/illustrations/statistics.svg" /></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <!-- Dashboard info widget 1-->
+                <div class="card border-start-lg border-start-primary h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="small fw-bold text-primary mb-1">Earnings (monthly)</div>
+                                <div class="h5">$4,390</div>
+                                <div class="text-xs fw-bold text-success d-inline-flex align-items-center">
+                                    <i class="me-1" data-feather="trending-up"></i>
+                                    12%
+                                </div>
+                            </div>
+                            <div class="ms-2"><i class="fas fa-dollar-sign fa-2x text-gray-200"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <!-- Dashboard info widget 2-->
+                <div class="card border-start-lg border-start-secondary h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="small fw-bold text-secondary mb-1">Average sale price</div>
+                                <div class="h5">$27.00</div>
+                                <div class="text-xs fw-bold text-danger d-inline-flex align-items-center">
+                                    <i class="me-1" data-feather="trending-down"></i>
+                                    3%
+                                </div>
+                            </div>
+                            <div class="ms-2"><i class="fas fa-tag fa-2x text-gray-200"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <!-- Dashboard info widget 3-->
+                <div class="card border-start-lg border-start-success h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="small fw-bold text-success mb-1">Clicks</div>
+                                <div class="h5">11,291</div>
+                                <div class="text-xs fw-bold text-success d-inline-flex align-items-center">
+                                    <i class="me-1" data-feather="trending-up"></i>
+                                    12%
+                                </div>
+                            </div>
+                            <div class="ms-2"><i class="fas fa-mouse-pointer fa-2x text-gray-200"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <!-- Dashboard info widget 4-->
+                <div class="card border-start-lg border-start-info h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <div class="small fw-bold text-info mb-1">Conversion rate</div>
+                                <div class="h5">1.23%</div>
+                                <div class="text-xs fw-bold text-danger d-inline-flex align-items-center">
+                                    <i class="me-1" data-feather="trending-down"></i>
+                                    1%
+                                </div>
+                            </div>
+                            <div class="ms-2"><i class="fas fa-percentage fa-2x text-gray-200"></i></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </header>
-                    <!-- Main page content-->
-                    <div class="container-xl px-4 mt-n10">
-                        <div class="row">
-                            <div class="col-xxl-4 col-xl-12 mb-4">
-                                <div class="card h-100">
-                                    <div class="card-body h-100 p-5">
-                                        <div class="row align-items-center">
-                                            <div class="col-xl-8 col-xxl-12">
-                                                <div class="text-center text-xl-start text-xxl-center mb-4 mb-xl-0 mb-xxl-4">
-                                                    <h1 class="text-primary">Welcome to SB Admin Pro!</h1>
-                                                    <p class="text-gray-700 mb-0">Browse our fully designed UI toolkit! Browse our prebuilt app pages, components, and utilites, and be sure to look at our full documentation!</p>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-4 col-xxl-12 text-center"><img class="img-fluid" src="assets/img/illustrations/at-work.svg" style="max-width: 26rem" /></div>
-                                        </div>
-                                    </div>
-                                </div>
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <!-- Illustration card example-->
+                <div class="card mb-4">
+                    <div class="card-body text-center p-5">
+                        <img class="img-fluid mb-5" src="assets/img/illustrations/data-report.svg" />
+                        <h4>Report generation</h4>
+                        <p class="mb-4">Ready to get started? Let us know now! It's time to start building that dashboard you've been waiting to create!</p>
+                        <a class="btn btn-primary p-3" href="#!">Continue</a>
+                    </div>
+                </div>
+                <!-- Report summary card example-->
+                <div class="card mb-4">
+                    <div class="card-header">Affiliate Reports</div>
+                    <div class="list-group list-group-flush small">
+                        <a class="list-group-item list-group-item-action" href="#!">
+                            <i class="fas fa-dollar-sign fa-fw text-blue me-2"></i>
+                            Earnings Reports
+                        </a>
+                        <a class="list-group-item list-group-item-action" href="#!">
+                            <i class="fas fa-tag fa-fw text-purple me-2"></i>
+                            Average Sale Price
+                        </a>
+                        <a class="list-group-item list-group-item-action" href="#!">
+                            <i class="fas fa-mouse-pointer fa-fw text-green me-2"></i>
+                            Engagement (Clicks &amp; Impressions)
+                        </a>
+                        <a class="list-group-item list-group-item-action" href="#!">
+                            <i class="fas fa-percentage fa-fw text-yellow me-2"></i>
+                            Conversion Rate
+                        </a>
+                        <a class="list-group-item list-group-item-action" href="#!">
+                            <i class="fas fa-chart-pie fa-fw text-pink me-2"></i>
+                            Segments
+                        </a>
+                    </div>
+                    <div class="card-footer position-relative border-top-0">
+                        <a class="stretched-link" href="#!">
+                            <div class="text-xs d-flex align-items-center justify-content-between">
+                                View More Reports
+                                <i class="fas fa-long-arrow-alt-right"></i>
                             </div>
-                            <div class="col-xxl-4 col-xl-6 mb-4">
-                                <div class="card card-header-actions h-100">
-                                    <div class="card-header">
-                                        Recent Activity
-                                        <div class="dropdown no-caret">
-                                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                                            <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
-                                                <h6 class="dropdown-header">Filter Activity:</h6>
-                                                <a class="dropdown-item" href="#!"><span class="badge bg-green-soft text-green my-1">Commerce</span></a>
-                                                <a class="dropdown-item" href="#!"><span class="badge bg-blue-soft text-blue my-1">Reporting</span></a>
-                                                <a class="dropdown-item" href="#!"><span class="badge bg-yellow-soft text-yellow my-1">Server</span></a>
-                                                <a class="dropdown-item" href="#!"><span class="badge bg-purple-soft text-purple my-1">Users</span></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="timeline timeline-xs">
-                                            <!-- Timeline Item 1-->
-                                            <div class="timeline-item">
-                                                <div class="timeline-item-marker">
-                                                    <div class="timeline-item-marker-text">27 min</div>
-                                                    <div class="timeline-item-marker-indicator bg-green"></div>
-                                                </div>
-                                                <div class="timeline-item-content">
-                                                    New order placed!
-                                                    <a class="fw-bold text-dark" href="#!">Order #2912</a>
-                                                    has been successfully placed.
-                                                </div>
-                                            </div>
-                                            <!-- Timeline Item 2-->
-                                            <div class="timeline-item">
-                                                <div class="timeline-item-marker">
-                                                    <div class="timeline-item-marker-text">58 min</div>
-                                                    <div class="timeline-item-marker-indicator bg-blue"></div>
-                                                </div>
-                                                <div class="timeline-item-content">
-                                                    Your
-                                                    <a class="fw-bold text-dark" href="#!">weekly report</a>
-                                                    has been generated and is ready to view.
-                                                </div>
-                                            </div>
-                                            <!-- Timeline Item 3-->
-                                            <div class="timeline-item">
-                                                <div class="timeline-item-marker">
-                                                    <div class="timeline-item-marker-text">2 hrs</div>
-                                                    <div class="timeline-item-marker-indicator bg-purple"></div>
-                                                </div>
-                                                <div class="timeline-item-content">
-                                                    New user
-                                                    <a class="fw-bold text-dark" href="#!">Valerie Luna</a>
-                                                    has registered
-                                                </div>
-                                            </div>
-                                            <!-- Timeline Item 4-->
-                                            <div class="timeline-item">
-                                                <div class="timeline-item-marker">
-                                                    <div class="timeline-item-marker-text">1 day</div>
-                                                    <div class="timeline-item-marker-indicator bg-yellow"></div>
-                                                </div>
-                                                <div class="timeline-item-content">Server activity monitor alert</div>
-                                            </div>
-                                            <!-- Timeline Item 5-->
-                                            <div class="timeline-item">
-                                                <div class="timeline-item-marker">
-                                                    <div class="timeline-item-marker-text">1 day</div>
-                                                    <div class="timeline-item-marker-indicator bg-green"></div>
-                                                </div>
-                                                <div class="timeline-item-content">
-                                                    New order placed!
-                                                    <a class="fw-bold text-dark" href="#!">Order #2911</a>
-                                                    has been successfully placed.
-                                                </div>
-                                            </div>
-                                            <!-- Timeline Item 6-->
-                                            <div class="timeline-item">
-                                                <div class="timeline-item-marker">
-                                                    <div class="timeline-item-marker-text">1 day</div>
-                                                    <div class="timeline-item-marker-indicator bg-purple"></div>
-                                                </div>
-                                                <div class="timeline-item-content">
-                                                    Details for
-                                                    <a class="fw-bold text-dark" href="#!">Marketing and Planning Meeting</a>
-                                                    have been updated.
-                                                </div>
-                                            </div>
-                                            <!-- Timeline Item 7-->
-                                            <div class="timeline-item">
-                                                <div class="timeline-item-marker">
-                                                    <div class="timeline-item-marker-text">2 days</div>
-                                                    <div class="timeline-item-marker-indicator bg-green"></div>
-                                                </div>
-                                                <div class="timeline-item-content">
-                                                    New order placed!
-                                                    <a class="fw-bold text-dark" href="#!">Order #2910</a>
-                                                    has been successfully placed.
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xxl-4 col-xl-6 mb-4">
-                                <div class="card card-header-actions h-100">
-                                    <div class="card-header">
-                                        Progress Tracker
-                                        <div class="dropdown no-caret">
-                                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="dropdownMenuButton" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                                            <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="#!">
-                                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="list"></i></div>
-                                                    Manage Tasks
-                                                </a>
-                                                <a class="dropdown-item" href="#!">
-                                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="plus-circle"></i></div>
-                                                    Add New Task
-                                                </a>
-                                                <a class="dropdown-item" href="#!">
-                                                    <div class="dropdown-item-icon"><i class="text-gray-500" data-feather="minus-circle"></i></div>
-                                                    Delete Tasks
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <h4 class="small">
-                                            Server Migration
-                                            <span class="float-end fw-bold">20%</span>
-                                        </h4>
-                                        <div class="progress mb-4"><div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div></div>
-                                        <h4 class="small">
-                                            Sales Tracking
-                                            <span class="float-end fw-bold">40%</span>
-                                        </h4>
-                                        <div class="progress mb-4"><div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div></div>
-                                        <h4 class="small">
-                                            Customer Database
-                                            <span class="float-end fw-bold">60%</span>
-                                        </h4>
-                                        <div class="progress mb-4"><div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div></div>
-                                        <h4 class="small">
-                                            Payout Details
-                                            <span class="float-end fw-bold">80%</span>
-                                        </h4>
-                                        <div class="progress mb-4"><div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div></div>
-                                        <h4 class="small">
-                                            Account Setup
-                                            <span class="float-end fw-bold">Complete!</span>
-                                        </h4>
-                                        <div class="progress"><div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>
-                                    </div>
-                                    <div class="card-footer position-relative">
-                                        <div class="d-flex align-items-center justify-content-between small text-body">
-                                            <a class="stretched-link text-body" href="#!">Visit Task Center</a>
-                                            <i class="fas fa-angle-right"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        </a>
+                    </div>
+                </div>
+                <!-- Progress card example-->
+                <div class="card bg-primary border-0">
+                    <div class="card-body">
+                        <h5 class="text-white-50">Budget Overview</h5>
+                        <div class="mb-4">
+                            <span class="display-4 text-white">$48k</span>
+                            <span class="text-white-50">per year</span>
                         </div>
-                        <!-- Example Colored Cards for Dashboard Demo-->
-                        <div class="row">
-                            <div class="col-lg-6 col-xl-3 mb-4">
-                                <div class="card bg-primary text-white h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="me-3">
-                                                <div class="text-white-75 small">Earnings (Monthly)</div>
-                                                <div class="text-lg fw-bold">$40,000</div>
-                                            </div>
-                                            <i class="feather-xl text-white-50" data-feather="calendar"></i>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                                        <a class="text-white stretched-link" href="#!">View Report</a>
-                                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
+                        <div class="progress bg-white-25 rounded-pill" style="height: 0.5rem"><div class="progress-bar bg-white w-75 rounded-pill" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 mb-4">
+                <!-- Area chart example-->
+                <div class="card mb-4">
+                    <div class="card-header">Revenue Summary</div>
+                    <div class="card-body">
+                        <div class="chart-area"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <!-- Bar chart example-->
+                        <div class="card h-100">
+                            <div class="card-header">Sales Reporting</div>
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <div class="chart-bar"><canvas id="myBarChart" width="100%" height="30"></canvas></div>
                             </div>
-                            <div class="col-lg-6 col-xl-3 mb-4">
-                                <div class="card bg-warning text-white h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="me-3">
-                                                <div class="text-white-75 small">Earnings (Annual)</div>
-                                                <div class="text-lg fw-bold">$215,000</div>
-                                            </div>
-                                            <i class="feather-xl text-white-50" data-feather="dollar-sign"></i>
-                                        </div>
+                            <div class="card-footer position-relative">
+                                <a class="stretched-link" href="#!">
+                                    <div class="text-xs d-flex align-items-center justify-content-between">
+                                        View More Reports
+                                        <i class="fas fa-long-arrow-alt-right"></i>
                                     </div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                                        <a class="text-white stretched-link" href="#!">View Report</a>
-                                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-xl-3 mb-4">
-                                <div class="card bg-success text-white h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="me-3">
-                                                <div class="text-white-75 small">Task Completion</div>
-                                                <div class="text-lg fw-bold">24</div>
-                                            </div>
-                                            <i class="feather-xl text-white-50" data-feather="check-square"></i>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                                        <a class="text-white stretched-link" href="#!">View Tasks</a>
-                                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-6 col-xl-3 mb-4">
-                                <div class="card bg-danger text-white h-100">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="me-3">
-                                                <div class="text-white-75 small">Pending Requests</div>
-                                                <div class="text-lg fw-bold">17</div>
-                                            </div>
-                                            <i class="feather-xl text-white-50" data-feather="message-circle"></i>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between small">
-                                        <a class="text-white stretched-link" href="#!">View Requests</a>
-                                        <div class="text-white"><i class="fas fa-angle-right"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Example Charts for Dashboard Demo-->
-                        <div class="row">
-                            <div class="col-xl-6 mb-4">
-                                <div class="card card-header-actions h-100">
-                                    <div class="card-header">
-                                        Earnings Breakdown
-                                        <div class="dropdown no-caret">
-                                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                                            <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
-                                                <a class="dropdown-item" href="#!">Last 12 Months</a>
-                                                <a class="dropdown-item" href="#!">Last 30 Days</a>
-                                                <a class="dropdown-item" href="#!">Last 7 Days</a>
-                                                <a class="dropdown-item" href="#!">This Month</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="#!">Custom Range</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-area"><canvas id="myAreaChart" width="100%" height="30"></canvas></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 mb-4">
-                                <div class="card card-header-actions h-100">
-                                    <div class="card-header">
-                                        Monthly Revenue
-                                        <div class="dropdown no-caret">
-                                            <button class="btn btn-transparent-dark btn-icon dropdown-toggle" id="areaChartDropdownExample" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-gray-500" data-feather="more-vertical"></i></button>
-                                            <div class="dropdown-menu dropdown-menu-end animated--fade-in-up" aria-labelledby="areaChartDropdownExample">
-                                                <a class="dropdown-item" href="#!">Last 12 Months</a>
-                                                <a class="dropdown-item" href="#!">Last 30 Days</a>
-                                                <a class="dropdown-item" href="#!">Last 7 Days</a>
-                                                <a class="dropdown-item" href="#!">This Month</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="#!">Custom Range</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="chart-bar"><canvas id="myBarChart" width="100%" height="30"></canvas></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Example DataTable for Dashboard Demo-->
-                        <div class="card mb-4">
-                            <div class="card-header">Personnel Management</div>
-                            <div class="card-body">
-                                <table id="datatablesSimple">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Age</th>
-                                            <th>Start date</th>
-                                            <th>Salary</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </tfoot>
-                                    <tbody>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>61</td>
-                                            <td>2011/04/25</td>
-                                            <td>$320,800</td>
-                                            <td><div class="badge bg-primary text-white rounded-pill">Full-time</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Garrett Winters</td>
-                                            <td>Accountant</td>
-                                            <td>Tokyo</td>
-                                            <td>63</td>
-                                            <td>2011/07/25</td>
-                                            <td>$170,750</td>
-                                            <td><div class="badge bg-warning rounded-pill">Pending</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Ashton Cox</td>
-                                            <td>Junior Technical Author</td>
-                                            <td>San Francisco</td>
-                                            <td>66</td>
-                                            <td>2009/01/12</td>
-                                            <td>$86,000</td>
-                                            <td><div class="badge bg-secondary text-white rounded-pill">Part-time</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Cedric Kelly</td>
-                                            <td>Senior Javascript Developer</td>
-                                            <td>Edinburgh</td>
-                                            <td>22</td>
-                                            <td>2012/03/29</td>
-                                            <td>$433,060</td>
-                                            <td><div class="badge bg-info rounded-pill">Contract</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Airi Satou</td>
-                                            <td>Accountant</td>
-                                            <td>Tokyo</td>
-                                            <td>33</td>
-                                            <td>2008/11/28</td>
-                                            <td>$162,700</td>
-                                            <td><div class="badge bg-primary text-white rounded-pill">Full-time</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Brielle Williamson</td>
-                                            <td>Integration Specialist</td>
-                                            <td>New York</td>
-                                            <td>61</td>
-                                            <td>2012/12/02</td>
-                                            <td>$372,000</td>
-                                            <td><div class="badge bg-primary text-white rounded-pill">Full-time</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Herrod Chandler</td>
-                                            <td>Sales Assistant</td>
-                                            <td>San Francisco</td>
-                                            <td>59</td>
-                                            <td>2012/08/06</td>
-                                            <td>$137,500</td>
-                                            <td><div class="badge bg-primary text-white rounded-pill">Full-time</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Rhona Davidson</td>
-                                            <td>Integration Specialist</td>
-                                            <td>Tokyo</td>
-                                            <td>55</td>
-                                            <td>2010/10/14</td>
-                                            <td>$327,900</td>
-                                            <td><div class="badge bg-primary text-white rounded-pill">Full-time</div></td>
-                                            <td>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                </a>
                             </div>
                         </div>
                     </div>
-                </main>
+                    <div class="col-lg-6">
+                        <!-- Pie chart example-->
+                        <div class="card h-100">
+                            <div class="card-header">Traffic Sources</div>
+                            <div class="card-body">
+                                <div class="chart-pie mb-4"><canvas id="myPieChart" width="100%" height="50"></canvas></div>
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item d-flex align-items-center justify-content-between small px-0 py-2">
+                                        <div class="me-3">
+                                            <i class="fas fa-circle fa-sm me-1 text-blue"></i>
+                                            Direct
+                                        </div>
+                                        <div class="fw-500 text-dark">55%</div>
+                                    </div>
+                                    <div class="list-group-item d-flex align-items-center justify-content-between small px-0 py-2">
+                                        <div class="me-3">
+                                            <i class="fas fa-circle fa-sm me-1 text-purple"></i>
+                                            Social
+                                        </div>
+                                        <div class="fw-500 text-dark">15%</div>
+                                    </div>
+                                    <div class="list-group-item d-flex align-items-center justify-content-between small px-0 py-2">
+                                        <div class="me-3">
+                                            <i class="fas fa-circle fa-sm me-1 text-green"></i>
+                                            Referral
+                                        </div>
+                                        <div class="fw-500 text-dark">30%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">Personnel Management</div>
+            <div class="card-body">
+                <table id="datatablesSimple">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Office</th>
+                            <th>Age</th>
+                            <th>Start date</th>
+                            <th>Salary</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Office</th>
+                            <th>Age</th>
+                            <th>Start date</th>
+                            <th>Salary</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        <tr>
+                            <td>Tiger Nixon</td>
+                            <td>System Architect</td>
+                            <td>Edinburgh</td>
+                            <td>61</td>
+                            <td>2011/04/25</td>
+                            <td>$320,800</td>
+                            <td><div class="badge bg-primary text-white rounded-pill">Full-time</div></td>
+                            <td>
+                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Garrett Winters</td>
+                            <td>Accountant</td>
+                            <td>Tokyo</td>
+                            <td>63</td>
+                            <td>2011/07/25</td>
+                            <td>$170,750</td>
+                            <td><div class="badge bg-warning rounded-pill">Pending</div></td>
+                            <td>
+                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Ashton Cox</td>
+                            <td>Junior Technical Author</td>
+                            <td>San Francisco</td>
+                            <td>66</td>
+                            <td>2009/01/12</td>
+                            <td>$86,000</td>
+                            <td><div class="badge bg-secondary text-white rounded-pill">Part-time</div></td>
+                            <td>
+                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Cedric Kelly</td>
+                            <td>Senior Javascript Developer</td>
+                            <td>Edinburgh</td>
+                            <td>22</td>
+                            <td>2012/03/29</td>
+                            <td>$433,060</td>
+                            <td><div class="badge bg-info rounded-pill">Contract</div></td>
+                            <td>
+                                <button class="btn btn-datatable btn-icon btn-transparent-dark me-2"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                                <button class="btn btn-datatable btn-icon btn-transparent-dark"><i class="fa-regular fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+    </div>
+</main>
                 {% endblock %}

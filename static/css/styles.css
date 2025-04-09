@@ -19618,3 +19618,10 @@ pre[class*=language-] {
 .token.variable {
   color: #ff6666;
 }
+
+
+/* CUSTOM CSS */
+
+#cleo-dashboard-chat {
+  background: linear-gradient(to right, #130450, #08021E);
+}
