@@ -23,7 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Login som startsida
-    path('', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
+    path('', auth_views.LoginView.as_view(template_name='auth-login-basic.html'), name='login'),
 
     # Logga ut, lösenordsåterställning m.m.
     path('accounts/', include('django.contrib.auth.urls')),
