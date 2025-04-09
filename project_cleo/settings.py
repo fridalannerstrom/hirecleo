@@ -138,4 +138,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Redirects after login/logout
 LOGIN_REDIRECT_URL = '/dashboard/'   # eller vad du nu vill att användaren ska se efter inloggning
-LOGOUT_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/login/'     # Vart användaren ska skickas efter logout

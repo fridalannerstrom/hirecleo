@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def index(request):
@@ -34,5 +35,13 @@ def login_view(request):
             login(request, user)
             return redirect('dashboard')  # namnet på din url
         else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
-    return render(request, 'login.html')
+            return render(request, 'auth-login-basic.html', {'error': 'Invalid credentials'})
+    return render(request, 'auth-login-basic.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')  # Skicka användaren till inloggningssidan efter logout
+
+@login_required
+def dashboard_view(request):
+    return render(request, 'dashboard.html')
