@@ -90,3 +90,6 @@ def add_candidates_manually(request):
 
 def add_candidates_pdf(request):
     return render(request, 'add-candidates-pdf.html')
+
+def your_candidates(request):
+    return render(request, 'your-candidates.html')

@@ -15,4 +15,5 @@ urlpatterns = [
     path('account/', views.account_profile, name='account_profile'),
     path('add-candidates-manually/', views.add_candidates_manually, name='add_candidates_manually'),
     path('add-candidates-pdf/', views.add_candidates_pdf, name='add_candidates_pdf'),
+    path('your-candidates', views.your_candidates, name='your_candidates'),
 ]
