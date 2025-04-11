@@ -244,7 +244,7 @@
                                 <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavCandidatesMenu">
                                     <!-- Nested Sidenav Accordion (Candidates) -->
                                     <a class="nav-link" href="pricing.html">Your Candidates</a>
-                                    <a class="nav-link" href="invoice.html">Add Candidates</a>
+                                    <a class="nav-link" href="{% url 'add_candidates' %}">Add Candidates</a>
                                 </nav>
                             </div>
                             <!-- Sidenav Accordion (Jobs)-->
@@ -316,7 +316,6 @@
             <div id="layoutSidenav_content">
                 <main>
                     <!-- Main page content-->
-                    <div class="container-xl px-4 mt-5" id="basic-layout">
                     {% endblock %}
 
                         {% block content %}
