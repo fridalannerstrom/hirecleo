@@ -93,3 +93,12 @@ def add_candidates_pdf(request):
 
 def your_candidates(request):
     return render(request, 'your-candidates.html')
+
+def your_jobs(request):
+    return render(request, 'your-jobs.html')
+
+def add_jobs_manually(request):
+    return render(request, 'add-jobs-manually.html')
+
+def add_jobs_pdf(request):
+    return render(request, 'add-jobs-pdf.html')

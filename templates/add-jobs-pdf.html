@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard - Cleo{% endblock %}
+{% block content %}
+
+    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+        <div class="container-xl px-4">
+            <div class="page-header-content">
+                <div class="row align-items-center justify-content-between pt-3">
+                    <div class="col-auto mb-3">
+                        <h1 class="page-header-title">
+                            <div class="page-header-icon"><i class="fa-regular fa-file-pdf"></i></div>
+                            Add jobs from PDF
+                        </h1>
+                    </div>
+                    <div class="col-12 col-xl-auto mb-3 gap-5">
+                        <a class="btn btn-sm btn-light text-primary" href="{% url 'add_jobs_manually' %}">
+                            <i class="fa-regular fa-pen-to-square"></i>
+                            Add jobs manually
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Main page content-->
+    <div class="container-xl px-4 mt-4">
+        <div class="row">
+
+        </div>
+    </div>
+{% endblock %}

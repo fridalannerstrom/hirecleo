@@ -15,5 +15,8 @@ urlpatterns = [
     path('account/', views.account_profile, name='account_profile'),
     path('add-candidates-manually/', views.add_candidates_manually, name='add_candidates_manually'),
     path('add-candidates-pdf/', views.add_candidates_pdf, name='add_candidates_pdf'),
-    path('your-candidates', views.your_candidates, name='your_candidates'),
+    path('your-candidates/', views.your_candidates, name='your_candidates'),
+    path('your-jobs/', views.your_jobs, name='your_jobs'),
+    path('add-jobs-manually/', views.add_jobs_manually, name='add_jobs_manually'),
+    path('add-jobs-pdf/', views.add_jobs_pdf, name='add_jobs_pdf'),
 ]
