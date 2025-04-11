@@ -102,3 +102,6 @@ def add_jobs_manually(request):
 
 def add_jobs_pdf(request):
     return render(request, 'add-jobs-pdf.html')
+
+def chat(request):
+    return render(request, 'chat.html')

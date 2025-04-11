@@ -19,4 +19,5 @@ urlpatterns = [
     path('your-jobs/', views.your_jobs, name='your_jobs'),
     path('add-jobs-manually/', views.add_jobs_manually, name='add_jobs_manually'),
     path('add-jobs-pdf/', views.add_jobs_pdf, name='add_jobs_pdf'),
+    path('chat/', views.chat, name='chat'),
 ]

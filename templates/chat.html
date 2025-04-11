@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard - Cleo{% endblock %}
+{% block content %}
+                    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+                        <div class="container-xl px-4">
+                            <div class="page-header-content">
+                                <div class="row align-items-center justify-content-between pt-3">
+                                    <div class="col-auto mb-3">
+                                        <h1 class="page-header-title">
+                                            <div class="page-header-icon"><i class="fa-regular fa-comments"></i></div>
+                                            Chat with Cleo
+                                        </h1>
+                                    </div>
+                                    <div class="col-12 col-xl-auto mb-3 gap-5">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <!-- Main page content-->
+                    <div class="container-xl px-4 mt-4">
+                        <div class="row">
+                            <div class="col-lg-9">
+                                <div id="navBordersComponent">
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+
+                                            <p>Chat</p>
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Bootstrap Docs Link-->
+                                <div class="card card-icon mb-4">
+                                    <div class="row g-0">
+                                        <div class="col-auto card-icon-aside bg-secondary"><i class="me-1 text-white-50 fab fa-bootstrap"></i></div>
+                                        <div class="col">
+                                            <div class="card-body py-5">
+                                                <h5 class="card-title">Bootstrap Documentation Available</h5>
+                                                <p class="card-text">Navs are a default component included with the Bootstrap framework. For more information on implementing, modifying, and extending the usage of Bootstrap nav components within your project, visit the official Bootstrap navs documentation page.</p>
+                                                <a class="btn btn-secondary btn-sm" href="https://getbootstrap.com/docs/4.4/components/navs/" target="_blank">
+                                                    <i class="me-1" data-feather="external-link"></i>
+                                                    Visit Bootstrap Navs Docs
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Sticky Navigation-->
+                            <div class="col-lg-3">
+                                <div class="nav-sticky">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <ul class="nav flex-column" id="stickyNav">
+                                                <li class="nav-item">
+                                                    <a class="nav-link" href="#navBordersComponent">
+                                                        <div class="d-flex align-items-center justify-content-between">
+                                                            Nav Borders
+                                                            <span class="badge bg-primary-soft text-primary">New</span>
+                                                        </div>
+                                                    </a>
+                                                    <ul class="nav flex-column ms-3">
+                                                        <li class="nav-item"><a class="nav-link" href="#navBordersComponentHorizontal">Horizontal</a></li>
+                                                        <li class="nav-item"><a class="nav-link" href="#navBordersComponentVertical">Vertical</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li class="nav-item"><a class="nav-link" href="#sidenavComponent">Side Navigation</a></li>
+                                                <li class="nav-item"><a class="nav-link" href="#stickNavComponent">Sticky Navigation</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock %}
