@@ -87,3 +87,6 @@ def account_profile(request):
 
 def add_candidates_manually(request):
     return render(request, 'add-candidates-manually.html')
+
+def add_candidates_pdf(request):
+    return render(request, 'add-candidates-pdf.html')
