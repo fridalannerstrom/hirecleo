@@ -17,4 +17,5 @@ urlpatterns = [
     path('add-jobs-pdf/', views.add_jobs_pdf, name='add_jobs_pdf'),
     path('chat/', views.chat, name='chat'),
     path('candidates/<slug:slug>/', views.candidate_detail, name='candidate_detail'),
+    path('candidates/<slug:slug>/edit/', views.edit_candidate, name='edit_candidate'),
 ]

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Edit {{ candidate.first_name }} - Cleo{% endblock %}
+{% block content %}
+
+<div class="container-xl px-4 mt-4">
+    <div class="card mb-4">
+        <div class="card-header">Edit Candidate: {{ candidate.first_name }} {{ candidate.last_name }}</div>
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row gx-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="small mb-1">First Name</label>
+                        <input class="form-control" name="first_name" value="{{ candidate.first_name }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small mb-1">Last Name</label>
+                        <input class="form-control" name="last_name" value="{{ candidate.last_name }}">
+                    </div>
+                </div>
+
+                <div class="row gx-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="small mb-1">Email</label>
+                        <input class="form-control" name="email" value="{{ candidate.email }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small mb-1">Phone Number</label>
+                        <input class="form-control" name="phone_number" value="{{ candidate.phone_number }}">
+                    </div>
+                </div>
+
+                <div class="row gx-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="small mb-1">LinkedIn URL</label>
+                        <input class="form-control" name="linkedin_url" value="{{ candidate.linkedin_url }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small mb-1">Top Skills (comma-separated)</label>
+                        <input class="form-control" name="top_skills" value="{{ candidate.top_skills|join:', ' }}">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="small mb-1">CV Text</label>
+                    <textarea class="form-control" name="cv_text" rows="2">{{ candidate.cv_text }}</textarea>
+                </div>
+
+                <div class="row gx-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="small mb-1">Interview Notes</label>
+                        <textarea class="form-control" name="interview_notes" rows="3">{{ candidate.interview_notes }}</textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="small mb-1">Test Results</label>
+                        <textarea class="form-control" name="test_results" rows="3">{{ candidate.test_results }}</textarea>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

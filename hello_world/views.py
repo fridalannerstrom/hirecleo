@@ -151,3 +151,25 @@ def chat(request):
 def candidate_detail(request, slug):
     candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
     return render(request, 'your-candidates-profile.html', {'candidate': candidate})
+
+@login_required
+def edit_candidate(request, slug):
+    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+
+    if request.method == 'POST':
+        candidate.first_name = request.POST.get('first_name')
+        candidate.last_name = request.POST.get('last_name')
+        candidate.email = request.POST.get('email')
+        candidate.phone_number = request.POST.get('phone_number')
+        candidate.linkedin_url = request.POST.get('linkedin_url')
+        candidate.cv_text = request.POST.get('cv_text')
+        candidate.interview_notes = request.POST.get('interview_notes')
+        candidate.test_results = request.POST.get('test_results')
+
+        top_skills_raw = request.POST.get('top_skills', '')
+        candidate.top_skills = [s.strip() for s in top_skills_raw.split(',') if s.strip()]
+
+        candidate.save()
+        return redirect('candidate_detail', slug=candidate.slug)
+
+    return render(request, 'your-candidates-edit.html', {'candidate': candidate})
