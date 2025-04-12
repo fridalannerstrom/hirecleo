@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileImageForm
 from .models import Candidate, Profile
@@ -146,3 +146,8 @@ def add_jobs_pdf(request):
 @login_required
 def chat(request):
     return render(request, 'chat.html')
+
+@login_required
+def candidate_detail(request, slug):
+    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+    return render(request, 'your-candidates-profile.html', {'candidate': candidate})

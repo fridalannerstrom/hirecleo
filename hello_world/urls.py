@@ -16,4 +16,5 @@ urlpatterns = [
     path('add-jobs-manually/', views.add_jobs_manually, name='add_jobs_manually'),
     path('add-jobs-pdf/', views.add_jobs_pdf, name='add_jobs_pdf'),
     path('chat/', views.chat, name='chat'),
+    path('candidates/<slug:slug>/', views.candidate_detail, name='candidate_detail'),
 ]

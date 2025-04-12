@@ -58,9 +58,9 @@
                                 {% for candidate in candidates %}
                                     <tr>
                                         <td>
-                                            <div class="d-flex align-items-center">
+                                            <div class="d-flex align-items-center"><a href="{% url 'candidate_detail' candidate.slug %}" class="text-dark fw-bold text-decoration-none">
                                                 {{ candidate.first_name }} {{ candidate.last_name }}
-                                            </div>
+                                            </a></div>
                                         </td>
                                         <td>{{ candidate.email }}</td>
                                         <td>{{ candidate.phone_number }}</td> <!-- Eller visa nåt från modellen om du har det -->
