@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileImageForm
+from .models import Candidate, Job, Profile
 
 # Create your views here.
 def dashboard(request):
@@ -85,23 +86,31 @@ def account_profile(request):
         'form': form
     })
 
+@login_required
 def add_candidates_manually(request):
     return render(request, 'add-candidates-manually.html')
 
+@login_required
 def add_candidates_pdf(request):
     return render(request, 'add-candidates-pdf.html')
 
+@login_required
 def your_candidates(request):
-    return render(request, 'your-candidates.html')
+    candidates = Candidate.objects.filter(user=request.user).order_by('-created_on')
+    return render(request, 'your-candidates.html', {'candidates': candidates})
 
+@login_required
 def your_jobs(request):
     return render(request, 'your-jobs.html')
 
+@login_required
 def add_jobs_manually(request):
     return render(request, 'add-jobs-manually.html')
 
+@login_required
 def add_jobs_pdf(request):
     return render(request, 'add-jobs-pdf.html')
 
+@login_required
 def chat(request):
     return render(request, 'chat.html')
