@@ -19,4 +19,5 @@ urlpatterns = [
     path('candidates/<slug:slug>/', views.candidate_detail, name='candidate_detail'),
     path('candidates/<slug:slug>/edit/', views.edit_candidate, name='edit_candidate'),
     path('candidates/<slug:slug>/delete/', views.delete_candidate, name='delete_candidate'),
+    path("test-openai/", views.test_openai, name="test_openai"),
 ]

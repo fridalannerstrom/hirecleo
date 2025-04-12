@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
 
 # Create your models here.
 class Job(models.Model):
@@ -38,12 +39,14 @@ class Candidate(models.Model):
         if not self.slug:
             base_slug = slugify(f"{self.first_name}-{self.last_name}")
             unique_slug = base_slug
-            num = 1
+            counter = 1
             while Candidate.objects.filter(slug=unique_slug).exists():
-                unique_slug = f"{base_slug}-{num}"
-                num += 1
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
             self.slug = unique_slug
         super().save(*args, **kwargs)
+
+        print("Saving candidate:", self.first_name, self.last_name)
     
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -1,3 +1,4 @@
+import os
 import fitz  # PyMuPDF
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
@@ -7,6 +8,12 @@ from .forms import ProfileImageForm, CandidatePDFUploadForm
 from .models import Candidate, Profile
 from django.utils.text import slugify
 import uuid
+from openai import OpenAI
+from PyPDF2 import PdfReader
+if os.path.exists("env.py"):
+    import env
+
+client = OpenAI()
 
 # Create your views here.
 def dashboard(request):
@@ -189,29 +196,63 @@ def extract_text_from_pdf(pdf_file):
             text += page.get_text()
     return text
 
+def extract_data_with_openai(text):
+    prompt = f"""
+    Här är innehållet från ett CV:
+    \"\"\"{text}\"\"\"
+
+    Extrahera följande information om kandidaten:
+    - Förnamn
+    - Efternamn
+    - E-postadress
+    - Telefonnummer
+    - LinkedIn-länk (om det finns)
+    - Lista med 3–5 top skills (som Python, Figma, SQL etc.)
+
+    Returnera som JSON.
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "Du är en duktig CV-analytiker."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=500
+    )
+
+    return response.choices[0].message.content
+
+def read_pdf_text(pdf_file):
+    pdf = PdfReader(pdf_file)
+    text = ''
+    for page in pdf.pages:
+        text += page.extract_text() or ''
+    return text
+
 def add_candidates_pdf(request):
     if request.method == 'POST':
         form = CandidatePDFUploadForm(request.POST, request.FILES)
         if form.is_valid():
             candidate = form.save(commit=False)
-
-            # Sätt dummydata
-            candidate.first_name = "Unnamed"
-            candidate.last_name = "Candidate"
-            candidate.email = "no@email.com"
-            candidate.phone_number = ""
             candidate.user = request.user
+            candidate.cv_text = read_pdf_text(candidate.uploaded_pdf)
 
-            # Slug + extrahera text
-            filename = request.FILES['uploaded_pdf'].name
-            slug_base = slugify(filename.replace('.pdf', ''))
-            candidate.slug = f"{slug_base}-{uuid.uuid4().hex[:8]}"
+            # 🎯 Extrahera data med OpenAI
+            try:
+                import json
+                result = extract_data_with_openai(candidate.cv_text)
+                data = json.loads(result)
 
-            # 🧠 Extrahera CV-text
-            pdf_file = request.FILES['uploaded_pdf']
-            candidate.cv_text = extract_text_from_pdf(pdf_file)
+                candidate.first_name = data.get('Förnamn', '')
+                candidate.last_name = data.get('Efternamn', '')
+                candidate.email = data.get('E-postadress', '')
+                candidate.phone_number = data.get('Telefonnummer', '')
+                candidate.linkedin_url = data.get('LinkedIn-länk', '')
+                candidate.top_skills = data.get('Lista med 3–5 top skills', [])
+            except Exception as e:
+                print("OpenAI error:", e)
 
-            # Spara
             candidate.save()
             return redirect('add_candidates_pdf')
     else:
@@ -223,3 +264,14 @@ def add_candidates_pdf(request):
         'form': form,
         'candidates': candidates
     })
+
+@login_required
+def test_openai(request):
+    prompt = "Vad heter du?"
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return HttpResponse(response.choices[0].message.content)
