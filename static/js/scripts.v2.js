@@ -5,6 +5,9 @@
 */
 
 window.addEventListener('DOMContentLoaded', event => {
+    console.log("✅ script.js is loaded!");
+    console.log("✅ scripts.js from project is REALLY LOADED");
+
     // Activate feather
     feather.replace();
 
@@ -75,7 +78,6 @@ window.addEventListener('DOMContentLoaded', event => {
         targetAnchor.classList.add('active');
     });
 
-    // 🔁 Automatisk uppladdning av profilbild efter val
     const fileInput = document.getElementById('imageInput');
     const form = document.getElementById('profileImageForm');
 
@@ -86,4 +88,19 @@ window.addEventListener('DOMContentLoaded', event => {
             }
         });
     }
+
+    const deleteButtons = document.querySelectorAll('.open-delete-modal');
+    const modalName = document.getElementById('candidateName');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const name = this.getAttribute('data-name');
+            const url = this.getAttribute('data-url');
+            console.log("Modal opened for:", name);
+            console.log("Delete URL set to:", url);
+            modalName.textContent = name;
+            confirmBtn.setAttribute('href', url);
+        });
+    });
 });

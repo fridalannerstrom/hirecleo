@@ -5,10 +5,6 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
-    path('candidates/', views.candidates, name='candidates'),
-    path('jobs/', views.jobs, name='jobs'),
-    path('upload-candidates/', views.upload_candidates, name='upload_candidates'),
-    path('upload-jobs/', views.upload_jobs, name='upload_jobs'),
     path('jobad/', views.jobad, name='jobad'),
     path('login/', auth_views.LoginView.as_view(template_name='auth-login-basic.html'), name='login'),
     path('logout/', views.logout_view, name='logout'),
@@ -20,4 +16,8 @@ urlpatterns = [
     path('add-jobs-manually/', views.add_jobs_manually, name='add_jobs_manually'),
     path('add-jobs-pdf/', views.add_jobs_pdf, name='add_jobs_pdf'),
     path('chat/', views.chat, name='chat'),
+    path('candidates/<slug:slug>/', views.candidate_detail, name='candidate_detail'),
+    path('candidates/<slug:slug>/edit/', views.edit_candidate, name='edit_candidate'),
+    path('candidates/<slug:slug>/delete/', views.delete_candidate, name='delete_candidate'),
+    path("test-openai/", views.test_openai, name="test_openai"),
 ]

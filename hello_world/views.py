@@ -1,18 +1,24 @@
+import os
+import fitz  # PyMuPDF
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileImageForm
+from .forms import ProfileImageForm, CandidatePDFUploadForm
+from .models import Candidate, Profile
+from django.utils.text import slugify
+import uuid
+from openai import OpenAI
+from PyPDF2 import PdfReader
+if os.path.exists("env.py"):
+    import env
+import re
+
+client = OpenAI()
 
 # Create your views here.
 def dashboard(request):
     return render(request, 'dashboard.html')
-
-def candidates(request):
-    return render(request, 'candidates.html')
-
-def upload_candidates(request):
-    return render(request, 'upload_candidates.html')
 
 def jobs(request):
     return render(request, 'jobs.html')
@@ -85,23 +91,232 @@ def account_profile(request):
         'form': form
     })
 
+@login_required
 def add_candidates_manually(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        linkedin_url = request.POST.get('linkedin_url')
+        top_skills_raw = request.POST.get('top_skills', '')
+        top_skills = [skill.strip() for skill in top_skills_raw.split(',') if skill.strip()]
+        cv_text = request.POST.get('cv_text')
+        interview_notes = request.POST.get('interview_notes')
+        test_results = request.POST.get('test_results')
+
+        # Generera unik slug
+        base_slug = slugify(f"{first_name}-{last_name}")
+        slug = base_slug
+        counter = 1
+        while Candidate.objects.filter(slug=slug).exists():
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+
+        # Skapa kandidat
+        Candidate.objects.create(
+            user=request.user,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone_number=phone_number,
+            linkedin_url=linkedin_url,
+            top_skills=top_skills,
+            cv_text=cv_text,
+            interview_notes=interview_notes,
+            test_results=test_results,
+            slug=slug,
+        )
+
+        return redirect('your_candidates') 
+
     return render(request, 'add-candidates-manually.html')
 
-def add_candidates_pdf(request):
-    return render(request, 'add-candidates-pdf.html')
-
+@login_required
 def your_candidates(request):
-    return render(request, 'your-candidates.html')
+    candidates = Candidate.objects.filter(user=request.user).order_by('-created_on')
+    return render(request, 'your-candidates.html', {'candidates': candidates})
 
+@login_required
 def your_jobs(request):
     return render(request, 'your-jobs.html')
 
+@login_required
 def add_jobs_manually(request):
     return render(request, 'add-jobs-manually.html')
 
+@login_required
 def add_jobs_pdf(request):
     return render(request, 'add-jobs-pdf.html')
 
+@login_required
 def chat(request):
     return render(request, 'chat.html')
+
+@login_required
+def candidate_detail(request, slug):
+    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+    return render(request, 'your-candidates-profile.html', {'candidate': candidate})
+
+@login_required
+def edit_candidate(request, slug):
+    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+
+    if request.method == 'POST':
+        candidate.first_name = request.POST.get('first_name')
+        candidate.last_name = request.POST.get('last_name')
+        candidate.email = request.POST.get('email')
+        candidate.phone_number = request.POST.get('phone_number')
+        candidate.linkedin_url = request.POST.get('linkedin_url')
+        candidate.cv_text = request.POST.get('cv_text')
+        candidate.interview_notes = request.POST.get('interview_notes')
+        candidate.test_results = request.POST.get('test_results')
+
+        top_skills_raw = request.POST.get('top_skills', '')
+        candidate.top_skills = [s.strip() for s in top_skills_raw.split(',') if s.strip()]
+
+        candidate.save()
+        return redirect('candidate_detail', slug=candidate.slug)
+
+    return render(request, 'your-candidates-edit.html', {'candidate': candidate})
+
+@login_required
+def delete_candidate(request, slug):
+    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+    candidate.delete()
+    return redirect('your_candidates')
+
+def extract_text_from_pdf(pdf_file):
+    text = ""
+    with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
+        for page in doc:
+            text += page.get_text()
+    return text
+
+def extract_data_with_openai(text):
+    prompt = f"""
+    Här är innehållet från ett CV:
+    \"\"\"{text}\"\"\"
+
+    Extrahera följande information om kandidaten:
+    - Förnamn
+    - Efternamn
+    - E-postadress
+    - Telefonnummer
+    - LinkedIn-länk (om det finns)
+    - Lista med 3–5 top skills (som Python, Figma, SQL etc.)
+
+    Returnera svaret som ett giltigt JSON-objekt med följande nycklar: "Förnamn", "Efternamn", "E-postadress", "Telefonnummer", "LinkedIn-länk", "Top Skills". Se till att JSON:en är korrekt formatterad utan kommentarer eller extra text.
+    """
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "Du är en duktig CV-analytiker."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=500
+    )
+
+    return response.choices[0].message.content
+
+def clean_cv_text(text, phone=None, email=None, linkedin=None):
+    # Ta bort telefonnummer
+    if phone:
+        escaped_phone = re.escape(phone)
+        text = re.sub(escaped_phone, '', text)
+
+    # Ta bort e-post
+    if email:
+        escaped_email = re.escape(email)
+        text = re.sub(escaped_email, '', text)
+
+    # Ta bort LinkedIn
+    if linkedin:
+        escaped_linkedin = re.escape(linkedin)
+        text = re.sub(escaped_linkedin, '', text)
+
+    # Snygga till radbrytningar och mellanslag
+    text = re.sub(r'\n{2,}', '\n', text)  # Max 1 radbrytning
+    text = re.sub(r' {2,}', ' ', text)    # Max 1 mellanslag
+    text = re.sub(r'(?<=[a-zäöå0-9])\.\s+(?=[A-ZÅÄÖ])', '.\n', text)  # Ny rad efter mening
+
+    return text.strip()
+
+def read_pdf_text(pdf_file):
+    pdf = PdfReader(pdf_file)
+    text = ''
+    for page in pdf.pages:
+        text += page.extract_text() or ''
+    return text
+
+@login_required
+def add_candidates_pdf(request):
+    if request.method == 'POST':
+        form = CandidatePDFUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            candidate = form.save(commit=False)
+            candidate.user = request.user
+            candidate.cv_text = read_pdf_text(candidate.uploaded_pdf)
+
+            # 🎯 Extrahera data med OpenAI
+            try:
+                import json
+                import re
+
+                result = extract_data_with_openai(candidate.cv_text)
+                print("🔍 RAW RESULT FROM OPENAI:\n", result)
+
+                # Ta bort markdown-formatering (t.ex. ```json)
+                cleaned_result = re.sub(r"```json|```", "", result).strip()
+
+                try:
+                    data = json.loads(cleaned_result)
+                    print("✅ Parsed JSON:\n", data)
+                except json.JSONDecodeError as e:
+                    print("❌ JSONDecodeError:", e)
+                    data = {}
+
+                # Spara fält till modellen
+                candidate.first_name = data.get('Förnamn', '')
+                candidate.last_name = data.get('Efternamn', '')
+                candidate.email = data.get('E-postadress', '')
+                candidate.phone_number = data.get('Telefonnummer', '')
+                candidate.linkedin_url = data.get('LinkedIn-länk', '')
+                candidate.top_skills = data.get('Top Skills', [])
+                
+                # Rensa och snygga till CV Text
+                candidate.cv_text = clean_cv_text(
+                    candidate.cv_text,
+                    phone=candidate.phone_number,
+                    email=candidate.email,
+                    linkedin=candidate.linkedin_url,
+                )
+
+            except Exception as e:
+                print("🔥 OpenAI error:", e)
+
+            print("💾 Sparar kandidat:", candidate.first_name, candidate.last_name)
+            candidate.save()
+            return redirect('add_candidates_pdf')
+
+    else:
+        form = CandidatePDFUploadForm()
+
+    candidates = Candidate.objects.filter(uploaded_pdf__isnull=False).order_by('-created_on')
+
+    return render(request, 'add-candidates-pdf.html', {
+        'form': form,
+        'candidates': candidates
+    })
+
+@login_required
+def test_openai(request):
+    prompt = "Vad heter du?"
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
+    return HttpResponse(response.choices[0].message.content)
