@@ -28,9 +28,22 @@ class Candidate(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     top_skills = models.JSONField(blank=True, null=True, default=list) 
+    uploaded_pdf = models.FileField(upload_to='candidate_pdfs/', null=True, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(f"{self.first_name}-{self.last_name}")
+            unique_slug = base_slug
+            num = 1
+            while Candidate.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = unique_slug
+        super().save(*args, **kwargs)
     
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

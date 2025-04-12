@@ -2,9 +2,10 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileImageForm
+from .forms import ProfileImageForm, CandidatePDFUploadForm
 from .models import Candidate, Profile
 from django.utils.text import slugify
+import uuid
 
 # Create your views here.
 def dashboard(request):
@@ -179,3 +180,34 @@ def delete_candidate(request, slug):
     candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
     candidate.delete()
     return redirect('your_candidates')
+
+def add_candidates_pdf(request):
+    if request.method == 'POST':
+        form = CandidatePDFUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            candidate = form.save(commit=False)
+
+            # Sätt nödvändiga fält med placeholder-värden om de saknas
+            candidate.first_name = "Unnamed"
+            candidate.last_name = "Candidate"
+            candidate.email = "no@email.com"
+            candidate.phone_number = ""
+            candidate.user = request.user
+
+            # Lägg till en slug så inte reverse failar
+            filename = request.FILES['uploaded_pdf'].name
+            slug_base = slugify(filename.replace('.pdf', ''))
+            candidate.slug = f"{slug_base}-{uuid.uuid4().hex[:8]}"
+
+            candidate.save()
+            return redirect('add_candidates_pdf')  # återladdar sidan efter uppladdning
+    else:
+        form = CandidatePDFUploadForm()
+
+    # Justera sorteringsfält till 'created_on' om 'uploaded_at' inte finns
+    candidates = Candidate.objects.filter(uploaded_pdf__isnull=False).order_by('-created_on')
+
+    return render(request, 'add-candidates-pdf.html', {
+        'form': form,
+        'candidates': candidates
+    })

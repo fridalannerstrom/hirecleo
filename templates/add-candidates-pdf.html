@@ -28,13 +28,10 @@
     <div class="card mb-4">
         <div class="card-header">Upload Candidate PDFs</div>
         <div class="card-body">
-            <form method="post" enctype="multipart/form-data" id="pdfUploadForm">
+            <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="dropzone p-5 border border-dashed rounded bg-light text-center" id="dropzone">
-                    <p class="text-muted mb-2">Drag & drop PDF files here or</p>
-                    <input type="file" name="pdf_files" accept="application/pdf" multiple hidden id="pdfInput">
-                    <button type="button" class="btn btn-primary" id="selectFilesBtn">Select Files</button>
-                </div>
+                {{ form.uploaded_pdf }}
+                <button type="submit" class="btn btn-primary mt-2">Upload</button>
             </form>
         </div>
     </div>
@@ -43,6 +40,17 @@
         <div class="card-header">Uploaded Candidates</div>
         <div class="card-body" id="uploadedList">
             <p class="text-muted">No files uploaded yet.</p>
+            {% if candidates %}
+    <ul class="list-group mt-3">
+        {% for candidate in candidates %}
+            <li class="list-group-item">
+                <a href="{{ candidate.uploaded_pdf.url }}" target="_blank">{{ candidate.uploaded_pdf.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No files uploaded yet.</p>
+{% endif %}
         </div>
     </div>
 </div>
