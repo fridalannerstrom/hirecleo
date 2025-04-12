@@ -3,30 +3,98 @@
 {% block title %}Dashboard - Cleo{% endblock %}
 {% block content %}
 
-    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-        <div class="container-xl px-4">
-            <div class="page-header-content">
-                <div class="row align-items-center justify-content-between pt-3">
-                    <div class="col-auto mb-3">
-                        <h1 class="page-header-title">
-                            <div class="page-header-icon"><i class="fa-regular fa-file-pdf"></i></div>
-                            Add candidates from PDF
-                        </h1>
-                    </div>
-                    <div class="col-12 col-xl-auto mb-3 gap-5">
-                        <a class="btn btn-sm btn-light text-primary" href="{% url 'add_candidates_manually' %}">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                            Add candidates manually
-                        </a>
-                    </div>
+<header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+    <div class="container-xl px-4">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-between pt-3">
+                <div class="col-auto mb-3">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i class="fa-regular fa-file-pdf"></i></div>
+                        Add candidates from PDF
+                    </h1>
+                </div>
+                <div class="col-12 col-xl-auto mb-3 gap-5">
+                    <a class="btn btn-sm btn-light text-primary" href="{% url 'add_candidates_manually' %}">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                        Add candidates manually
+                    </a>
                 </div>
             </div>
         </div>
-    </header>
-    <!-- Main page content-->
-    <div class="container-xl px-4 mt-4">
-        <div class="row">
+    </div>
+</header>
 
+<div class="container-xl px-4 mt-4">
+    <div class="card mb-4">
+        <div class="card-header">Upload Candidate PDFs</div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" id="pdfUploadForm">
+                {% csrf_token %}
+                <div class="dropzone p-5 border border-dashed rounded bg-light text-center" id="dropzone">
+                    <p class="text-muted mb-2">Drag & drop PDF files here or</p>
+                    <input type="file" name="pdf_files" accept="application/pdf" multiple hidden id="pdfInput">
+                    <button type="button" class="btn btn-primary" id="selectFilesBtn">Select Files</button>
+                </div>
+            </form>
         </div>
     </div>
+
+    <div class="card">
+        <div class="card-header">Uploaded Candidates</div>
+        <div class="card-body" id="uploadedList">
+            <p class="text-muted">No files uploaded yet.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('pdfInput');
+    const selectFilesBtn = document.getElementById('selectFilesBtn');
+    const uploadedList = document.getElementById('uploadedList');
+
+    // Click opens file dialog
+    selectFilesBtn.addEventListener('click', () => fileInput.click());
+
+    // Handle file selection
+    fileInput.addEventListener('change', handleFiles);
+
+    // Drag & drop
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-primary');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('border-primary');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-primary');
+        const files = e.dataTransfer.files;
+        fileInput.files = files;
+        handleFiles();
+    });
+
+    function handleFiles() {
+        const files = fileInput.files;
+        if (files.length > 0) {
+            uploadedList.innerHTML = '';
+            for (let file of files) {
+                const item = document.createElement('div');
+                item.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'border-bottom', 'py-2');
+                item.innerHTML = `
+                    <div>
+                        <i class="fa-regular fa-file-pdf text-danger me-2"></i>
+                        ${file.name}
+                    </div>
+                    <span class="badge bg-info text-dark">Pending</span>
+                `;
+                uploadedList.appendChild(item);
+            }
+        }
+    }
+</script>
+
 {% endblock %}
