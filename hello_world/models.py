@@ -27,6 +27,7 @@ class Candidate(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
+    top_skills = models.JSONField(blank=True, null=True, default=list) 
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

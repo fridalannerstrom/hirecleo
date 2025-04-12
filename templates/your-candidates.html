@@ -65,10 +65,10 @@
                                         <td>{{ candidate.email }}</td>
                                         <td>{{ candidate.phone_number }}</td> <!-- Eller visa nåt från modellen om du har det -->
                                         <td>
-                                            {% for job in candidate.jobs.all %}
-                                                <span class="badge bg-blue-soft text-blue">{{ job.title }}</span>
+                                            {% for skill in candidate.top_skills %}
+                                                <span class="badge bg-secondary text-white">{{ skill }}</span>
                                             {% empty %}
-                                                <span class="badge bg-secondary text-muted">No jobs</span>
+                                                <span class="text-muted">No skills</span>
                                             {% endfor %}
                                         </td>
                                         <td>{{ candidate.created_on|date:"d M Y" }}</td>
