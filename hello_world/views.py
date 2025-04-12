@@ -12,6 +12,7 @@ from openai import OpenAI
 from PyPDF2 import PdfReader
 if os.path.exists("env.py"):
     import env
+import re
 
 client = OpenAI()
 
@@ -219,6 +220,29 @@ def extract_data_with_openai(text):
 
     return response.choices[0].message.content
 
+def clean_cv_text(text, phone=None, email=None, linkedin=None):
+    # Ta bort telefonnummer
+    if phone:
+        escaped_phone = re.escape(phone)
+        text = re.sub(escaped_phone, '', text)
+
+    # Ta bort e-post
+    if email:
+        escaped_email = re.escape(email)
+        text = re.sub(escaped_email, '', text)
+
+    # Ta bort LinkedIn
+    if linkedin:
+        escaped_linkedin = re.escape(linkedin)
+        text = re.sub(escaped_linkedin, '', text)
+
+    # Snygga till radbrytningar och mellanslag
+    text = re.sub(r'\n{2,}', '\n', text)  # Max 1 radbrytning
+    text = re.sub(r' {2,}', ' ', text)    # Max 1 mellanslag
+    text = re.sub(r'(?<=[a-zäöå0-9])\.\s+(?=[A-ZÅÄÖ])', '.\n', text)  # Ny rad efter mening
+
+    return text.strip()
+
 def read_pdf_text(pdf_file):
     pdf = PdfReader(pdf_file)
     text = ''
@@ -260,6 +284,14 @@ def add_candidates_pdf(request):
                 candidate.phone_number = data.get('Telefonnummer', '')
                 candidate.linkedin_url = data.get('LinkedIn-länk', '')
                 candidate.top_skills = data.get('Top Skills', [])
+                
+                # Rensa och snygga till CV Text
+                candidate.cv_text = clean_cv_text(
+                    candidate.cv_text,
+                    phone=candidate.phone_number,
+                    email=candidate.email,
+                    linkedin=candidate.linkedin_url,
+                )
 
             except Exception as e:
                 print("🔥 OpenAI error:", e)
