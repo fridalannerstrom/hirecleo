@@ -1,3 +1,4 @@
+import fitz  # PyMuPDF
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
@@ -181,30 +182,41 @@ def delete_candidate(request, slug):
     candidate.delete()
     return redirect('your_candidates')
 
+def extract_text_from_pdf(pdf_file):
+    text = ""
+    with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
+        for page in doc:
+            text += page.get_text()
+    return text
+
 def add_candidates_pdf(request):
     if request.method == 'POST':
         form = CandidatePDFUploadForm(request.POST, request.FILES)
         if form.is_valid():
             candidate = form.save(commit=False)
 
-            # Sätt nödvändiga fält med placeholder-värden om de saknas
+            # Sätt dummydata
             candidate.first_name = "Unnamed"
             candidate.last_name = "Candidate"
             candidate.email = "no@email.com"
             candidate.phone_number = ""
             candidate.user = request.user
 
-            # Lägg till en slug så inte reverse failar
+            # Slug + extrahera text
             filename = request.FILES['uploaded_pdf'].name
             slug_base = slugify(filename.replace('.pdf', ''))
             candidate.slug = f"{slug_base}-{uuid.uuid4().hex[:8]}"
 
+            # 🧠 Extrahera CV-text
+            pdf_file = request.FILES['uploaded_pdf']
+            candidate.cv_text = extract_text_from_pdf(pdf_file)
+
+            # Spara
             candidate.save()
-            return redirect('add_candidates_pdf')  # återladdar sidan efter uppladdning
+            return redirect('add_candidates_pdf')
     else:
         form = CandidatePDFUploadForm()
 
-    # Justera sorteringsfält till 'created_on' om 'uploaded_at' inte finns
     candidates = Candidate.objects.filter(uploaded_pdf__isnull=False).order_by('-created_on')
 
     return render(request, 'add-candidates-pdf.html', {
