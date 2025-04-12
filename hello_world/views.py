@@ -173,3 +173,9 @@ def edit_candidate(request, slug):
         return redirect('candidate_detail', slug=candidate.slug)
 
     return render(request, 'your-candidates-edit.html', {'candidate': candidate})
+
+@login_required
+def delete_candidate(request, slug):
+    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+    candidate.delete()
+    return redirect('your_candidates')
