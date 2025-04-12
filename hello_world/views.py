@@ -132,10 +132,6 @@ def add_candidates_manually(request):
     return render(request, 'add-candidates-manually.html')
 
 @login_required
-def add_candidates_pdf(request):
-    return render(request, 'add-candidates-pdf.html')
-
-@login_required
 def your_candidates(request):
     candidates = Candidate.objects.filter(user=request.user).order_by('-created_on')
     return render(request, 'your-candidates.html', {'candidates': candidates})
@@ -209,7 +205,7 @@ def extract_data_with_openai(text):
     - LinkedIn-länk (om det finns)
     - Lista med 3–5 top skills (som Python, Figma, SQL etc.)
 
-    Returnera som JSON.
+    Returnera svaret som ett giltigt JSON-objekt med följande nycklar: "Förnamn", "Efternamn", "E-postadress", "Telefonnummer", "LinkedIn-länk", "Top Skills". Se till att JSON:en är korrekt formatterad utan kommentarer eller extra text.
     """
 
     response = client.chat.completions.create(
@@ -230,6 +226,7 @@ def read_pdf_text(pdf_file):
         text += page.extract_text() or ''
     return text
 
+@login_required
 def add_candidates_pdf(request):
     if request.method == 'POST':
         form = CandidatePDFUploadForm(request.POST, request.FILES)
@@ -241,20 +238,36 @@ def add_candidates_pdf(request):
             # 🎯 Extrahera data med OpenAI
             try:
                 import json
-                result = extract_data_with_openai(candidate.cv_text)
-                data = json.loads(result)
+                import re
 
+                result = extract_data_with_openai(candidate.cv_text)
+                print("🔍 RAW RESULT FROM OPENAI:\n", result)
+
+                # Ta bort markdown-formatering (t.ex. ```json)
+                cleaned_result = re.sub(r"```json|```", "", result).strip()
+
+                try:
+                    data = json.loads(cleaned_result)
+                    print("✅ Parsed JSON:\n", data)
+                except json.JSONDecodeError as e:
+                    print("❌ JSONDecodeError:", e)
+                    data = {}
+
+                # Spara fält till modellen
                 candidate.first_name = data.get('Förnamn', '')
                 candidate.last_name = data.get('Efternamn', '')
                 candidate.email = data.get('E-postadress', '')
                 candidate.phone_number = data.get('Telefonnummer', '')
                 candidate.linkedin_url = data.get('LinkedIn-länk', '')
-                candidate.top_skills = data.get('Lista med 3–5 top skills', [])
-            except Exception as e:
-                print("OpenAI error:", e)
+                candidate.top_skills = data.get('Top Skills', [])
 
+            except Exception as e:
+                print("🔥 OpenAI error:", e)
+
+            print("💾 Sparar kandidat:", candidate.first_name, candidate.last_name)
             candidate.save()
             return redirect('add_candidates_pdf')
+
     else:
         form = CandidatePDFUploadForm()
 
