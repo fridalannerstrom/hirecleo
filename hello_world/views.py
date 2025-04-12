@@ -3,17 +3,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileImageForm
-from .models import Candidate, Job, Profile
+from .models import Candidate, Profile
+from django.utils.text import slugify
 
 # Create your views here.
 def dashboard(request):
     return render(request, 'dashboard.html')
-
-def candidates(request):
-    return render(request, 'candidates.html')
-
-def upload_candidates(request):
-    return render(request, 'upload_candidates.html')
 
 def jobs(request):
     return render(request, 'jobs.html')
@@ -88,6 +83,43 @@ def account_profile(request):
 
 @login_required
 def add_candidates_manually(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        linkedin_url = request.POST.get('linkedin_url')
+        top_skills_raw = request.POST.get('top_skills', '')
+        top_skills = [skill.strip() for skill in top_skills_raw.split(',') if skill.strip()]
+        cv_text = request.POST.get('cv_text')
+        interview_notes = request.POST.get('interview_notes')
+        test_results = request.POST.get('test_results')
+
+        # Generera unik slug
+        base_slug = slugify(f"{first_name}-{last_name}")
+        slug = base_slug
+        counter = 1
+        while Candidate.objects.filter(slug=slug).exists():
+            slug = f"{base_slug}-{counter}"
+            counter += 1
+
+        # Skapa kandidat
+        Candidate.objects.create(
+            user=request.user,
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            phone_number=phone_number,
+            linkedin_url=linkedin_url,
+            top_skills=top_skills,
+            cv_text=cv_text,
+            interview_notes=interview_notes,
+            test_results=test_results,
+            slug=slug,
+        )
+
+        return redirect('your_candidates') 
+
     return render(request, 'add-candidates-manually.html')
 
 @login_required
