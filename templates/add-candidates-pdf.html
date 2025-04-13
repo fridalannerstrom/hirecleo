@@ -48,25 +48,6 @@
       </div>
     </div>
 
-  
-    <div class="card">
-      <div class="card-header">Uploaded Candidates</div>
-      <div class="card-body">
-        {% if candidates %}
-          <ul class="list-group mt-3">
-            {% for candidate in candidates %}
-              <li class="list-group-item">
-                <a href="{{ candidate.uploaded_pdf.url }}" target="_blank">{{ candidate.uploaded_pdf.name }}</a>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="text-muted">No files uploaded yet.</p>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const dropzone = document.getElementById('dropzone');
