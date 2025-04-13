@@ -56,14 +56,16 @@
                 <div class="cv-text">
                   {{ cv_html|safe }}
                 </div>
+                {% if candidate.uploaded_pdf %}
                 <hr>
                 <p class="mt-4">
-                <i class="fa-regular fa-file-pdf me-1 text-danger"></i>
-                <strong>Original PDF:</strong>
-                <a href="{{ candidate.uploaded_pdf.url }}" target="_blank">
+                  <i class="fa-regular fa-file-pdf me-1 text-danger"></i>
+                  <strong>Original PDF:</strong>
+                  <a href="{{ candidate.uploaded_pdf.url }}" target="_blank">
                     View CV document
-                </a>
+                  </a>
                 </p>
+              {% endif %}
               </div>
           
               <!-- INTERVIEW NOTES -->
