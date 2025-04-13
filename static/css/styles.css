@@ -54,6 +54,14 @@
   max-width: 1100px;
 }
 
+#dropzone {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+#dropzone:hover {
+  background-color: #f8f9fa;
+}
+
 /* END CUSTOM CSS */
 
 :root {
