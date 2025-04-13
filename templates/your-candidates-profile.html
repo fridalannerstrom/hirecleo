@@ -22,36 +22,67 @@
     </div>
 </header>
 <div class="container-xl px-4 mt-4">
-    <div class="card mb-4">
-        <div class="card-header">
-            {{ candidate.first_name }} {{ candidate.last_name }}
-        </div>
-        <div class="card-body">
-            <p><strong>Email:</strong> {{ candidate.email }}</p>
-            <p><strong>Phone:</strong> {{ candidate.phone_number }}</p>
-            <p><strong>LinkedIn:</strong>
-                {% if candidate.linkedin_url %}
-                    <a href="{{ candidate.linkedin_url }}" target="_blank">{{ candidate.linkedin_url }}</a>
-                {% else %}
-                    <span class="text-muted">No LinkedIn</span>
-                {% endif %}
-            </p>
-            <p><strong>Top Skills:</strong>
-                {% for skill in candidate.top_skills %}
-                    <span class="badge bg-purple text-white">{{ skill }}</span>
-                {% empty %}
-                    <span class="text-muted">No skills added</span>
-                {% endfor %}
-            </p>
+    <div class="row">
+      
+      <!-- LEFT COLUMN – CV, notes etc -->
+      <div class="col-lg-8">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h2 class="h4">{{ candidate.first_name }} {{ candidate.last_name }}</h2>
             <hr>
-            <p><strong>CV Text:</strong>
-                <div class="cv-text">
-                {{ cv_html|safe }}
-              </div>
-            <p><strong>Interview Notes:</strong><br>{{ candidate.interview_notes|linebreaksbr }}</p>
-            <p><strong>Test Results:</strong><br>{{ candidate.test_results|linebreaksbr }}</p>
+  
+            <h5 class="mt-4 mb-2 text-muted">CV Text</h5>
+            <div class="cv-text mb-4">
+              {{ cv_html|safe }}
+            </div>
+  
+            <h5 class="mb-2 text-muted">Interview Notes</h5>
+            <p>{{ candidate.interview_notes|linebreaksbr }}</p>
+  
+            <h5 class="mb-2 text-muted">Test Results</h5>
+            <p>{{ candidate.test_results|linebreaksbr }}</p>
+          </div>
         </div>
+      </div>
+  
+      <!-- RIGHT COLUMN – Info & actions -->
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h6 class="text-uppercase text-muted mb-3">Contact</h6>
+            <p><strong>Email:</strong><br>{{ candidate.email|default:"-" }}</p>
+            <p><strong>Phone:</strong><br>{{ candidate.phone_number|default:"-" }}</p>
+            <p><strong>LinkedIn:</strong><br>
+              {% if candidate.linkedin_url %}
+                <a href="{{ candidate.linkedin_url }}" target="_blank">{{ candidate.linkedin_url }}</a>
+              {% else %}
+                <span class="text-muted">No LinkedIn</span>
+              {% endif %}
+            </p>
+  
+            <h6 class="text-uppercase text-muted mt-4 mb-2">Top Skills</h6>
+            {% for skill in candidate.top_skills %}
+              <span class="badge bg-purple text-white mb-1">{{ skill }}</span>
+            {% empty %}
+              <span class="text-muted">No skills added</span>
+            {% endfor %}
+          </div>
+        </div>
+  
+        <div class="d-grid gap-2">
+          <a href="{% url 'edit_candidate' slug=candidate.slug %}" class="btn btn-outline-primary">
+            <i class="fa-regular fa-pen-to-square"></i> Edit Candidate
+          </a>
+          <a href="{% url 'your_candidates' %}" class="btn btn-outline-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Back to candidate list
+          </a>
+          <a href="#" class="btn btn-outline-dark">
+            <i class="fa-solid fa-upload"></i> Upload document
+          </a>
+        </div>
+      </div>
+  
     </div>
-</div>
+  </div>
 
 {% endblock %}
