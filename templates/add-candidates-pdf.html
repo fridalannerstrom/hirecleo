@@ -7,22 +7,47 @@
     <div class="card mb-4">
       <div class="card-header">Upload Candidate PDFs</div>
       <div class="card-body">
-        <form method="POST" enctype="multipart/form-data" id="uploadForm">
-          {% csrf_token %}
-          <input type="file" id="pdfInput" name="uploaded_pdf" accept="application/pdf" hidden multiple>
-          
-          <div id="dropzone" class="border border-3 border-dashed rounded text-center py-5 bg-light">
-            <p class="text-muted"><i class="fa-solid fa-cloud-arrow-up fa-2xl mb-2"></i><br>
-            Drag and drop PDF files here or</p>
-            <button type="button" id="selectFilesBtn" class="btn btn-outline-primary">Select Files</button>
-          </div>
-  
-          <div id="uploadedList" class="mt-4"></div>
-  
-          <button type="submit" class="btn btn-primary mt-3">Upload</button>
-        </form>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+    
+            <!-- GÖMD FILUPPLADDNING -->
+            <input 
+              type="file" 
+              id="pdfInput" 
+              name="uploaded_pdf" 
+              accept="application/pdf" 
+              hidden 
+              multiple
+            >
+    
+            <!-- DROPZONE -->
+            <div 
+              id="dropzone" 
+              class="border border-3 border-dashed rounded text-center py-5 bg-light"
+              style="cursor: pointer;"
+            >
+              <p class="text-muted mb-3">
+                <i class="fa-solid fa-cloud-arrow-up fa-2xl mb-2"></i><br>
+                Drag and drop PDF files here or
+              </p>
+              <button 
+                type="button" 
+                id="selectFilesBtn" 
+                class="btn btn-outline-primary"
+              >
+                Select Files
+              </button>
+            </div>
+    
+            <!-- VISAR VALDA FILER -->
+            <div id="uploadedList" class="mt-4"></div>
+    
+            <!-- UPPLADDA -->
+            <button type="submit" class="btn btn-primary mt-3">Upload</button>
+          </form>
       </div>
     </div>
+
   
     <div class="card">
       <div class="card-header">Uploaded Candidates</div>

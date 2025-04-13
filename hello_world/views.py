@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import ProfileImageForm, CandidatePDFUploadForm
+from .forms import ProfileImageForm
 from .models import Candidate, Profile
 from django.utils.text import slugify
 import uuid
@@ -253,13 +253,15 @@ def read_pdf_text(pdf_file):
 @login_required
 def add_candidates_pdf(request):
     if request.method == 'POST':
-        form = CandidatePDFUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            candidate = form.save(commit=False)
-            candidate.user = request.user
-            candidate.cv_text = read_pdf_text(candidate.uploaded_pdf)
+        files = request.FILES.getlist('uploaded_pdf')  # ⬅️ direkt från request
 
-            # 🎯 Extrahera data med OpenAI
+        for pdf_file in files:
+            candidate = Candidate(uploaded_pdf=pdf_file, user=request.user)
+
+            # 📄 Läs CV-text från PDF
+            candidate.cv_text = read_pdf_text(pdf_file)
+
+            # 🧠 Extrahera data med OpenAI
             try:
                 import json
                 import re
@@ -267,9 +269,7 @@ def add_candidates_pdf(request):
                 result = extract_data_with_openai(candidate.cv_text)
                 print("🔍 RAW RESULT FROM OPENAI:\n", result)
 
-                # Ta bort markdown-formatering (t.ex. ```json)
                 cleaned_result = re.sub(r"```json|```", "", result).strip()
-
                 try:
                     data = json.loads(cleaned_result)
                     print("✅ Parsed JSON:\n", data)
@@ -277,38 +277,34 @@ def add_candidates_pdf(request):
                     print("❌ JSONDecodeError:", e)
                     data = {}
 
-                # Spara fält till modellen
                 candidate.first_name = data.get('Förnamn', '')
                 candidate.last_name = data.get('Efternamn', '')
                 candidate.email = data.get('E-postadress', '')
                 candidate.phone_number = data.get('Telefonnummer', '')
                 candidate.linkedin_url = data.get('LinkedIn-länk', '')
                 candidate.top_skills = data.get('Top Skills', [])
-                
-                # Rensa och snygga till CV Text
+
+                # ✨ Rensa och snygga till texten
                 candidate.cv_text = clean_cv_text(
                     candidate.cv_text,
                     phone=candidate.phone_number,
                     email=candidate.email,
                     linkedin=candidate.linkedin_url,
                 )
-
             except Exception as e:
                 print("🔥 OpenAI error:", e)
 
             print("💾 Sparar kandidat:", candidate.first_name, candidate.last_name)
             candidate.save()
-            return redirect('add_candidates_pdf')
 
-    else:
-        form = CandidatePDFUploadForm()
+        return redirect('add_candidates_pdf')
 
+    # GET-request: visa formuläret och befintliga kandidater
     candidates = Candidate.objects.filter(uploaded_pdf__isnull=False).order_by('-created_on')
-
     return render(request, 'add-candidates-pdf.html', {
-        'form': form,
         'candidates': candidates
     })
+
 
 @login_required
 def test_openai(request):
