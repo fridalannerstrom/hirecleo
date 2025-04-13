@@ -200,7 +200,7 @@ def extract_text_from_pdf(pdf_file):
 
 def extract_data_with_openai(text):
     prompt = f"""
-    Här är innehållet från ett CV:
+    Here is the content from a CV:
     \"\"\"{text}\"\"\"
 
     Extrahera följande information om kandidaten:
@@ -209,7 +209,7 @@ def extract_data_with_openai(text):
     - E-postadress
     - Telefonnummer
     - LinkedIn-länk (om det finns)
-    - Lista med 3 top skills (som Python, Figma, SQL etc.)
+    - Lista med 3 top skills (som Python, Figma, SQL etc.). På engelska!
 
     Returnera svaret som ett giltigt JSON-objekt med följande nycklar: "Förnamn", "Efternamn", "E-postadress", "Telefonnummer", "LinkedIn-länk", "Top Skills". Se till att JSON:en är korrekt formatterad utan kommentarer eller extra text.
     """
