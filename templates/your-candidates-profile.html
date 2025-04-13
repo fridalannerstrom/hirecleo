@@ -44,7 +44,10 @@
                 {% endfor %}
             </p>
             <hr>
-            <p><strong>CV Text:</strong><br>{{ candidate.cv_text|linebreaksbr }}</p>
+            <p><strong>CV Text:</strong>
+                <div class="cv-text">
+                {{ cv_html|safe }}
+              </div>
             <p><strong>Interview Notes:</strong><br>{{ candidate.interview_notes|linebreaksbr }}</p>
             <p><strong>Test Results:</strong><br>{{ candidate.test_results|linebreaksbr }}</p>
         </div>

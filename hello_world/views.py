@@ -13,6 +13,7 @@ from PyPDF2 import PdfReader
 if os.path.exists("env.py"):
     import env
 import re
+import markdown
 
 client = OpenAI()
 
@@ -156,7 +157,11 @@ def chat(request):
 @login_required
 def candidate_detail(request, slug):
     candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
-    return render(request, 'your-candidates-profile.html', {'candidate': candidate})
+    cv_html = markdown.markdown(candidate.cv_text)
+    return render(request, 'your-candidates-profile.html', {
+        'candidate': candidate,
+        'cv_html': cv_html
+    })
 
 @login_required
 def edit_candidate(request, slug):
@@ -204,7 +209,7 @@ def extract_data_with_openai(text):
     - E-postadress
     - Telefonnummer
     - LinkedIn-länk (om det finns)
-    - Lista med 3–5 top skills (som Python, Figma, SQL etc.)
+    - Lista med 3 top skills (som Python, Figma, SQL etc.)
 
     Returnera svaret som ett giltigt JSON-objekt med följande nycklar: "Förnamn", "Efternamn", "E-postadress", "Telefonnummer", "LinkedIn-länk", "Top Skills". Se till att JSON:en är korrekt formatterad utan kommentarer eller extra text.
     """
@@ -322,7 +327,7 @@ def test_openai(request):
 
 def reformat_cv_text_with_openai(raw_text):
     prompt = f"""
-You are an expert at writing CV excerpts from PDF files. Your task is to structure the text so that it is easy to read and professionally presented.
+You are an expert at writing CV excerpts from PDF files. Your task is to structure the text so that it is easy to read and professionally presented. Also make it shorter and more concise.
 
 - Keep all important information
 - Divide the text into headings such as: Work experience, Education, Skills, Other
@@ -339,7 +344,7 @@ Here is the original text:
 """
 
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": "You are an experienced and skilled CV writer."},
             {"role": "user", "content": prompt}
