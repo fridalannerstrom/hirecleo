@@ -284,13 +284,16 @@ def add_candidates_pdf(request):
                 candidate.linkedin_url = data.get('LinkedIn-länk', '')
                 candidate.top_skills = data.get('Top Skills', [])
 
-                # ✨ Rensa och snygga till texten
+                # 1. Rensa bort kontaktinfo
                 candidate.cv_text = clean_cv_text(
                     candidate.cv_text,
                     phone=candidate.phone_number,
                     email=candidate.email,
                     linkedin=candidate.linkedin_url,
                 )
+
+                # 2. Skicka till OpenAI för snygg formatering
+                candidate.cv_text = reformat_cv_text_with_openai(candidate.cv_text)
             except Exception as e:
                 print("🔥 OpenAI error:", e)
 
@@ -316,3 +319,33 @@ def test_openai(request):
         ]
     )
     return HttpResponse(response.choices[0].message.content)
+
+def reformat_cv_text_with_openai(raw_text):
+    prompt = f"""
+You are an expert at writing CV excerpts from PDF files. Your task is to structure the text so that it is easy to read and professionally presented.
+
+- Keep all important information
+- Divide the text into headings such as: Work experience, Education, Skills, Other
+- Remove unnecessary line breaks, incorrect formatting and strange spaces
+- Structure it as if it were a real, nice CV
+- Do not include name, email, phone number or LinkedIn in the text
+- Write in english
+
+Here is the original text:
+
+\"\"\"
+{raw_text}
+\"\"\"
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are an experienced and skilled CV writer."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.4,
+        max_tokens=2048
+    )
+
+    return response.choices[0].message.content.strip()
