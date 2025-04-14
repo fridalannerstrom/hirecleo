@@ -125,8 +125,8 @@
                                     function read() {
                                         reader.read().then(({ done, value }) => {
                                             if (done) {
-                                                // ✅ När all text är färdigstreamad – visa som HTML
-                                                bubble.innerHTML = accumulated;
+                                                // ✅ När all text är färdigstreamad – rendera snyggt
+                                                bubble.innerHTML = marked.parse(accumulated);
                                                 chatBox.scrollTop = chatBox.scrollHeight;
                                                 return;
                                             }
@@ -134,13 +134,12 @@
                                             const chunk = decoder.decode(value);
                                             accumulated += chunk;
 
-                                            // 🔁 Visa tillfälligt som plain text (för effekten)
-                                            bubble.textContent = accumulated;
+                                            // 🔁 Visa som plain text medan det laddas
+                                            bubble.innerHTML = safeParseMarkdown(accumulated);
                                             chatBox.scrollTop = chatBox.scrollHeight;
                                             read();
                                         });
                                     }
-
                                     read();
                                 })
                                 .catch(err => {
@@ -178,6 +177,19 @@
                                 setTimeout(() => {
                                     chatBox.scrollTop = chatBox.scrollHeight;
                                 }, 50);
+                            }
+
+                            function safeParseMarkdown(text) {
+                                // Exempel: hantera **bold** live
+                                const openCount = (text.match(/\*\*/g) || []).length;
+
+                                // Om antalet ** är jämnt: fetstil klar!
+                                if (openCount % 2 === 0) {
+                                    return marked.parse(text);
+                                } else {
+                                    // Avsluta med dummy-tecken som inte visas, för att inte bryta markdown-parsern
+                                    return marked.parse(text + '**');
+                                }
                             }
                         });
                     </script>
