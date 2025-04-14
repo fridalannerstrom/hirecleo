@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileImageForm
-from .models import Candidate, Profile
+from .models import Candidate, Profile, ChatSession, ChatSession, ChatMessage
 from django.utils.text import slugify
 import uuid
 from openai import OpenAI
@@ -16,7 +16,7 @@ import re
 import markdown
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.http import StreamingHttpResponse, JsonResponse
+from django.http import StreamingHttpResponse, JsonResponse, HttpResponseBadRequest
 from asgiref.sync import sync_to_async
 from pinecone import Pinecone
 
@@ -421,3 +421,35 @@ def chat_response(request):
                 yield delta
 
     return StreamingHttpResponse(generate(), content_type='text/plain')
+
+@csrf_exempt
+@login_required
+def start_new_session(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        title = data.get("title", "Ny konversation")
+        session = ChatSession.objects.create(user=request.user, title=title)
+        return JsonResponse({"session_id": session.id})
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+@csrf_exempt
+def save_message(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        session_id = data.get("session_id")
+        sender = data.get("sender")
+        message = data.get("message")
+
+        try:
+            session = ChatSession.objects.get(id=session_id, user=request.user)
+        except ChatSession.DoesNotExist:
+            return JsonResponse({"error": "Invalid session"}, status=404)
+
+        ChatMessage.objects.create(
+            session=session,
+            sender=sender,
+            message=message
+        )
+        return JsonResponse({"status": "ok"})
+
+    return HttpResponseBadRequest("Invalid request")

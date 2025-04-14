@@ -23,15 +23,10 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # Login som startsida
     path('', auth_views.LoginView.as_view(template_name='auth-login-basic.html'), name='login'),
-
-    # Logga ut, lösenordsåterställning m.m.
     path('accounts/', include('django.contrib.auth.urls')),
-
-    # Appens egna vyer (dashboard, kandidater, jobb osv)
-      path('', include('hello_world.urls')), 
+    path('', include('hello_world.urls')),  # Dashboard, kandidater, etc
+    path('api/', include('hello_world.api_urls')),  # API-endpoints separerade
 ]
 
 if settings.DEBUG:

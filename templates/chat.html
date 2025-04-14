@@ -56,21 +56,24 @@
                                         <a href="#" class="chat-history-box">En till gammal fråga…</a>
                                     </div>
                                 </div>
-
-                                <div class="mt-auto pt-3 text-center">
-                                    <button class="btn btn-dark rounded-pill w-100 py-2">Ny Chatt</button>
+                                <div class="space-y-2 text-sm chat-history">
+                                    <!-- nya chattar kommer läggas till här -->
+                                </div>
+                                
+                                <div class="mt-auto text-center pt-4">
+                                    <button class="w-full bg-black text-white rounded-full py-3 text-sm font-semibold hover:bg-gray-800 transition new-chat-btn">Ny Chatt</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <script>
-
                         const cleoAvatar = "{% static 'assets/img/cleo-icon.png' %}";
-                    
+                        
+                        // 🔐 CSRF helper
                         function getCookie(name) {
                             let cookieValue = null;
-                            if (document.cookie && document.cookie !== "") {
+                            if (document.cookie && document !== "") {
                                 const cookies = document.cookie.split(";");
                                 for (let i = 0; i < cookies.length; i++) {
                                     const cookie = cookies[i].trim();
@@ -82,24 +85,43 @@
                             }
                             return cookieValue;
                         }
-                    
+                        
                         document.addEventListener("DOMContentLoaded", function () {
                             const sendBtn = document.getElementById("send-btn");
                             const chatBox = document.getElementById("chat-box");
                             const input = document.getElementById("chat-input");
-
-                            // 🔽 Scrolla till botten vid sidladdning
-                            setTimeout(() => {
-                                chatBox.scrollTop = chatBox.scrollHeight;
-                            }, 100);
-
+                            const historyContainer = document.querySelector('.chat-history');
+                        
+                            // 🆕 Ny chatt-knapp – skapar ny session
+                            document.querySelector('.new-chat-btn').addEventListener('click', () => {
+                                chatBox.innerHTML = '';
+                                input.value = '';
+                        
+                                fetch("/api/start-session/", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "X-CSRFToken": getCookie("csrftoken"),
+                                    },
+                                    body: JSON.stringify({ title: "Ny konversation" })
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    const sessionId = data.session_id;
+                                    window.currentSessionId = sessionId;
+                                    console.log("Ny chatt-session:", sessionId);
+                                });
+                            });
+                        
+                            // 🚀 När användaren skickar ett meddelande
                             sendBtn.addEventListener("click", function () {
                                 const userMessage = input.value.trim();
                                 if (!userMessage) return;
-
+                        
                                 appendMessage("user", userMessage);
+                                saveMessageToBackend(window.currentSessionId, "user", userMessage);
                                 input.value = "";
-
+                        
                                 fetch("/api/chat-response/", {
                                     method: "POST",
                                     headers: {
@@ -111,7 +133,7 @@
                                 .then(response => {
                                     const reader = response.body.getReader();
                                     const decoder = new TextDecoder();
-
+                        
                                     const div = document.createElement("div");
                                     div.className = "d-flex mb-3 align-items-start";
                                     div.innerHTML = `
@@ -122,23 +144,21 @@
                                     `;
                                     chatBox.appendChild(div);
                                     const bubble = div.querySelector(".bubble-inner");
-
-                                    let fullText = ""; // 👈 Vi samlar hela svaret här!
+                        
                                     let accumulated = "";
-
+                        
                                     function read() {
                                         reader.read().then(({ done, value }) => {
                                             if (done) {
-                                                // ✅ När all text är färdigstreamad – rendera snyggt
                                                 bubble.innerHTML = marked.parse(accumulated);
                                                 chatBox.scrollTop = chatBox.scrollHeight;
+
+                                                saveMessageToBackend(window.currentSessionId, "cleo", accumulated);
                                                 return;
                                             }
-
+                        
                                             const chunk = decoder.decode(value);
                                             accumulated += chunk;
-
-                                            // 🔁 Visa som plain text medan det laddas
                                             bubble.innerHTML = safeParseMarkdown(accumulated);
                                             chatBox.scrollTop = chatBox.scrollHeight;
                                             read();
@@ -151,50 +171,67 @@
                                     console.error(err);
                                 });
                             });
-
-                            // ✅ Här är appendMessage PÅ RÄTT PLATS
+                        
                             function appendMessage(sender, text) {
                                 const div = document.createElement("div");
-
+                        
                                 if (sender === "cleo") {
                                     div.className = "d-flex mb-3 align-items-start";
                                     div.innerHTML = `
                                         <img src="${cleoAvatar}" class="me-2 rounded-circle" width="32" height="32">
                                         <div class="chat-bubble cleo">
-                                            <div class="bubble-inner">
-                                                ${text}
-                                            </div>
+                                            <div class="bubble-inner">${text}</div>
                                         </div>
                                     `;
                                 } else {
                                     div.className = "d-flex mb-3 justify-content-end";
                                     div.innerHTML = `
                                         <div class="chat-bubble user">
-                                            <div class="bubble-inner">
-                                                ${text}
-                                            </div>
+                                            <div class="bubble-inner">${text}</div>
                                         </div>
                                     `;
                                 }
-
+                        
                                 chatBox.appendChild(div);
                                 setTimeout(() => {
                                     chatBox.scrollTop = chatBox.scrollHeight;
                                 }, 50);
                             }
-
+                        
                             function safeParseMarkdown(text) {
-                                // Exempel: hantera **bold** live
                                 const openCount = (text.match(/\*\*/g) || []).length;
-
-                                // Om antalet ** är jämnt: fetstil klar!
                                 if (openCount % 2 === 0) {
                                     return marked.parse(text);
                                 } else {
-                                    // Avsluta med dummy-tecken som inte visas, för att inte bryta markdown-parsern
                                     return marked.parse(text + '**');
                                 }
                             }
                         });
-                    </script>
+
+                        function saveMessageToBackend(sessionId, sender, message) {
+                            fetch("/api/save-message/", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRFToken": getCookie("csrftoken"),
+                                },
+                                body: JSON.stringify({
+                                    session_id: sessionId,
+                                    sender: sender,
+                                    message: message
+                                })
+                            })
+                            .then(res => {
+                                if (!res.ok) throw new Error("Misslyckades att spara meddelande.");
+                                return res.json();
+                            })
+                            .then(data => {
+                                console.log("✅ Meddelande sparat:", sender, message);
+                            })
+                            .catch(err => {
+                                console.error("❌ Fel vid sparning av meddelande:", err);
+                            });
+                        }
+                        
+                        </script>
                 {% endblock %}
