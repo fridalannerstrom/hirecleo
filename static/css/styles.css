@@ -271,6 +271,25 @@
   width: fit-content;
 }
 
+.chat-bubble.cleo .bubble-inner h1,
+.chat-bubble.cleo .bubble-inner h2 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-bubble.cleo .bubble-inner ul {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.chat-bubble.cleo .bubble-inner li {
+  margin-bottom: 0.25rem;
+}
+
+.chat-bubble.cleo .bubble-inner strong {
+  font-weight: 600;
+}
+
 /* END CUSTOM CSS */
 
 body {

@@ -107,8 +107,8 @@
                                 .then(response => {
                                     const reader = response.body.getReader();
                                     const decoder = new TextDecoder();
-                                    const div = document.createElement("div");
 
+                                    const div = document.createElement("div");
                                     div.className = "d-flex mb-3 align-items-start";
                                     div.innerHTML = `
                                         <img src="${cleoAvatar}" class="me-2 rounded-circle" width="32" height="32">
@@ -119,11 +119,22 @@
                                     chatBox.appendChild(div);
                                     const bubble = div.querySelector(".bubble-inner");
 
+                                    let fullText = ""; // 👈 Vi samlar hela svaret här!
+
                                     function read() {
                                         reader.read().then(({ done, value }) => {
-                                            if (done) return;
-                                            const chunk = decoder.decode(value);
-                                            bubble.innerHTML += marked.parse(chunk);
+                                            if (done) {
+                                                // När hela svaret är klart => rendera som markdown
+                                                bubble.innerHTML = marked.parse(fullText);
+                                                return;
+                                            }
+
+                                            const chunk = decoder.decode(value, { stream: true });
+                                            fullText += chunk;
+
+                                            // Förhandsvisning (du kan kommentera bort denna om du vill visa först efter hela är klart):
+                                            bubble.textContent = fullText;
+
                                             chatBox.scrollTop = chatBox.scrollHeight;
                                             read();
                                         });
