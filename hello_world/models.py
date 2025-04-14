@@ -57,3 +57,9 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} Profile'
+
+class CleoDocument(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    embedding_id = models.CharField(max_length=255, blank=True, null=True)  # Pinecone ID
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -383,23 +383,21 @@ def chat_response(request):
     pinecone_results = index.query(
         vector=user_embedding,
         top_k=5,
-        include_metadata=True
+        include_metadata=True,
+        namespace="cleo"
     )
 
     # 🔎 Debug: Visa vad vi faktiskt får från Pinecone
     print("🔍 Pinecone-resultat:")
     for match in pinecone_results.matches:
         print("Score:", match.score)
-        if match.fields:
-            print("Chunk text:", match.fields.get("chunk_text", "[tom]"))
-        else:
-            print("❗️Ingen metadata (fields) i match")
+        print("Metadata:", match.metadata)
         print("-" * 40)
 
     context_chunks = [
-        match.fields.get("chunk_text", "") 
-        for match in pinecone_results.matches 
-        if match.fields and isinstance(match.fields, dict)
+        match.metadata.get("chunk_text", "")
+        for match in pinecone_results.matches
+        if hasattr(match, "metadata") and isinstance(match.metadata, dict)
     ]
     context = "\n\n".join(context_chunks)
 
