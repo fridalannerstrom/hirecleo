@@ -19,4 +19,5 @@ urlpatterns = [
     path('candidates/<slug:slug>/', views.candidate_detail, name='candidate_detail'),
     path('candidates/<slug:slug>/edit/', views.edit_candidate, name='edit_candidate'),
     path('candidates/<slug:slug>/delete/', views.delete_candidate, name='delete_candidate'),
+    path('api/chat-response/', views.chat_response, name='chat_response'),
 ]

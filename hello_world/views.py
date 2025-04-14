@@ -14,6 +14,9 @@ if os.path.exists("env.py"):
     import env
 import re
 import markdown
+from django.views.decorators.csrf import csrf_exempt
+import json
+from django.http import JsonResponse
 
 client = OpenAI()
 
@@ -354,3 +357,24 @@ Here is the original text:
     )
 
     return response.choices[0].message.content.strip()
+
+@csrf_exempt
+@login_required
+def chat_response(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_message = data.get("message")
+
+        # Prata direkt med OpenAI (utan kontext)
+        chat_response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "Du är en hjälpsam AI-assistent som heter Cleo och jobbar med rekrytering."},
+                {"role": "user", "content": user_message}
+            ]
+        )
+
+        answer = chat_response.choices[0].message.content
+        return JsonResponse({"reply": answer})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
