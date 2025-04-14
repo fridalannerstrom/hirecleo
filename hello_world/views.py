@@ -18,8 +18,12 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.http import StreamingHttpResponse, JsonResponse
 from asgiref.sync import sync_to_async
+from pinecone import Pinecone
 
 client = OpenAI()
+
+pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
+index = pc.Index(os.environ.get("PINECONE_INDEX"))
 
 # Create your views here.
 def dashboard(request):
@@ -366,17 +370,53 @@ def chat_response(request):
         return JsonResponse({"error": "Invalid request"}, status=400)
 
     data = json.loads(request.body)
-    user_message = data.get("message")
+    user_message = data.get("message", "")
 
+    # 1. Skapa embedding av användarens fråga
+    embedding_response = client.embeddings.create(
+        model="text-embedding-3-small",
+        input=user_message
+    )
+    user_embedding = embedding_response.data[0].embedding
+
+    # 2. Hämta kontext från Pinecone
+    pinecone_results = index.query(
+        vector=user_embedding,
+        top_k=5,
+        include_metadata=True
+    )
+
+    # 🔎 Debug: Visa vad vi faktiskt får från Pinecone
+    print("🔍 Pinecone-resultat:")
+    for match in pinecone_results.matches:
+        print("Score:", match.score)
+        if match.fields:
+            print("Chunk text:", match.fields.get("chunk_text", "[tom]"))
+        else:
+            print("❗️Ingen metadata (fields) i match")
+        print("-" * 40)
+
+    context_chunks = [
+        match.fields.get("chunk_text", "") 
+        for match in pinecone_results.matches 
+        if match.fields and isinstance(match.fields, dict)
+    ]
+    context = "\n\n".join(context_chunks)
+
+    # 3. Streama svaret från GPT med kontext
     def generate():
+        messages = [
+            {"role": "system", "content": "Du är Cleo, en hjälpsam AI inom rekrytering. Använd kontexten om det är relevant."},
+            {"role": "system", "content": f"Kontext:\n{context}"},
+            {"role": "user", "content": user_message}
+        ]
+
         response = client.chat.completions.create(
             model="gpt-4o",
-            messages=[
-                {"role": "system", "content": "Du är en hjälpsam AI-assistent som heter Cleo och jobbar med rekrytering."},
-                {"role": "user", "content": user_message}
-            ],
+            messages=messages,
             stream=True
         )
+
         for chunk in response:
             delta = chunk.choices[0].delta.content if chunk.choices[0].delta else ""
             if delta:
