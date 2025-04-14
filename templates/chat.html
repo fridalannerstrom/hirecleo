@@ -18,11 +18,11 @@
                             </div>
                         </div>
                     </header>
-                    <!-- Main page content-->
+                    <!-- Main container -->
                     <div class="container-xl px-4 mt-4">
-                        <div class="chat-wrapper d-flex">
-                            <!-- CHAT-DELEN -->
-                            <div class="chat-main flex-grow-1 d-flex flex-column p-4">
+                        <div class="d-flex gap-4">
+                            <!-- CHAT DELEN -->
+                            <div class="flex-grow-1 d-flex flex-column p-4">
                                 <div class="chat-box flex-grow-1 overflow-auto mb-3" id="chat-box">
                                     <!-- Meddelanden här -->
                                 </div>
@@ -31,30 +31,34 @@
                                     <button id="send-btn" class="btn btn-dark">Skicka</button>
                                 </div>
                             </div>
-                        
+
                             <!-- SIDOPANEL -->
-                            <div class="chat-sidebar p-4 bg-white">
-                                <div class="sticky-top">
-                                    <div class="text-center mb-4">
-                                        <img src="{% static 'assets/img/cleo-icon.png' %}" width="64">
-                                        <h5 class="mt-2 fw-bold">Cleo, AI-kollega<br>inom rekrytering</h5>
+                            <div class="chat-sidebar p-4 bg-white rounded shadow-sm d-flex flex-column">
+                                <div class="text-center mb-4">
+                                    <img src="{% static 'assets/img/cleo-icon.png' %}" width="72" class="mb-2" alt="Cleo">
+                                    <h5 class="fw-bold mb-0">Cleo, AI-kollega<br>inom rekrytering</h5>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p class="text-uppercase text-muted small fw-bold mb-2">Kom igång med Cleo</p>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-light rounded-pill">❓ Tips på frågor att ställa</button>
+                                        <button class="btn btn-light rounded-pill">🧠 Vad Cleo kan göra</button>
+                                        <button class="btn btn-light rounded-pill">🔐 Hur Cleo hanterar din data</button>
+                                        <button class="btn btn-light rounded-pill">⚙️ Hur Cleo tränats</button>
                                     </div>
-                                    <div class="mb-3">
-                                        <p class="fw-bold">Kom igång med Cleo</p>
-                                        <div class="d-grid gap-2">
-                                            <button class="btn btn-outline-secondary btn-sm">❓ Tips på frågor att ställa</button>
-                                            <button class="btn btn-outline-secondary btn-sm">🧠 Vad Cleo kan göra</button>
-                                            <button class="btn btn-outline-secondary btn-sm">🔐 Hur Cleo hanterar din data</button>
-                                            <button class="btn btn-outline-secondary btn-sm">⚙️ Hur Cleo tränats</button>
-                                        </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <p class="text-uppercase text-muted small fw-bold mb-2">Chatthistorik</p>
+                                    <div class="d-grid gap-2">
+                                        <a href="#" class="chat-history-box">Text till en gammal chatt…</a>
+                                        <a href="#" class="chat-history-box">En till gammal fråga…</a>
                                     </div>
-                                    <div>
-                                        <p class="fw-bold">Chatthistorik</p>
-                                        <div class="list-group small">
-                                            <a href="#" class="list-group-item list-group-item-action">En tidigare fråga…</a>
-                                            <a href="#" class="list-group-item list-group-item-action">En till fråga…</a>
-                                        </div>
-                                    </div>
+                                </div>
+
+                                <div class="mt-auto pt-3 text-center">
+                                    <button class="btn btn-dark rounded-pill w-100 py-2">Ny Chatt</button>
                                 </div>
                             </div>
                         </div>
