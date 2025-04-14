@@ -374,7 +374,12 @@ def chat_response(request):
             ]
         )
 
+        # Originaltext från OpenAI
         answer = chat_response.choices[0].message.content
-        return JsonResponse({"reply": answer})
+
+        # 🪄 Markdown → HTML
+        html_output = markdown.markdown(answer)
+
+        return JsonResponse({"reply": html_output})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
