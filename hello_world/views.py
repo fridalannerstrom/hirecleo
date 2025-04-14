@@ -17,6 +17,8 @@ import markdown
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.http import JsonResponse
+from django.http import StreamingHttpResponse
+from asgiref.sync import sync_to_async
 
 client = OpenAI()
 
@@ -361,25 +363,27 @@ Here is the original text:
 @csrf_exempt
 @login_required
 def chat_response(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        user_message = data.get("message")
+    if request.method != 'POST':
+        return JsonResponse({"error": "Invalid request"}, status=400)
 
-        # Prata direkt med OpenAI (utan kontext)
-        chat_response = client.chat.completions.create(
+    data = json.loads(request.body)
+    user_message = data.get("message")
+
+    def generate():
+        yield '<div>'  # starta HTML-wrapper
+        response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "Du är en hjälpsam AI-assistent som heter Cleo och jobbar med rekrytering."},
                 {"role": "user", "content": user_message}
-            ]
+            ],
+            stream=True
         )
 
-        # Originaltext från OpenAI
-        answer = chat_response.choices[0].message.content
+        for chunk in response:
+            delta = chunk.choices[0].delta.content if chunk.choices[0].delta else ""
+            if delta:
+                yield delta
+        yield '</div>'  # stäng wrappern
 
-        # 🪄 Markdown → HTML
-        html_output = markdown.markdown(answer)
-
-        return JsonResponse({"reply": html_output})
-
-    return JsonResponse({"error": "Invalid request"}, status=400)
+    return StreamingHttpResponse(generate(), content_type='text/html')

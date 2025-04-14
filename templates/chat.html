@@ -83,19 +83,19 @@
                             const sendBtn = document.getElementById("send-btn");
                             const chatBox = document.getElementById("chat-box");
                             const input = document.getElementById("chat-input");
-                    
+
                             // 🔽 Scrolla till botten vid sidladdning
                             setTimeout(() => {
                                 chatBox.scrollTop = chatBox.scrollHeight;
                             }, 100);
-                    
+
                             sendBtn.addEventListener("click", function () {
                                 const userMessage = input.value.trim();
                                 if (!userMessage) return;
-                    
+
                                 appendMessage("user", userMessage);
                                 input.value = "";
-                    
+
                                 fetch("/api/chat-response/", {
                                     method: "POST",
                                     headers: {
@@ -104,19 +104,43 @@
                                     },
                                     body: JSON.stringify({ message: userMessage })
                                 })
-                                .then(res => res.json())
-                                .then(data => {
-                                    appendMessage("cleo", data.reply);
+                                .then(response => {
+                                    const reader = response.body.getReader();
+                                    const decoder = new TextDecoder();
+                                    const div = document.createElement("div");
+
+                                    div.className = "d-flex mb-3 align-items-start";
+                                    div.innerHTML = `
+                                        <img src="${cleoAvatar}" class="me-2 rounded-circle" width="32" height="32">
+                                        <div class="chat-bubble cleo">
+                                            <div class="bubble-inner"></div>
+                                        </div>
+                                    `;
+                                    chatBox.appendChild(div);
+                                    const bubble = div.querySelector(".bubble-inner");
+
+                                    function read() {
+                                        reader.read().then(({ done, value }) => {
+                                            if (done) return;
+                                            const chunk = decoder.decode(value);
+                                            bubble.innerHTML += marked.parse(chunk);
+                                            chatBox.scrollTop = chatBox.scrollHeight;
+                                            read();
+                                        });
+                                    }
+
+                                    read();
                                 })
                                 .catch(err => {
                                     appendMessage("cleo", "Något gick fel 😢");
                                     console.error(err);
                                 });
                             });
-                    
+
+                            // ✅ Här är appendMessage PÅ RÄTT PLATS
                             function appendMessage(sender, text) {
                                 const div = document.createElement("div");
-                    
+
                                 if (sender === "cleo") {
                                     div.className = "d-flex mb-3 align-items-start";
                                     div.innerHTML = `
@@ -137,10 +161,8 @@
                                         </div>
                                     `;
                                 }
-                    
+
                                 chatBox.appendChild(div);
-                    
-                                // 🔽 Scrolla alltid till botten efter nytt meddelande
                                 setTimeout(() => {
                                     chatBox.scrollTop = chatBox.scrollHeight;
                                 }, 50);
