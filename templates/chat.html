@@ -120,21 +120,22 @@
                                     const bubble = div.querySelector(".bubble-inner");
 
                                     let fullText = ""; // 👈 Vi samlar hela svaret här!
+                                    let accumulated = "";
 
                                     function read() {
                                         reader.read().then(({ done, value }) => {
                                             if (done) {
-                                                // När hela svaret är klart => rendera som markdown
-                                                bubble.innerHTML = marked.parse(fullText);
+                                                // ✅ När all text är färdigstreamad – visa som HTML
+                                                bubble.innerHTML = accumulated;
+                                                chatBox.scrollTop = chatBox.scrollHeight;
                                                 return;
                                             }
 
-                                            const chunk = decoder.decode(value, { stream: true });
-                                            fullText += chunk;
+                                            const chunk = decoder.decode(value);
+                                            accumulated += chunk;
 
-                                            // Förhandsvisning (du kan kommentera bort denna om du vill visa först efter hela är klart):
-                                            bubble.textContent = fullText;
-
+                                            // 🔁 Visa tillfälligt som plain text (för effekten)
+                                            bubble.textContent = accumulated;
                                             chatBox.scrollTop = chatBox.scrollHeight;
                                             read();
                                         });

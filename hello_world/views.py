@@ -16,8 +16,7 @@ import re
 import markdown
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.http import JsonResponse
-from django.http import StreamingHttpResponse
+from django.http import StreamingHttpResponse, JsonResponse
 from asgiref.sync import sync_to_async
 
 client = OpenAI()
@@ -370,7 +369,6 @@ def chat_response(request):
     user_message = data.get("message")
 
     def generate():
-        yield '<div>'  # starta HTML-wrapper
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
@@ -379,11 +377,9 @@ def chat_response(request):
             ],
             stream=True
         )
-
         for chunk in response:
             delta = chunk.choices[0].delta.content if chunk.choices[0].delta else ""
             if delta:
                 yield delta
-        yield '</div>'  # stäng wrappern
 
-    return StreamingHttpResponse(generate(), content_type='text/html')
+    return StreamingHttpResponse(generate(), content_type='text/plain')
