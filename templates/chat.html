@@ -87,6 +87,22 @@
                         }
                         
                         document.addEventListener("DOMContentLoaded", function () {
+                            if (!window.currentSessionId) {
+                                fetch("/api/start-session/", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "X-CSRFToken": getCookie("csrftoken"),
+                                    },
+                                    body: JSON.stringify({ title: "Ny konversation" })
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    window.currentSessionId = data.session_id;
+                                    console.log("🟢 Automatisk chatt-session skapad:", data.session_id);
+                                });
+                            }
+
                             const sendBtn = document.getElementById("send-btn");
                             const chatBox = document.getElementById("chat-box");
                             const input = document.getElementById("chat-input");
@@ -209,6 +225,13 @@
                         });
 
                         function saveMessageToBackend(sessionId, sender, message) {
+                            console.log("🚀 saveMessageToBackend TRIGGERED");
+                            console.log("➡️ Skickar till /api/save-message/ med:", {
+                                session_id: sessionId,
+                                sender: sender,
+                                message: message,
+                            });
+
                             fetch("/api/save-message/", {
                                 method: "POST",
                                 headers: {

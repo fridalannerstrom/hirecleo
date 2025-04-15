@@ -434,22 +434,29 @@ def start_new_session(request):
 
 @csrf_exempt
 def save_message(request):
+    print("🟡 [Django] save_message FUNKTION TRIGGAD:", request.method, request.path)
+    
     if request.method == "POST":
-        data = json.loads(request.body)
-        session_id = data.get("session_id")
-        sender = data.get("sender")
-        message = data.get("message")
-
         try:
+            data = json.loads(request.body)
+            print("📦 Data mottagen:", data)
+
+            session_id = data.get("session_id")
+            sender = data.get("sender")
+            message = data.get("message")
+
             session = ChatSession.objects.get(id=session_id, user=request.user)
-        except ChatSession.DoesNotExist:
-            return JsonResponse({"error": "Invalid session"}, status=404)
+            ChatMessage.objects.create(
+                session=session,
+                sender=sender,
+                message=message
+            )
+            print("✅ Meddelande sparat i databasen")
+            return JsonResponse({"status": "ok"})
 
-        ChatMessage.objects.create(
-            session=session,
-            sender=sender,
-            message=message
-        )
-        return JsonResponse({"status": "ok"})
+        except Exception as e:
+            print("❌ FEL I save_message:", e)
+            return JsonResponse({"error": str(e)}, status=500)
 
+    print("❌ Fel metod:", request.method)
     return HttpResponseBadRequest("Invalid request")

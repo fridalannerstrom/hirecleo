@@ -20,6 +20,7 @@ from hello_world import views as index_views
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import HttpResponse
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +28,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('hello_world.urls')),  # Dashboard, kandidater, etc
     path('api/', include('hello_world.api_urls')),  # API-endpoints separerade
+    path("api/test/", lambda request: HttpResponse("Hej från test!")),
 ]
 
 if settings.DEBUG:
