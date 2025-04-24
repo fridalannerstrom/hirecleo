@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileImageForm
-from .models import Candidate, Profile, ChatSession, ChatSession, ChatMessage
+from .models import Candidate, Profile, ChatSession, ChatMessage
 from django.utils.text import slugify
 import uuid
 from openai import OpenAI
