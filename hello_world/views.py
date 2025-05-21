@@ -22,8 +22,8 @@ from pinecone import Pinecone
 
 client = OpenAI()
 
-pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
-index = pc.Index(os.environ.get("PINECONE_INDEX"))
+pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
+index = pc.Index(os.environ["PINECONE_INDEX"])
 
 # Create your views here.
 def dashboard(request):
