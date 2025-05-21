@@ -103,6 +103,7 @@
   --bs-pink-soft-rgb: 241, 221, 236;
   --bs-primary-soft-rgb: 218, 231, 251;
   --bs-secondary-soft-rgb: 228, 221, 247;
+
   --bs-success-soft-rgb: 218, 239, 237;
   --bs-info-soft-rgb: 218, 242, 248;
   --bs-warning-soft-rgb: 242, 238, 227;
@@ -119,7 +120,7 @@
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
   --bs-body-color: #69707a;
-  --bs-body-bg: #f2f6fc;
+  --bs-body-bg: #ffffff;
   --bs-border-width: 1px;
   --bs-border-style: solid;
   --bs-border-color: #e0e5ec;
@@ -354,10 +355,12 @@ h5 {
   min-width: 0;
   height: var(--bs-card-height);
   word-wrap: break-word;
-  background-color: var(--bs-card-bg);
+  background-color: #F5F2FF;
   background-clip: border-box;
-  border: 1px solid rgb(212, 212, 212);
   border-radius: 10px;
+    transition: transform 0.3s ease-in-out, 
+              box-shadow 0.3s ease-in-out, 
+              background-color 0.3s ease-in-out;
 }
 
 .card-tools .text-muted {
@@ -366,6 +369,11 @@ h5 {
 
 .card-tools .text-muted {
   font-size: 0.8rem;
+}
+
+.card-tools:hover {
+  background-color: #dcdae9; /* lätt toning vid hover */
+  cursor: pointer;
 }
 
 .tools-title {
