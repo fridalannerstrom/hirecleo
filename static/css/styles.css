@@ -330,6 +330,53 @@ h5 {
 }
 
 
+.card-tools {
+  --bs-card-spacer-y: 1.35rem;
+  --bs-card-spacer-x: 1.35rem;
+  --bs-card-title-spacer-y: 0.5rem;
+  --bs-card-border-width: 1px;
+  --bs-card-border-color: rgba(33, 40, 50, 0.125);
+  --bs-card-border-radius: 0.35rem;
+  --bs-card-box-shadow: ;
+  --bs-card-inner-border-radius: 0.35rem;
+  --bs-card-cap-padding-y: 1rem;
+  --bs-card-cap-padding-x: 1.35rem;
+  --bs-card-cap-bg: rgba(33, 40, 50, 0.03);
+  --bs-card-cap-color: ;
+  --bs-card-height: ;
+  --bs-card-color: ;
+  --bs-card-bg: #fff;
+  --bs-card-img-overlay-padding: 1rem;
+  --bs-card-group-margin: 0.75rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: var(--bs-card-height);
+  word-wrap: break-word;
+  background-color: var(--bs-card-bg);
+  background-clip: border-box;
+  border: 1px solid rgb(212, 212, 212);
+  border-radius: 10px;
+}
+
+.card-tools .text-muted {
+  font-size: 0.8rem;
+}
+
+.card-tools .text-muted {
+  font-size: 0.8rem;
+}
+
+.tools-title {
+  font-size: 0.9rem;
+  letter-spacing: 0px;
+  font-weight: 700;
+  color: black;
+}
+
+
+
 /* End custom */
 
 *,
@@ -385,6 +432,7 @@ h5 {
 
 #basic-layout {
   max-width: 1100px;
+  padding-top: 50px;
 }
 
 #dropzone {
@@ -5663,6 +5711,7 @@ textarea.form-control-lg {
   border: var(--bs-card-border-width) solid var(--bs-card-border-color);
   border-radius: var(--bs-card-border-radius);
 }
+
 .card > hr {
   margin-right: 0;
   margin-left: 0;
