@@ -111,10 +111,10 @@
   --bs-black-rgb: 0, 0, 0;
   --bs-body-color-rgb: 105, 112, 122;
   --bs-body-bg-rgb: 242, 246, 252;
-  --bs-font-sans-serif: "Archivo", sans-serif;
+  --bs-font-sans-serif: "Poppins", sans-serif;
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
-  --bs-body-font-family: "Archivo", sans-serif;
+  --bs-body-font-family: "Poppins", sans-serif;
   --bs-body-font-size: 1rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
@@ -161,6 +161,7 @@ body,
 .cursor {
   cursor: pointer;
 }
+
 /* =====================================
    HEADINGS
 ====================================== */
@@ -320,6 +321,12 @@ h5 {
 
 .logo-img {
   width: 110px;
+}
+
+.logo-img-dashboard {
+  width: 70px;
+  margin-right: 30px;
+  margin-left: 10px;
 }
 
 
@@ -9250,6 +9257,7 @@ textarea.form-control-lg {
   right: 0;
   left: 0;
   z-index: 1030;
+  border-bottom: 1px solid lightgray;
 }
 
 .fixed-bottom {
@@ -18819,7 +18827,7 @@ body {
 
 .topnav {
   padding-left: 0;
-  height: 3.625rem;
+  height: 4.625rem;
   z-index: 1039;
   font-size: 0.9rem;
 }
@@ -18894,6 +18902,7 @@ body {
   height: 100%;
   flex-wrap: nowrap;
   font-size: 0.9rem;
+  border-right: 1px solid lightgray;
 }
 .sidenav .sidenav-menu {
   flex-grow: 1;

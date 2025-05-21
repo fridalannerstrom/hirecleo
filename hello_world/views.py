@@ -66,7 +66,7 @@ class RegisterView(View):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login')  # eller till dashboard
+            return redirect('dashboard') 
         return render(request, 'auth-register-basic.html', {'form': form})
 
 @login_required
