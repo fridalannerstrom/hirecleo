@@ -355,7 +355,6 @@ h5 {
   min-width: 0;
   height: var(--bs-card-height);
   word-wrap: break-word;
-  background-color: #F5F2FF;
   background-clip: border-box;
   border-radius: 10px;
     transition: transform 0.3s ease-in-out, 
@@ -381,6 +380,22 @@ h5 {
   letter-spacing: 0px;
   font-weight: 700;
   color: black;
+}
+
+.background-blue {
+  background-color: #D3E7EE;
+}
+
+.background-orange {
+  background-color: #FADFC1;
+}
+
+.background-purple {
+  background-color: #D5D2FD;
+}
+
+.background-green {
+  background-color: #D9E8CB;
 }
 
 
