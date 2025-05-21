@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -16,36 +16,40 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js" crossorigin="anonymous"></script>
         {% block extra_head %}{% endblock %}
     </head>
-    <body class="bg-primary">
-        {% block header %}
-        <div id="layoutAuthentication">
-            <div id="layoutAuthentication_content">
-            {% endblock %}
+<body class="auth-body">
 
-            <main>
-                {% block content %}
-                <!-- Innehåll från undersidorna hamnar här -->
-                {% endblock %}
-            </main>
+  <!-- Full viewport wrapper -->
+  <div class="container-fluid vh-100 p-0">
+    <div class="row h-100 g-0 p-0">
 
-            </div>
-            {% block footer %}
-            <div id="layoutAuthentication_footer">
-                <footer class="footer-admin mt-auto footer-dark">
-                    <div class="container-xl px-4">
-                        <div class="row">
-                            <div class="col-md-6 small">Copyright &copy; TQ Nordic 2025</div>
-                            <div class="col-md-6 text-md-end small">
-                                <a href="#!">Privacy Policy</a>
-                                &middot;
-                                <a href="#!">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
-                </footer>
-            </div>
+      <!-- Left column: logo and auth form -->
+      <div class="col-lg-5 d-flex flex-column justify-content-between">
+
+        <!-- Logo -->
+        <div class="px-4 py-3">
+          <a href="/" class="text-decoration-none">
+            <img src="{% static 'media/images/logo-black.webp' %}" alt="Selekt logo" class="mb-5 logo-img">
+          </a>
         </div>
-        {% endblock %}
+
+        <!-- Django auth form block -->
+        <div class="auth-form-wrapper">
+          {% block auth_content %}
+          {% endblock %}
+        </div>
+
+      </div>
+
+      <!-- Right column: full-height background image -->
+      <div class="col-lg-7 d-none d-lg-block p-0">
+        <img src="{% block auth_image %}{% static 'media/images/selekt-background-default.webp' %}{% endblock %}"
+          class="object-fit-cover auth-img" alt="Auth image">
+      </div>
+
+    </div>
+  </div>
+
+</body>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="{% static 'js/scripts.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
@@ -55,6 +59,4 @@
         <script src="{% static 'js/datatables/datatables-simple-demo.js' %}"></script>
         <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/bundle.js" crossorigin="anonymous"></script>
         <script src="{% static 'js/litepicker.js' %}"></script>
-        {% block extra_js %}{% endblock %}
-    </body>
 </html>
