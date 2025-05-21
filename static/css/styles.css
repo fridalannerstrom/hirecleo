@@ -136,6 +136,89 @@
   --bs-highlight-bg: #fdeccc;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@200&family=Poppins:wght@400;600&display=swap');
+
+body,
+.index-body,
+.auth-body {
+  font-family: 'Poppins', sans-serif;
+  color: black;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.row {
+  margin: 0;
+}
+
+.display-none {
+  display: none;
+}
+
+.cursor {
+  cursor: pointer;
+}
+/* =====================================
+   HEADINGS
+====================================== */
+
+h1, h2, h5 {
+  font-family: 'Libre Baskerville', serif;
+  font-weight: 200;
+}
+
+h1 { 
+  font-weight: 200; 
+}
+
+.small-h1 { 
+  font-size: 1.7rem; 
+}
+
+h2 { 
+  font-weight: 300; 
+}
+
+h3, h4 { 
+  font-size: 1.1rem; 
+  font-weight: 600; 
+}
+
+h5 { 
+  line-height: 2rem; 
+}
+
+.section-heading {
+  font-size: 2.5rem;
+  line-height: 3.5rem;
+}
+
+/* =====================================
+   TEXT STYLES
+====================================== */
+
+.section-text,
+.text-muted {
+  font-size: 0.9rem;
+}
+
+.text-muted {
+  color: rgb(46, 46, 46) !important;
+  font-family: poppins;
+}
+
+.tag {
+  font-size: 0.7rem;
+  background-color: white;
+  border: 1px solid rgb(185, 185, 185);
+  display: inline;
+  padding: 5px 7px;
+  border-radius: 100px;
+}
+
 /* =====================================
    CUSTOM CSS
 ====================================== */
@@ -11069,11 +11152,6 @@ textarea.form-control-lg {
 .text-body {
   --bs-text-opacity: 1;
   color: rgba(var(--bs-body-color-rgb), var(--bs-text-opacity)) !important;
-}
-
-.text-muted {
-  --bs-text-opacity: 1;
-  color: #a7aeb8 !important;
 }
 
 .text-black-50 {

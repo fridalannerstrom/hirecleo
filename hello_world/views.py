@@ -19,6 +19,9 @@ import json
 from django.http import StreamingHttpResponse, JsonResponse, HttpResponseBadRequest
 from asgiref.sync import sync_to_async
 from pinecone import Pinecone
+from django.contrib.auth.forms import UserCreationForm
+from django.views import View
+from django.shortcuts import render, redirect
 
 client = OpenAI()
 
@@ -53,6 +56,18 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')  # Skicka användaren till inloggningssidan efter logout
+
+class RegisterView(View):
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request, 'auth-register-basic.html', {'form': form})
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # eller till dashboard
+        return render(request, 'auth-register-basic.html', {'form': form})
 
 @login_required
 def dashboard_view(request):
