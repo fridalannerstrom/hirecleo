@@ -71,7 +71,13 @@
                                         <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="#">
                                             <i data-feather="edit"></i>
                                         </a>
-                                        <a class="btn btn-datatable btn-icon btn-transparent-dark" href="#">
+                                        <a 
+                                            class="btn btn-datatable btn-icon btn-transparent-dark open-delete-modal"
+                                            href="#"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            data-title="{{ job.title }}"
+                                            data-url="{% url 'delete_job' job.slug %}">
                                             <i data-feather="trash-2"></i>
                                         </a>
                                     </td>
@@ -88,5 +94,45 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Ta bort jobb</h5>
+        <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Är du säker på att du vill ta bort jobbet <strong id="deleteJobTitle">{{ job.title }}</strong>?
+      </div>
+      <div class="modal-footer">
+        <form id="deleteForm" method="post" action="">
+          {% csrf_token %}
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+          <button type="submit" class="btn btn-danger">Ta bort</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById('deleteModal');
+  const jobTitleSpan = document.getElementById('deleteJobTitle');
+  const form = document.getElementById('deleteForm');
+
+  document.querySelectorAll('.open-delete-modal').forEach(button => {
+    button.addEventListener('click', function () {
+      const title = this.getAttribute('data-title');
+      const url = this.getAttribute('data-url');
+
+      jobTitleSpan.textContent = title;
+      form.action = url;
+    });
+  });
+});
+</script>
 
 {% endblock %}

@@ -562,3 +562,11 @@ Returnera bara JSON, utan kommentarer.
 def job_detail(request, slug):
     job = get_object_or_404(Job, slug=slug, user=request.user)
     return render(request, 'your-jobs-detail.html', {'job': job})
+
+@login_required
+def delete_job(request, slug):
+    job = get_object_or_404(Job, slug=slug, user=request.user)
+    if request.method == 'POST':
+        job.delete()
+        return redirect('your_jobs')
+    return redirect('your_jobs')  # fallback if GET
