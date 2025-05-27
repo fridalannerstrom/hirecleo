@@ -168,6 +168,33 @@ def your_jobs(request):
 
 @login_required
 def add_jobs_manually(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        company = request.POST.get('company')
+        location = request.POST.get('location')
+        employment_type = request.POST.get('employment_type')
+        description = request.POST.get('description')
+
+        # Generera unik slug
+        base_slug = slugify(title)
+        slug = base_slug
+        counter = 1
+        while Job.objects.filter(slug=slug).exists():
+            slug = f"{base_slug}-{uuid.uuid4().hex[:4]}"
+            counter += 1
+
+        Job.objects.create(
+            user=request.user,
+            title=title,
+            company=company,
+            location=location,
+            employment_type=employment_type,
+            description=description,
+            slug=slug
+        )
+
+        return redirect('your_jobs')
+
     return render(request, 'add-jobs-manually.html')
 
 @login_required
