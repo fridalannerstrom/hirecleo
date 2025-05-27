@@ -371,7 +371,7 @@ h5 {
 }
 
 .card-tools:hover {
-  background-color: #dcdae9; /* lätt toning vid hover */
+  background-color: #f5f5f5; /* lätt toning vid hover */
   cursor: pointer;
 }
 
@@ -391,8 +391,13 @@ h5 {
 }
 
 .background-purple {
-  background-color: #D5D2FD;
+  background-color: #f0eeff;
 }
+
+.background-purple:hover {
+  background-color: #d4d2fc;
+}
+
 
 .background-green {
   background-color: #D9E8CB;
@@ -417,13 +422,19 @@ h5 {
 /* CUSTOM CSS */
 
 .cleo-chat-card {
-  background: linear-gradient(to right, #130450, #08021E);
+  border: 1px solid rgb(194, 194, 194) !important;
+  color: black;
+  font-size: 0.9rem;
+}
+
+.cleo-chat-card {
+  border-radius: 15px !important;
 }
 
 .cleo-chat-card h2 {
-  color: white;
-  font-size: 2rem;
-  font-weight: 700;
+  color: rgb(0, 0, 0);
+  font-size: 1.6rem;
+  font-weight: 600;
 }
 
 .cleo-input {
@@ -431,22 +442,22 @@ h5 {
   flex: 1;
   border-radius: 12px;
   padding: 0.75rem 1rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .cleo-btn {
-  background-color: #7c5dff;
+  background-color: #000000;
   border: none;
   color: white;
   border-radius: 999px;
   padding: 0.75rem 2rem;
   font-weight: 500;
-  font-size: 1rem;
+  font-size: 0.9rem;
   transition: background-color 0.3s ease;
 }
 
 .cleo-btn:hover {
-  background-color: #6849e8;
+  background-color: #2e2e2e;
 }
 
 .cleo-img {

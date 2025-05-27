@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col-xl-4 col-md-6 mb-3">
                 <!-- Dashboard info widget 1 -->
-                <div class="card-tools background-blue h-100">
+                <div class="card-tools background-purple h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
@@ -31,7 +31,7 @@
 
             <div class="col-xl-4 col-md-6 mb-3">
                 <!-- Dashboard info widget 1 -->
-                <div class="card-tools background-orange h-100">
+                <div class="card-tools background-purple h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
@@ -79,7 +79,7 @@
 
             <div class="col-xl-4 col-md-6 mb-4">
                 <!-- Dashboard info widget 1 -->
-                <div class="card-tools background-blue h-100">
+                <div class="card-tools background-purple h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
@@ -95,7 +95,7 @@
 
             <div class="col-xl-4 col-md-6 mb-4">
                 <!-- Dashboard info widget 1 -->
-                <div class="card-tools background-orange h-100">
+                <div class="card-tools background-purple h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
@@ -112,24 +112,24 @@
 
 
         <!-- Illustration dashboard card example-->
-        <div class="card mb-3 mt-3 border-0 cleo-chat-card">
+        <div class="mb-3 mt-3 cleo-chat-card">
             <div class="card-body p-5">
               <div class="row align-items-center justify-content-between">
                 
                 <!-- Text och formulär -->
-                <div class="col-lg-8 text-white">
+                <div class="col-lg-8">
                   <h2>Cleo säger hej!</h2>
                   <p class="mb-4">Chatta med Cleo, din AI-kollega inom rekrytering. Cleo kan bland annat hjälpa dig med intervju, screening och mer.</p>
           
                   <form class="d-flex gap-3 flex-wrap">
                     <input type="text" class="form-control form-control-lg cleo-input" placeholder="Skriv ett meddelande...">
-                    <button type="submit" class="btn cleo-btn">Skicka</button>
+                    <button type="submit" class="cleo-btn">Skicka</button>
                   </form>
                 </div>
           
                 <!-- Cleo-bild -->
                 <div class="col-lg-4 d-flex justify-content-center justify-content-lg-end align-items-center mt-4 mt-lg-0">
-                  <img src="{% static 'assets/img/cleo-profile-pic.png' %}" class="img-fluid cleo-img" alt="Cleo">
+                  <img src="{% static 'assets/img/cleo-hello.png' %}" class="img-fluid cleo-img" alt="Cleo">
                 </div>
           
               </div>
@@ -139,18 +139,20 @@
         <!-- UPLOAD YOUR DATA -->
         <div class="d-flex justify-content-between align-items-sm-center flex-column flex-sm-row mb-2">
             <div class="me-4 mb-3 mb-sm-0">
-                <h2 class="mb-0 mt-5">Upload your data</h2>
+                <h2 class="mb-2 mt-5">Ladda upp ditt material</h2>
             </div>
         </div>
+
         <div class="row">
-            <div class="col-xl-6 col-md-6 mb-4">
+            <div class="col-xl-6 col-md-6 mb-3">
                 <!-- Dashboard info widget 1 -->
-                <div class="card h-100">
+                <div class="card-tools border h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
-                                <div class="fw-bolder mb-1">Candidates</div>
-                                <p class="text-muted mb-0">Upload CVs, test results and other information related to candidates</p>
+                                <i class="fa-regular fa-clone mb-3"></i><br>
+                                <div class="tools-title">Kandidater</div>
+                                <p class="text-muted mb-0">Ladda upp dina kandidater i Cleo</p>
                             </div>
                             <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
                         </div>
@@ -158,113 +160,15 @@
                 </div>
             </div>
 
-            <div class="col-xl-6 col-md-6 mb-4">
+            <div class="col-xl-6 col-md-6 mb-3">
                 <!-- Dashboard info widget 1 -->
-                <div class="card h-100">
+                <div class="card-tools border h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
-                                <div class="fw-bolder mb-1">Jobs</div>
-                                <p class="text-muted mb-0">Upload job advertisements, requirement profiles and other job-related information</p>
-                            </div>
-                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-        <!-- TOOLS -->
-        <div class="d-flex justify-content-between align-items-sm-center flex-column flex-sm-row mb-2">
-            <div class="me-4 mb-3 mb-sm-0">
-                <h2 class="mb-0 mt-5">AI Tools</h2>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xl-4 col-md-6 mb-4">
-                <!-- Dashboard info widget 1 -->
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <div class="fw-bolder mb-1">Job Ad Generator</div>
-                                <p class="text-muted mb-0">Use Cleo’s job ad generator</p>
-                            </div>
-                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-md-6 mb-4">
-                <!-- Dashboard info widget 1 -->
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <div class="fw-bolder mb-1">Candidate Comparison</div>
-                                <p class="text-muted mb-0">Compare candidates with your job</p>
-                            </div>
-                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-md-6 mb-4">
-                <!-- Dashboard info widget 1 -->
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <div class="fw-bolder mb-1">Test Interpreter</div>
-                                <p class="text-muted mb-0">Get interpretation support</p>
-                            </div>
-                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-md-6 mb-4">
-                <!-- Dashboard info widget 1 -->
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <div class="fw-bolder mb-1">Interview Preparation</div>
-                                <p class="text-muted mb-0">Interview question generator</p>
-                            </div>
-                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-md-6 mb-4">
-                <!-- Dashboard info widget 1 -->
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <div class="fw-bolder mb-1">Candidate Summary</div>
-                                <p class="text-muted mb-0">Summarize a candidate</p>
-                            </div>
-                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-4 col-md-6 mb-4">
-                <!-- Dashboard info widget 1 -->
-                <div class="card h-100">
-                    <div class="card-body">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-grow-1">
-                                <div class="fw-bolder mb-1">Email Templates</div>
-                                <p class="text-muted mb-0">Get templates based on candidates</p>
+                                <i class="fa-regular fa-clone mb-3"></i><br>
+                                <div class="tools-title">Jobb</div>
+                                <p class="text-muted mb-0">Ladda upp dina jobb i Cleo</p>
                             </div>
                             <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
                         </div>
@@ -272,58 +176,61 @@
                 </div>
             </div>
         </div>
+
 
        <!-- Customization -->
        <div class="d-flex justify-content-between align-items-sm-center flex-column flex-sm-row mb-2">
         <div class="me-4 mb-3 mb-sm-0">
-            <h2 class="mb-0 mt-5">Customization</h2>
+            <h2 class="mb-0 mt-5">Anpassning</h2>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xl-4 col-md-6 mb-4">
-            <!-- Dashboard info widget 1 -->
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <div class="fw-bolder mb-1">Instructions</div>
-                            <p class="text-muted mb-0">Give Cleo tailored instructions</p>
+        <div class="row">
+            <div class="col-xl-4 col-md-6 mb-3">
+                <!-- Dashboard info widget 1 -->
+                <div class="card-tools border h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <i class="fa-regular fa-clone mb-3"></i><br>
+                                <div class="tools-title">Instruktioner</div>
+                                <p class="text-muted mb-0">Ge Cleo dina egna instruktioner</p>
+                            </div>
+                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
                         </div>
-                        <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-xl-4 col-md-6 mb-4">
-            <!-- Dashboard info widget 1 -->
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <div class="fw-bolder mb-1">Tone of Voice</div>
-                            <p class="text-muted mb-0">Customize how Cleo communicates</p>
+            <div class="col-xl-4 col-md-6 mb-3">
+                <!-- Dashboard info widget 1 -->
+                <div class="card-tools border h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <i class="fa-regular fa-clone mb-3"></i><br>
+                                <div class="tools-title">Tonalitet</div>
+                                <p class="text-muted mb-0">Berätta hur Cleo ska kommunicera</p>
+                            </div>
+                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
                         </div>
-                        <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="col-xl-4 col-md-6 mb-4">
-            <!-- Dashboard info widget 1 -->
-            <div class="card h-100">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-grow-1">
-                            <div class="fw-bolder mb-1">Knowledge</div>
-                            <p class="text-muted mb-0">Upload for Cleo to learn from</p>
+            <div class="col-xl-4 col-md-6 mb-3">
+                <!-- Dashboard info widget 1 -->
+                <div class="card-tools border h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <i class="fa-regular fa-clone mb-3"></i><br>
+                                <div class="tools-title">Träning</div>
+                                <p class="text-muted mb-0">Låt Cleo tränas i dina dokument</p>
+                            </div>
+                            <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
                         </div>
-                        <div class="ms-2"><i class="fa-solid fa-chevron-right"></i></div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
                 {% endblock %}
