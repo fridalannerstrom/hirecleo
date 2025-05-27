@@ -18558,7 +18558,7 @@ body {
   z-index: 1039;
 }
 .nav-fixed #layoutSidenav #layoutSidenav_nav {
-  width: 15rem;
+  width: 16rem;
   height: 100vh;
   z-index: 1038;
 }
@@ -18636,10 +18636,10 @@ body {
     transition: margin 0.15s ease-in-out;
   }
   .layout-rtl.sidenav-toggled #layoutSidenav #layoutSidenav_nav {
-    transform: translateX(15rem);
+    transform: translateX(16rem);
   }
   .layout-rtl.sidenav-toggled #layoutSidenav #layoutSidenav_content {
-    margin-right: -15rem;
+    margin-right: -16rem;
   }
 }
 
@@ -18648,7 +18648,7 @@ body {
 }
 .layout-rtl.nav-fixed #layoutSidenav #layoutSidenav_content {
   padding-left: 0;
-  padding-right: 15rem;
+  padding-right: 16rem;
 }
 
 .dropdown-notifications {
