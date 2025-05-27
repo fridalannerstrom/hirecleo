@@ -58,7 +58,7 @@
                             {% for job in jobs %}
                                 <tr>
                                     <td>
-                                        <a href="#" class="text-dark fw-bold text-decoration-none">
+                                        <a href="{% url 'job_detail' job.slug %}" class="text-dark fw-bold text-decoration-none">
                                             {{ job.title }}
                                         </a>
                                     </td>

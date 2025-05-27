@@ -530,3 +530,8 @@ Returnera bara JSON, utan kommentarer.
         max_tokens=600
     )
     return response.choices[0].message.content
+
+@login_required
+def job_detail(request, slug):
+    job = get_object_or_404(Job, slug=slug, user=request.user)
+    return render(request, 'your-jobs-detail.html', {'job': job})

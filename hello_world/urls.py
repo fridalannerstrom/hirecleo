@@ -21,4 +21,5 @@ urlpatterns = [
     path('candidates/<slug:slug>/edit/', views.edit_candidate, name='edit_candidate'),
     path('candidates/<slug:slug>/delete/', views.delete_candidate, name='delete_candidate'),
     path('skapa-konto/', RegisterView.as_view(), name='register'),
+    path('job/<slug:slug>/', views.job_detail, name='job_detail'),
 ]
