@@ -1,32 +1,147 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Dashboard - Cleo{% endblock %}
+{% block title %}Add Jobs - Cleo{% endblock %}
 {% block content %}
 
-    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-        <div class="container-xl px-4">
-            <div class="page-header-content">
-                <div class="row align-items-center justify-content-between pt-3">
-                    <div class="col-auto mb-3">
-                        <h1 class="page-header-title">
-                            <div class="page-header-icon"><i class="fa-regular fa-file-pdf"></i></div>
-                            Add jobs from PDF
-                        </h1>
-                    </div>
-                    <div class="col-12 col-xl-auto mb-3 gap-5">
-                        <a class="btn btn-sm btn-light text-primary" href="{% url 'add_jobs_manually' %}">
-                            <i class="fa-regular fa-pen-to-square"></i>
-                            Add jobs manually
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-    <!-- Main page content-->
-    <div class="container-xl px-4 mt-4">
-        <div class="row">
+<header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+  <div class="container-xl px-4">
+      <div class="page-header-content">
+          <div class="row align-items-center justify-content-between pt-3">
+              <div class="col-auto mb-3">
+                  <h1 class="page-header-title">
+                      <div class="page-header-icon"><i class="fa-regular fa-pen-to-square"></i></div>
+                      Add jobs from PDF
+                  </h1>
+              </div>
+              <div class="col-12 col-xl-auto mb-3 gap-5">
+                  <a class="btn btn-sm btn-light text-primary" href="{% url 'add_jobs_manually' %}">
+                      <i class="fa-regular fa-file-lines me-1"></i>
+                      Add jobs manually
+                  </a>
+              </div>
+          </div>
+      </div>
+  </div>
+</header>
 
-        </div>
+<div class="container-xl px-4 mt-4">
+  <div class="card mb-4">
+    <div class="card-header">Upload job description PDFs</div>
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <!-- Hidden File Input -->
+          <input 
+            type="file" 
+            id="pdfInput" 
+            name="uploaded_pdf" 
+            accept="application/pdf" 
+            hidden 
+            multiple
+          >
+
+          <!-- Dropzone -->
+          <div 
+            id="dropzone" 
+            class="border border-3 border-dashed rounded text-center py-5 bg-light"
+            style="cursor: pointer;"
+          >
+            <p class="text-muted mb-3">
+              <i class="fa-solid fa-cloud-arrow-up fa-2xl mb-2"></i><br>
+              Drag and drop job PDFs here or
+            </p>
+            <button 
+              type="button" 
+              id="selectFilesBtn" 
+              class="btn btn-outline-primary"
+            >
+              Select Files
+            </button>
+          </div>
+
+          <!-- Selected files list -->
+          <div id="uploadedList" class="mt-4"></div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn btn-primary mt-3" id="uploadBtn">Upload</button>
+        </form>
     </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('pdfInput');
+      const selectFilesBtn = document.getElementById('selectFilesBtn');
+      const uploadedList = document.getElementById('uploadedList');
+      const uploadBtn = document.getElementById('uploadBtn');
+
+      let allFiles = [];
+
+      selectFilesBtn.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', () => {
+        const newFiles = Array.from(fileInput.files);
+        allFiles = [...allFiles, ...newFiles];
+        updateFileList();
+      });
+
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-primary', 'bg-white');
+        dropzone.classList.remove('bg-light');
+      });
+
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('border-primary', 'bg-white');
+        dropzone.classList.add('bg-light');
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('border-primary', 'bg-white');
+        dropzone.classList.add('bg-light');
+
+        const droppedFiles = Array.from(e.dataTransfer.files).filter(file => file.type === 'application/pdf');
+        allFiles = [...allFiles, ...droppedFiles];
+        updateFileList();
+      });
+
+      function updateFileList() {
+        uploadedList.innerHTML = '';
+        allFiles.forEach((file, index) => {
+          const item = document.createElement('div');
+          item.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'border', 'rounded', 'p-2', 'mb-2');
+          item.innerHTML = `
+            <div>
+              <i class="fa-regular fa-file-pdf text-danger me-2"></i>
+              ${file.name}
+            </div>
+            <div id="file-status-${index}" class="text-muted">Pending</div>
+          `;
+          uploadedList.appendChild(item);
+        });
+
+        const dataTransfer = new DataTransfer();
+        allFiles.forEach(file => dataTransfer.items.add(file));
+        fileInput.files = dataTransfer.files;
+      }
+
+      uploadBtn.addEventListener('click', function () {
+        allFiles.forEach((file, index) => {
+          const statusEl = document.getElementById(`file-status-${index}`);
+          if (statusEl) {
+            statusEl.innerHTML = `
+              <div class="spinner-border spinner-border-sm text-primary me-1" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div> Uploading...`;
+          }
+        });
+      });
+
+    });
+  </script>
+</div>
+
 {% endblock %}

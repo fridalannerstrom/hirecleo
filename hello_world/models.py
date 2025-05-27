@@ -4,12 +4,15 @@ from django.utils.text import slugify
 
 # Create your models here.
 class Job(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="jobs")
-    title = models.CharField(max_length=50)
-    description = models.TextField()
-    slug = models.SlugField(max_length=200, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    company = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+    employment_type = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    uploaded_pdf = models.FileField(upload_to='job_pdfs/', blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(unique=True)
 
     def __str__(self):
         return self.title

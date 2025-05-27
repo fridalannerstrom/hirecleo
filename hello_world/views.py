@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileImageForm
-from .models import Candidate, Profile, ChatSession, ChatMessage
+from .models import Candidate, Profile, ChatSession, ChatMessage, Job
 from django.utils.text import slugify
 import uuid
 from openai import OpenAI
@@ -163,7 +163,8 @@ def your_candidates(request):
 
 @login_required
 def your_jobs(request):
-    return render(request, 'your-jobs.html')
+    jobs = Job.objects.filter(user=request.user).order_by('-created_on')
+    return render(request, 'your-jobs.html', {'jobs': jobs})
 
 @login_required
 def add_jobs_manually(request):
@@ -171,7 +172,34 @@ def add_jobs_manually(request):
 
 @login_required
 def add_jobs_pdf(request):
-    return render(request, 'add-jobs-pdf.html')
+    if request.method == 'POST':
+        files = request.FILES.getlist('uploaded_pdf')
+
+        for pdf_file in files:
+            job = Job(uploaded_pdf=pdf_file, user=request.user)
+            raw_text = read_pdf_text(pdf_file)
+
+            try:
+                result = extract_job_data_with_openai(raw_text)
+                cleaned = re.sub(r"```json|```", "", result).strip()
+                data = json.loads(cleaned)
+
+                job.title = data.get('Titel', '')
+                job.company = data.get('Företag', '')
+                job.location = data.get('Plats', '')
+                job.employment_type = data.get('Anställningsform', '')
+                job.description = data.get('Beskrivning', '')
+                job.slug = slugify(f"{job.title}-{uuid.uuid4().hex[:6]}")
+
+            except Exception as e:
+                print("❌ Error parsing job:", e)
+
+            job.save()
+
+        return redirect('your_jobs')
+
+    jobs = Job.objects.filter(user=request.user).order_by('-created_on')
+    return render(request, 'add-jobs-pdf.html', {'jobs': jobs})
 
 @login_required
 def chat(request):
@@ -475,3 +503,30 @@ def save_message(request):
 
     print("❌ Fel metod:", request.method)
     return HttpResponseBadRequest("Invalid request")
+
+
+def extract_job_data_with_openai(text):
+    prompt = f"""
+Här är en jobbannons i textformat:
+
+\"\"\"{text}\"\"\"
+
+Extrahera följande som JSON:
+- Titel
+- Företag
+- Plats
+- Anställningsform
+- Beskrivning (kort, renskriven version)
+
+Returnera bara JSON, utan kommentarer.
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "Du är en expert på att tolka jobbannonser."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=600
+    )
+    return response.choices[0].message.content
