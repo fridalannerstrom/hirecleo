@@ -67,7 +67,6 @@
                                     <td>{{ job.employment_type }}</td>
                                     <td>{{ job.created_on|date:"d M Y" }}</td>
                                     <td>
-                                        {# Lägg till redigerings- och raderingslänkar om du har vyer för det #}
                                         <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="#">
                                             <i data-feather="edit"></i>
                                         </a>
@@ -104,7 +103,7 @@
         <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Är du säker på att du vill ta bort jobbet <strong id="deleteJobTitle">{{ job.title }}</strong>?
+        Är du säker på att du vill ta bort jobbet <strong id="modalJobTitle">[Jobbtitel]</strong>?
       </div>
       <div class="modal-footer">
         <form id="deleteForm" method="post" action="">
@@ -116,23 +115,5 @@
     </div>
   </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-  const modal = document.getElementById('deleteModal');
-  const jobTitleSpan = document.getElementById('deleteJobTitle');
-  const form = document.getElementById('deleteForm');
-
-  document.querySelectorAll('.open-delete-modal').forEach(button => {
-    button.addEventListener('click', function () {
-      const title = this.getAttribute('data-title');
-      const url = this.getAttribute('data-url');
-
-      jobTitleSpan.textContent = title;
-      form.action = url;
-    });
-  });
-});
-</script>
 
 {% endblock %}

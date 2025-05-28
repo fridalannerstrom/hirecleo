@@ -368,5 +368,26 @@
             <script src="{% static 'js/litepicker.js' %}"></script>
             <script src="{% static 'js/scripts.v2.js' %}"></script>
             <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+
+            <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const modal = document.getElementById('deleteModal');
+                const jobTitleElement = document.getElementById('modalJobTitle');
+                const form = document.getElementById('deleteForm');
+
+                document.querySelectorAll('.open-delete-modal').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const title = this.getAttribute('data-title');
+                        const url = this.getAttribute('data-url');
+
+                        jobTitleElement.textContent = title;
+                        form.action = url;
+
+                        console.log("🔴 Modal öppnas för jobb:", title);
+                    });
+                });
+            });
+            </script>
         </body>
     </html>

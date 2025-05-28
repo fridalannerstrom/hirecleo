@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-from .views import RegisterView
 
 
 urlpatterns = [
@@ -20,7 +19,7 @@ urlpatterns = [
     path('candidates/<slug:slug>/', views.candidate_detail, name='candidate_detail'),
     path('candidates/<slug:slug>/edit/', views.edit_candidate, name='edit_candidate'),
     path('candidates/<slug:slug>/delete/', views.delete_candidate, name='delete_candidate'),
-    path('skapa-konto/', RegisterView.as_view(), name='register'),
+    path('skapa-konto/', views.RegisterView.as_view(), name='register'),
     path('job/<slug:slug>/', views.job_detail, name='job_detail'),
-    path('job/delete/<slug:slug>/', views.delete_job, name='delete_job'),
+    path('job/delete/<slug:slug>/', views.delete_job, name='delete_job')
 ]
