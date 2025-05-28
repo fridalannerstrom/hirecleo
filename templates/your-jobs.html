@@ -67,8 +67,9 @@
                                     <td>{{ job.employment_type }}</td>
                                     <td>{{ job.created_on|date:"d M Y" }}</td>
                                     <td>
-                                        <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="#">
-                                            <i data-feather="edit"></i>
+                                        <a class="btn btn-datatable btn-icon btn-transparent-dark me-2"
+                                        href="{% url 'edit_job' job.slug %}">
+                                        <i data-feather="edit"></i>
                                         </a>
                                         <a 
                                             class="btn btn-datatable btn-icon btn-transparent-dark open-delete-modal"

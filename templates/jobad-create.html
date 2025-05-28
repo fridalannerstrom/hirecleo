@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Skapa jobbannons{% endblock %}
+{% block content %}
+
+<div class="container-xl mt-5">
+    <h2>Skapa ny jobbannons</h2>
+
+    <form id="jobAdForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- === TABBAR === -->
+        <ul class="nav nav-tabs mb-4" id="inputTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-text-tab" data-bs-toggle="tab" data-bs-target="#tab-text" type="button" role="tab">Skriv fritt</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-job-tab" data-bs-toggle="tab" data-bs-target="#tab-job" type="button" role="tab">Välj jobb</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-upload-tab" data-bs-toggle="tab" data-bs-target="#tab-upload" type="button" role="tab">Ladda upp fil</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="inputTabsContent">
+
+            <!-- ✍️ Fritext -->
+            <div class="tab-pane fade show active" id="tab-text" role="tabpanel">
+                <label class="form-label">Beskriv jobbet med egna ord</label>
+                <textarea class="form-control" name="prompt" rows="5" placeholder="Ex: Vi söker en driven säljare..."></textarea>
+            </div>
+
+            <!-- 📋 Välj befintligt jobb -->
+            <div class="tab-pane fade" id="tab-job" role="tabpanel">
+                <label class="form-label mt-3">Välj ett jobb från din lista</label>
+                <select class="form-select" name="job_id">
+                    <option value="">-- Välj --</option>
+                    {% for job in jobs %}
+                        <option value="{{ job.id }}">{{ job.title }} – {{ job.company }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 📎 Ladda upp fil -->
+            <div class="tab-pane fade" id="tab-upload" role="tabpanel">
+                <label class="form-label mt-3">Ladda upp en fil</label>
+                <input type="file" class="form-control" name="job_file" accept=".pdf,.docx,.xlsx,.txt">
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mt-4" onclick="generateJobAd()">🎯 Generera med AI</button>
+
+        <!-- Redigerbar output -->
+        <div class="mt-5">
+            <label class="form-label">Titel</label>
+            <input type="text" class="form-control" name="title" placeholder="Ex: Säljare B2B – Stockholm">
+
+            <label class="form-label mt-3">Redigera jobbannons</label>
+            <textarea id="jobadContent" name="content" class="form-control" rows="10"></textarea>
+        </div>
+
+        <button class="btn btn-primary mt-3" type="submit">💾 Spara jobbannons</button>
+    </form>
+</div>
+
+<!-- jQuery måste laddas först -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Trumbowyg -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/trumbowyg@2.25.1/dist/ui/trumbowyg.min.css">
+<script src="https://cdn.jsdelivr.net/npm/trumbowyg@2.25.1/dist/trumbowyg.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        $('#jobadContent').trumbowyg();
+    });
+
+    function generateJobAd() {
+        const prompt = document.querySelector('textarea[name="prompt"]').value;
+        const jobId = document.querySelector('select[name="job_id"]').value;
+        const fileInput = document.querySelector('input[name="job_file"]');
+        const file = fileInput.files[0];
+
+        // Skapa payload
+        const formData = new FormData();
+        if (prompt) formData.append("prompt", prompt);
+        if (jobId) formData.append("job_id", jobId);
+        if (file) formData.append("job_file", file);
+
+        fetch("{% url 'generate_jobad_api' %}", {
+            method: "POST",
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            $('#jobadContent').trumbowyg('html', data.content);
+            document.querySelector('input[name="title"]').value = data.suggested_title || "";
+        })
+        .catch(error => {
+            alert("Något gick fel: " + error);
+            console.error(error);
+        });
+    }
+</script>
+{% endblock %}

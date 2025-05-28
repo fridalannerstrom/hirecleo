@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+from django.urls import reverse
 
-# Create your models here.
+# === Jobb ===
 class Job(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -15,8 +16,16 @@ class Job(models.Model):
     slug = models.SlugField(unique=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.title} @ {self.company}"
 
+    class Meta:
+        ordering = ['-created_on']
+        unique_together = ('user', 'title', 'company')
+
+    def get_absolute_url(self):
+        return reverse('job_detail', args=[str(self.slug)])
+
+# === Kandidat ===
 class Candidate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidates")
     first_name = models.CharField(max_length=30)
@@ -52,8 +61,11 @@ class Candidate(models.Model):
                 counter += 1
             self.slug = unique_slug
         super().save(*args, **kwargs)
-        print("Saving candidate:", self.first_name, self.last_name)
-    
+
+    class Meta:
+        ordering = ['-created_on']
+
+# === Profil ===
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_pics/', default='default.png')
@@ -61,12 +73,17 @@ class Profile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 
+# === Cleo-dokument (för embedding/AI) ===
 class CleoDocument(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     embedding_id = models.CharField(max_length=255, blank=True, null=True)  # Pinecone ID
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.title
+
+# === Chatfunktioner ===
 class ChatSession(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_sessions')
     title = models.CharField(max_length=255)
@@ -74,7 +91,6 @@ class ChatSession(models.Model):
 
     def __str__(self):
         return f"{self.user.username} – {self.title} ({self.created_at.strftime('%Y-%m-%d %H:%M')})"
-
 
 class ChatMessage(models.Model):
     session = models.ForeignKey(ChatSession, on_delete=models.CASCADE, related_name='messages')
@@ -84,3 +100,22 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"{self.timestamp.strftime('%H:%M')} {self.sender}: {self.message[:30]}"
+
+# === Jobbannonser ===
+class JobAd(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.SET_NULL, null=True, blank=True)
+    title = models.CharField(max_length=255)
+    content = models.TextField()  # AI-genererad + ev. redigerad text
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    is_draft = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.title} ({'Utkast' if self.is_draft else 'Publicerad'})"
+
+    class Meta:
+        ordering = ['-created_on']
+
+    def get_absolute_url(self):
+        return reverse('jobad_detail', args=[str(self.id)])
