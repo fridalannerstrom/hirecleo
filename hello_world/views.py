@@ -661,12 +661,17 @@ def generate_jobad_api(request):
                 {"role": "user", "content": ai_prompt}
             ]
         )
+        # 1. GPT-output
         content = response.choices[0].message.content.strip()
+
+        # 2. Rensa ev. markdown-block som ```html ... ```
+        content = re.sub(r"```html|```", "", content).strip()
+
         return JsonResponse({"content": content, "suggested_title": "Jobbannons"})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
     
-    
+
 @login_required
 def jobad_detail(request, pk):
     ad = get_object_or_404(JobAd, pk=pk, user=request.user)
