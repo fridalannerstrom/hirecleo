@@ -22,6 +22,9 @@ from pinecone import Pinecone
 from django.contrib.auth.forms import UserCreationForm
 from django.views import View
 from django.shortcuts import render, redirect
+from bs4 import BeautifulSoup
+import uuid
+from django.utils.text import slugify
 
 client = OpenAI()
 
@@ -589,13 +592,34 @@ def edit_job(request, slug):
 @login_required
 def create_jobad(request):
     jobs = Job.objects.filter(user=request.user)
-    
+
     if request.method == 'POST':
         content = request.POST.get('content')
         title = request.POST.get('title')
-        job_id = request.POST.get('job')
-        job = Job.objects.get(id=job_id) if job_id else None
+        job_id = request.POST.get('job') or request.POST.get('job_id')  # stöd för båda namnen
+        job = None
 
+        # Om man valde ett jobb → koppla
+        if job_id:
+            job = get_object_or_404(Job, id=job_id, user=request.user)
+
+        # Om inget valdes → skapa ett nytt jobb baserat på annonsinnehållet
+        else:
+            soup = BeautifulSoup(content, "html.parser")
+            plain_text = soup.get_text()
+            generated_title = title or "Jobbannons"
+
+            job = Job.objects.create(
+                user=request.user,
+                title=generated_title,
+                company="Ej angivet",
+                location="Ej angivet",
+                employment_type="Ej angivet",
+                description=plain_text[:1000],  # kort version av innehållet
+                slug=slugify(f"{generated_title}-{uuid.uuid4().hex[:6]}")
+            )
+
+        # Skapa jobbannonsen
         JobAd.objects.create(
             user=request.user,
             job=job,
@@ -603,7 +627,8 @@ def create_jobad(request):
             content=content,
             is_draft=True
         )
-        return redirect('your_jobs')  # eller redirect till annonslista
+
+        return redirect('job_detail', slug=job.slug)  # tillbaka till jobbet
 
     return render(request, 'jobad-create.html', {'jobs': jobs})
 

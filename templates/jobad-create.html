@@ -33,7 +33,7 @@
             <!-- 📋 Välj befintligt jobb -->
             <div class="tab-pane fade" id="tab-job" role="tabpanel">
                 <label class="form-label mt-3">Välj ett jobb från din lista</label>
-                <select class="form-select" name="job_id">
+                <select class="form-select" name="job">
                     <option value="">-- Välj --</option>
                     {% for job in jobs %}
                         <option value="{{ job.id }}">{{ job.title }} – {{ job.company }}</option>
@@ -75,10 +75,13 @@
     });
 
     function generateJobAd() {
-        const prompt = document.querySelector('textarea[name="prompt"]').value;
-        const jobId = document.querySelector('select[name="job_id"]').value;
-        const fileInput = document.querySelector('input[name="job_file"]');
-        const file = fileInput.files[0];
+        const promptEl = document.querySelector('textarea[name="prompt"]');
+        const jobEl = document.querySelector('select[name="job"]');
+        const fileEl = document.querySelector('input[name="job_file"]');
+
+        const prompt = promptEl ? promptEl.value : "";
+        const jobId = jobEl ? jobEl.value : "";
+        const file = fileEl && fileEl.files.length > 0 ? fileEl.files[0] : null;
 
         // Skapa payload
         const formData = new FormData();
@@ -95,6 +98,10 @@
         })
         .then(res => res.json())
         .then(data => {
+            if (data.error) {
+                alert("Fel: " + data.error);
+                return;
+            }
             $('#jobadContent').trumbowyg('html', data.content);
             document.querySelector('input[name="title"]').value = data.suggested_title || "";
         })

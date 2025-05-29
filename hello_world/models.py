@@ -20,7 +20,6 @@ class Job(models.Model):
 
     class Meta:
         ordering = ['-created_on']
-        unique_together = ('user', 'title', 'company')
 
     def get_absolute_url(self):
         return reverse('job_detail', args=[str(self.slug)])
@@ -100,6 +99,7 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"{self.timestamp.strftime('%H:%M')} {self.sender}: {self.message[:30]}"
+
 
 # === Jobbannonser ===
 class JobAd(models.Model):
