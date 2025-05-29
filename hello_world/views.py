@@ -596,7 +596,7 @@ def create_jobad(request):
         job_id = request.POST.get('job') or request.POST.get('job_id')
         job = None
 
-        if job_id:
+        if job_id and job_id.strip() and job_id.strip().isdigit():
             job = get_object_or_404(Job, id=job_id, user=request.user)
         else:
             # AI-extraktion baserat på innehåll
@@ -611,10 +611,15 @@ def create_jobad(request):
                 - Plats
                 - Anställningstyp
 
-                Returnera svaret som JSON i formatet:
-                {{"title": "...", "company": "...", "location": "...", "employment_type": "..."}}
+                Returnera **endast** ett JSON-objekt i detta format – utan någon inledande text. Om informationen inte finns, använd "Ej angivet" som värde:
+                {{
+                "title": "Marknadsförare",
+                "company": "Fridas webbyrå AB",
+                "location": "Stockholm",
+                "employment_type": "Heltid"
+                }}
 
-                Text:
+                Jobbannons:
                 \"\"\"{plain_text[:2000]}\"\"\"
                 """
 
@@ -625,9 +630,15 @@ def create_jobad(request):
                         {"role": "user", "content": ai_summary_prompt}
                     ]
                 )
+               
+                raw_content = ai_response.choices[0].message.content
 
-                import json
-                extracted = json.loads(ai_response.choices[0].message.content)
+                # Extrahera första JSON-blocket från svaret
+                json_match = re.search(r'\{.*?\}', raw_content, re.DOTALL)
+                if json_match:
+                    extracted = json.loads(json_match.group(0))
+                else:
+                    raise ValueError("Kunde inte hitta JSON i GPT-svaret")
 
             except Exception as e:
                 print("AI-extraktion misslyckades:", e)
