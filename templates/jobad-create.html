@@ -50,11 +50,16 @@
 
         <button type="button" class="btn btn-secondary mt-4" onclick="generateJobAd()">🎯 Generera med AI</button>
 
-        <!-- Redigerbar output -->
-        <div class="mt-5">
-            <label class="form-label">Titel</label>
-            <input type="text" class="form-control" name="title" placeholder="Ex: Säljare B2B – Stockholm">
+        <!-- Loader -->
+        <div id="jobadLoader" class="mt-4" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Laddar...</span>
+            </div>
+            <span class="ms-2">AI genererar jobbannons...</span>
+        </div>
 
+        <!-- Outputfält, gömda tills AI svarat -->
+        <div class="mt-5" id="jobadOutput" style="display: none;">
             <label class="form-label mt-3">Redigera jobbannons</label>
             <textarea id="jobadContent" name="content" class="form-control" rows="10"></textarea>
         </div>
@@ -83,11 +88,13 @@
         const jobId = jobEl ? jobEl.value : "";
         const file = fileEl && fileEl.files.length > 0 ? fileEl.files[0] : null;
 
-        // Skapa payload
         const formData = new FormData();
         if (prompt) formData.append("prompt", prompt);
         if (jobId) formData.append("job_id", jobId);
         if (file) formData.append("job_file", file);
+
+        // Visa loader
+        document.querySelector("#jobadLoader").style.display = "block";
 
         fetch("{% url 'generate_jobad_api' %}", {
             method: "POST",
@@ -98,14 +105,18 @@
         })
         .then(res => res.json())
         .then(data => {
+            document.querySelector("#jobadLoader").style.display = "none";
+
             if (data.error) {
                 alert("Fel: " + data.error);
                 return;
             }
+
             $('#jobadContent').trumbowyg('html', data.content);
-            document.querySelector('input[name="title"]').value = data.suggested_title || "";
+            document.querySelector("#jobadOutput").style.display = "block";  // Visa outputfältet
         })
         .catch(error => {
+            document.querySelector("#jobadLoader").style.display = "none";
             alert("Något gick fel: " + error);
             console.error(error);
         });

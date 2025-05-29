@@ -23,8 +23,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import View
 from django.shortcuts import render, redirect
 from bs4 import BeautifulSoup
-import uuid
-from django.utils.text import slugify
 
 client = OpenAI()
 
@@ -595,40 +593,71 @@ def create_jobad(request):
 
     if request.method == 'POST':
         content = request.POST.get('content')
-        title = request.POST.get('title')
-        job_id = request.POST.get('job') or request.POST.get('job_id')  # stöd för båda namnen
+        job_id = request.POST.get('job') or request.POST.get('job_id')
         job = None
 
-        # Om man valde ett jobb → koppla
         if job_id:
             job = get_object_or_404(Job, id=job_id, user=request.user)
-
-        # Om inget valdes → skapa ett nytt jobb baserat på annonsinnehållet
         else:
-            soup = BeautifulSoup(content, "html.parser")
+            # AI-extraktion baserat på innehåll
+            soup = BeautifulSoup(content or "", "html.parser")
             plain_text = soup.get_text()
-            generated_title = title or "Jobbannons"
+
+            try:
+                ai_summary_prompt = f"""
+                Här är en jobbannons. Extrahera följande information:
+                - Titel
+                - Företagsnamn
+                - Plats
+                - Anställningstyp
+
+                Returnera svaret som JSON i formatet:
+                {{"title": "...", "company": "...", "location": "...", "employment_type": "..."}}
+
+                Text:
+                \"\"\"{plain_text[:2000]}\"\"\"
+                """
+
+                ai_response = client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {"role": "system", "content": "Du är en rekryteringsexpert som extraherar strukturerad information från jobbannonser."},
+                        {"role": "user", "content": ai_summary_prompt}
+                    ]
+                )
+
+                import json
+                extracted = json.loads(ai_response.choices[0].message.content)
+
+            except Exception as e:
+                print("AI-extraktion misslyckades:", e)
+                extracted = {
+                    "title": "Jobbannons",
+                    "company": "Ej angivet",
+                    "location": "Ej angivet",
+                    "employment_type": "Ej angivet"
+                }
 
             job = Job.objects.create(
                 user=request.user,
-                title=generated_title,
-                company="Ej angivet",
-                location="Ej angivet",
-                employment_type="Ej angivet",
-                description=plain_text[:1000],  # kort version av innehållet
-                slug=slugify(f"{generated_title}-{uuid.uuid4().hex[:6]}")
+                title=extracted["title"],
+                company=extracted["company"],
+                location=extracted["location"],
+                employment_type=extracted["employment_type"],
+                description=plain_text[:1000],
+                slug=slugify(f"{extracted['title']}-{uuid.uuid4().hex[:6]}")
             )
 
-        # Skapa jobbannonsen
+        # Spara jobbannonsen
         JobAd.objects.create(
             user=request.user,
             job=job,
-            title=title,
+            title=job.title,
             content=content,
             is_draft=True
         )
 
-        return redirect('job_detail', slug=job.slug)  # tillbaka till jobbet
+        return redirect('job_detail', slug=job.slug)
 
     return render(request, 'jobad-create.html', {'jobs': jobs})
 

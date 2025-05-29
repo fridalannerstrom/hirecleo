@@ -72,6 +72,9 @@ function compareCandidates() {
         button.disabled = false;
 
         if (data.results && Array.isArray(data.results)) {
+            // SORTERA från högst till lägst score
+            data.results.sort((a, b) => b.score - a.score);
+
             data.results.forEach(r => {
                 resultBox.innerHTML += `
                     <div class="card mb-3 border-start border-success border-4 shadow-sm">
