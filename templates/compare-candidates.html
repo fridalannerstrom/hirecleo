@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Kandidatjämförelse - Cleo{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+  <h2>AI-baserad kandidatjämförelse</h2>
+
+<form id="compare-form">
+  <label for="job">Välj jobb:</label>
+  <select name="job_id" id="job-select" class="form-select mb-3">
+    {% for job in jobs %}
+      <option value="{{ job.id }}">{{ job.title }} @ {{ job.company }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="candidates">Välj kandidater att jämföra:</label>
+  <div class="mb-3">
+    {% for candidate in candidates %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="candidate_ids" value="{{ candidate.id }}" id="cand-{{ candidate.id }}">
+        <label class="form-check-label" for="cand-{{ candidate.id }}">{{ candidate.first_name }} {{ candidate.last_name }}</label>
+      </div>
+    {% endfor %}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Jämför med AI</button>
+</form>
+
+<div id="results" class="mt-4"></div>
+
+<script>
+function compareCandidates() {
+    const jobId = document.querySelector("#job-select").value;
+    const candidateInputs = document.querySelectorAll('input[name="candidate_ids"]:checked');
+    const candidateIds = Array.from(candidateInputs).map(el => parseInt(el.value));
+
+    if (!jobId || candidateIds.length === 0) {
+        alert("Välj både ett jobb och minst en kandidat.");
+        return;
+    }
+
+    fetch("{% url 'compare_candidates_api' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({
+            job_id: jobId,
+            candidate_ids: candidateIds
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const resultBox = document.querySelector("#results");
+        resultBox.innerHTML = "";
+        if (data.results) {
+            data.results.forEach(r => {
+                resultBox.innerHTML += `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5>${r.candidate_name}</h5>
+                            <p>${r.result}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            alert("Något gick fel: " + (data.error || "okänt fel"));
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Kunde inte jämföra kandidater.");
+    });
+}
+
+document.querySelector("#compare-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    compareCandidates();
+});
+</script>
+
+{% endblock %}

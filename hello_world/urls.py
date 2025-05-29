@@ -25,4 +25,6 @@ urlpatterns = [
     path('job/<slug:slug>/edit/', views.edit_job, name='edit_job'),
     path('jobads/create/', views.create_jobad, name='create_jobad'),
     path('api/generate-jobad/', views.generate_jobad_api, name='generate_jobad_api'),
+    path("compare-candidates/", views.compare_candidates_page, name="compare_candidates"),
+    path("compare-candidates/api/", views.compare_candidates_api, name="compare_candidates_api"),
 ]
