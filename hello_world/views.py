@@ -775,13 +775,82 @@ Returnera:
 @login_required
 def compare_candidates_api(request):
     if request.method == "POST":
-        # Dummydata tills vidare – ersätts med OpenAI-logik sen
-        return JsonResponse({"results": [
-            {"candidate_id": 1, "score": 82},
-            {"candidate_id": 2, "score": 67},
-            {"candidate_id": 3, "score": 92},
-        ]})
-    return JsonResponse({"error": "Only POST allowed"}, status=405)
+        try:
+            data = json.loads(request.body)
+            job_id = data.get("job_id")
+            candidate_ids = data.get("candidate_ids", [])
+
+            if not job_id or not candidate_ids:
+                return JsonResponse({"error": "job_id och candidate_ids krävs"}, status=400)
+
+            job = Job.objects.get(id=job_id, user=request.user)
+            candidates = Candidate.objects.filter(id__in=candidate_ids, user=request.user)
+
+            job_text = f"""Titel: {job.title}
+Företag: {job.company}
+Plats: {job.location}
+Anställningsform: {job.employment_type}
+Beskrivning: {job.description}"""
+
+            results = []
+            for candidate in candidates:
+                summary = f"""
+Namn: {candidate.first_name} {candidate.last_name}
+E-post: {candidate.email or '-'}
+LinkedIn: {candidate.linkedin_url or '-'}
+CV-text: {candidate.cv_text or '-'}
+Intervjunoter: {candidate.interview_notes or '-'}
+Testrapporter: {candidate.test_results or '-'}
+"""
+
+                prompt = f"""
+Du är en rekryteringsexpert. Baserat på följande jobbannons och information om kandidaten, ge:
+
+1. En **matchningsscore mellan 0 och 100**
+2. En **kort kommentar** som förklarar varför kandidaten är (eller inte är) en bra match.
+
+Formatet på svaret ska vara:
+Score: [siffra]
+Kommentar: [text]
+
+JOBB:
+{job_text}
+
+KANDIDAT:
+{summary}
+"""
+
+                response = client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {"role": "system", "content": "Du är en rekryteringsexpert."},
+                        {"role": "user", "content": prompt}
+                    ]
+                )
+
+                content = response.choices[0].message.content.strip()
+
+                # Enkel parsing – förväntar sig exakt format
+                score = None
+                comment = None
+                for line in content.splitlines():
+                    if line.lower().startswith("score:"):
+                        score = int(''.join(filter(str.isdigit, line)))
+                    elif line.lower().startswith("kommentar:"):
+                        comment = line.split(":", 1)[-1].strip()
+
+                results.append({
+                    "candidate_name": f"{candidate.first_name} {candidate.last_name}",
+                    "score": score if score is not None else 0,
+                    "summary": comment or "Kommentar saknas"
+                })
+
+            return JsonResponse({"results": results})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Endast POST tillåtet"}, status=405)
 
 @login_required
 def compare_candidates_page(request):

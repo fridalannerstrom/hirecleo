@@ -23,10 +23,17 @@
     {% endfor %}
   </div>
 
-  <button type="submit" class="btn btn-primary">Jämför med AI</button>
+  <button type="submit" class="btn btn-primary">Jämför kandidater</button>
 </form>
 
 <div id="results" class="mt-4"></div>
+
+<div id="loader" class="text-center my-4" style="display: none;">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Laddar...</span>
+  </div>
+  <p class="mt-2">Cleo analyserar kandidater...</p>
+</div>
 
 <script>
 function compareCandidates() {
@@ -34,10 +41,19 @@ function compareCandidates() {
     const candidateInputs = document.querySelectorAll('input[name="candidate_ids"]:checked');
     const candidateIds = Array.from(candidateInputs).map(el => parseInt(el.value));
 
+    const resultBox = document.querySelector("#results");
+    const loader = document.querySelector("#loader");
+    const button = document.querySelector("#compare-form button");
+
     if (!jobId || candidateIds.length === 0) {
         alert("Välj både ett jobb och minst en kandidat.");
         return;
     }
+
+    // Visa loader, dölj tidigare resultat
+    loader.style.display = "block";
+    resultBox.innerHTML = "";
+    button.disabled = true;
 
     fetch("{% url 'compare_candidates_api' %}", {
         method: "POST",
@@ -52,26 +68,30 @@ function compareCandidates() {
     })
     .then(res => res.json())
     .then(data => {
-        const resultBox = document.querySelector("#results");
-        resultBox.innerHTML = "";
-        if (data.results) {
+        loader.style.display = "none";
+        button.disabled = false;
+
+        if (data.results && Array.isArray(data.results)) {
             data.results.forEach(r => {
                 resultBox.innerHTML += `
-                    <div class="card mb-3">
+                    <div class="card mb-3 border-start border-success border-4 shadow-sm">
                         <div class="card-body">
-                            <h5>${r.candidate_name}</h5>
-                            <p>${r.result}</p>
+                            <h5 class="card-title mb-1">${r.candidate_name}</h5>
+                            <p class="mb-1"><strong>Matchningsscore:</strong> ${r.score}/100</p>
+                            <p class="text-muted">${r.summary}</p>
                         </div>
                     </div>
                 `;
             });
         } else {
-            alert("Något gick fel: " + (data.error || "okänt fel"));
+            resultBox.innerHTML = `<div class="alert alert-danger">Något gick fel: ${data.error || "okänt fel"}</div>`;
         }
     })
     .catch(error => {
+        loader.style.display = "none";
+        button.disabled = false;
         console.error("Error:", error);
-        alert("Kunde inte jämföra kandidater.");
+        resultBox.innerHTML = `<div class="alert alert-danger">Kunde inte jämföra kandidater. Försök igen.</div>`;
     });
 }
 
@@ -80,5 +100,4 @@ document.querySelector("#compare-form").addEventListener("submit", function(even
     compareCandidates();
 });
 </script>
-
 {% endblock %}
