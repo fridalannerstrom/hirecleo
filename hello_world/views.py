@@ -659,6 +659,26 @@ def create_jobad(request):
                 slug=slugify(f"{extracted['title']}-{uuid.uuid4().hex[:6]}")
             )
 
+            # === AI-genererad sammanfattning för visning ===
+            try:
+                summary_prompt = f"""
+            Sammanfatta den här jobbannonsen i 2–3 meningar. Fokusera på vad tjänsten handlar om, företaget och rollen.
+
+            \"\"\"{plain_text[:2000]}\"\"\"
+            """
+                summary_response = client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[
+                        {"role": "system", "content": "Du sammanfattar jobbannonser kort för rekryterare."},
+                        {"role": "user", "content": summary_prompt}
+                    ]
+                )
+                job.summary = summary_response.choices[0].message.content.strip()
+                job.save()
+
+            except Exception as e:
+                print("AI-sammanfattning misslyckades:", e)
+
         # Spara jobbannonsen
         JobAd.objects.create(
             user=request.user,

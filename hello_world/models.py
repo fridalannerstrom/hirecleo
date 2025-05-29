@@ -14,6 +14,7 @@ class Job(models.Model):
     uploaded_pdf = models.FileField(upload_to='job_pdfs/', blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(unique=True)
+    summary = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.title} @ {self.company}"

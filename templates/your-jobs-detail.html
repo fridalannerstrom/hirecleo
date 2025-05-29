@@ -56,8 +56,12 @@
               </ul>
 
               <hr>
-              <h5 class="mt-4">Job Description</h5>
-              <p>{{ job.description|linebreaksbr }}</p>
+
+              {% if job.summary %}
+                <div class="mb-4">
+                <p>{{ job.summary }}</p>
+                </div>
+                {% endif %}
 
               {% if job.uploaded_pdf %}
                 <hr>
