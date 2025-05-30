@@ -1,43 +1,163 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Testresultat - Cleo{% endblock %}
+{% block title %}Testtolkare - Cleo{% endblock %}
 {% block content %}
 
-<div class="container-xl px-4 mt-4">
-    <h1 class="mb-4"><i class="fa-solid fa-brain me-2"></i>AI-tolkning av testresultat</h1>
-
-    <div class="card mb-4">
-        <div class="card-header">
-            <strong>Sammanfattning</strong> från AI
-        </div>
-        <div class="card-body">
-            <p>{{ test_result.ai_summary|linebreaks }}</p>
+<header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+    <div class="container-xl px-4">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-between pt-3">
+                <div class="col-auto mb-3">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i class="fa-regular fa-vial"></i></div>
+                        Testtolkare
+                    </h1>
+                </div>
+            </div>
         </div>
     </div>
+</header>
 
-    <div class="card">
-        <div class="card-header">
-            <strong>Ställ följdfrågor till Cleo</strong>
+<div class="container-xl px-4 mt-4">
+    <div class="row">
+        <!-- Vänsterkolumn: Resultat -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header fw-bold">AI:s sammanfattning</div>
+                <div class="card-body">
+                    <pre style="white-space: pre-wrap;">{{ test_result.ai_summary }}</pre>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <form method="post" class="mb-3">
-                {% csrf_token %}
-                <input type="hidden" name="test_id" value="{{ test_result.id }}">
-                <textarea class="form-control mb-2" name="message" rows="3" placeholder="Ex: Hur påverkar detta personens förmåga att leda andra?" required></textarea>
-                <button type="submit" class="btn btn-primary">Ställ fråga</button>
-            </form>
 
-            <div class="chat-history">
-                {% for msg in chat_messages %}
-                    <div class="mb-2">
-                        <strong>{{ msg.sender }}:</strong> {{ msg.message|linebreaks }}
+        <!-- Högerkolumn: Chatt -->
+        <div class="col-md-6 d-flex flex-column">
+            <div class="card shadow-sm flex-grow-1 d-flex flex-column">
+                <div class="card-header fw-bold">Ställ följdfrågor</div>
+                <div class="card-body overflow-auto" id="chat-box" style="height: 400px;"></div>
+                <div class="card-footer">
+                    <div class="input-group">
+                        <input type="text" id="chat-input" class="form-control" placeholder="Ställ en fråga...">
+                        <button id="send-btn" class="btn btn-dark">Skicka</button>
                     </div>
-                {% empty %}
-                    <p class="text-muted">Inga tidigare frågor än.</p>
-                {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    const testResultId = {{ test_result.id }};
+    const cleoAvatar = "{% static 'assets/img/cleo-icon.png' %}";
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function safeParseMarkdown(text) {
+        const openCount = (text.match(/\*\*/g) || []).length;
+        if (openCount % 2 === 0) {
+            return marked.parse(text);
+        } else {
+            return marked.parse(text + '**');
+        }
+    }
+
+    function appendMessage(sender, text) {
+        const div = document.createElement("div");
+
+        if (sender === "cleo") {
+            div.className = "d-flex mb-3 align-items-start";
+            div.innerHTML = `
+                <img src="${cleoAvatar}" class="me-2 rounded-circle" width="32" height="32">
+                <div class="chat-bubble cleo">
+                    <div class="bubble-inner">${text}</div>
+                </div>
+            `;
+        } else {
+            div.className = "d-flex mb-3 justify-content-end";
+            div.innerHTML = `
+                <div class="chat-bubble user">
+                    <div class="bubble-inner">${text}</div>
+                </div>
+            `;
+        }
+
+        document.getElementById("chat-box").appendChild(div);
+        setTimeout(() => {
+            document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
+        }, 50);
+    }
+
+    document.getElementById("send-btn").addEventListener("click", function () {
+        const input = document.getElementById("chat-input");
+        const chatBox = document.getElementById("chat-box");
+        const userMessage = input.value.trim();
+        if (!userMessage) return;
+
+        appendMessage("user", userMessage);
+        input.value = "";
+
+        const div = document.createElement("div");
+        div.className = "d-flex mb-3 align-items-start";
+        div.innerHTML = `
+            <img src="${cleoAvatar}" class="me-2 rounded-circle" width="32" height="32">
+            <div class="chat-bubble cleo">
+                <div class="bubble-inner"></div>
+            </div>
+        `;
+        chatBox.appendChild(div);
+        const bubble = div.querySelector(".bubble-inner");
+
+        let accumulated = "";
+
+        fetch(`/testtolkare/api/stream/${testResultId}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({ message: userMessage })
+        })
+        .then(res => {
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+
+            function read() {
+                reader.read().then(({ done, value }) => {
+                    if (done) {
+                        bubble.innerHTML = marked.parse(accumulated);
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                        return;
+                    }
+
+                    const chunk = decoder.decode(value);
+                    accumulated += chunk;
+                    bubble.innerHTML = safeParseMarkdown(accumulated);
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    read();
+                });
+            }
+
+            read();
+        })
+        .catch(err => {
+            appendMessage("cleo", "Något gick fel 😢");
+            console.error(err);
+        });
+    });
+</script>
 
 {% endblock %}

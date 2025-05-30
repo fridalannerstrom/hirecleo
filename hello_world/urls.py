@@ -29,4 +29,5 @@ urlpatterns = [
     path("compare-candidates/api/", views.compare_candidates_api, name="compare_candidates_api"),
     path('testtolkare/upload/', views.upload_test_result, name='upload_test_result'),
     path('testtolkare/result/<int:pk>/', views.test_result_detail, name='test_result_detail'),
+    path("testtolkare/api/stream/<int:pk>/", views.testtolkare_stream_response, name="testtolkare_stream"),
 ]
