@@ -90,17 +90,32 @@ window.addEventListener('DOMContentLoaded', event => {
     }
 
     const deleteButtons = document.querySelectorAll('.open-delete-modal');
-    const modalName = document.getElementById('candidateName');
+    const modalItemName = document.getElementById('modalItemName');
     const confirmBtn = document.getElementById('confirmDeleteBtn');
-    
+    const deleteForm = document.getElementById('deleteForm');
+
     deleteButtons.forEach(button => {
         button.addEventListener('click', function () {
-            const name = this.getAttribute('data-name');
+            const name = this.getAttribute('data-name') || this.getAttribute('data-title');
             const url = this.getAttribute('data-url');
-            console.log("Modal opened for:", name);
-            console.log("Delete URL set to:", url);
-            modalName.textContent = name;
-            confirmBtn.setAttribute('href', url);
+            const usePost = this.getAttribute('data-method') === 'post';
+
+            console.log("🗑️ Öppnar modal för:", name);
+            if (modalItemName) modalItemName.textContent = name || '[Okänt]';
+
+            if (usePost) {
+                if (deleteForm) {
+                    deleteForm.action = url;
+                    deleteForm.style.display = 'inline-block';
+                }
+                if (confirmBtn) confirmBtn.style.display = 'none';
+            } else {
+                if (confirmBtn) {
+                    confirmBtn.href = url;
+                    confirmBtn.style.display = 'inline-block';
+                }
+                if (deleteForm) deleteForm.style.display = 'none';
+            }
         });
     });
 });

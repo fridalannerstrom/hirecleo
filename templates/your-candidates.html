@@ -82,7 +82,7 @@
                                             <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="{% url 'edit_candidate' candidate.slug %}">
                                                 <i data-feather="edit"></i>
                                             </a>
-                                            <a 
+                                        <a 
                                             class="btn btn-datatable btn-icon btn-transparent-dark open-delete-modal"
                                             href="#"
                                             data-bs-toggle="modal"
@@ -90,7 +90,7 @@
                                             data-name="{{ candidate.first_name }} {{ candidate.last_name }}"
                                             data-url="{% url 'delete_candidate' candidate.slug %}">
                                             <i data-feather="trash-2"></i>
-                                         </a>
+                                        </a>
                                         </td>
                                     </tr>
                                 {% empty %}

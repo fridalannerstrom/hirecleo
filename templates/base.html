@@ -338,24 +338,32 @@
                 </div>
             </div>
 
-            <!-- Global Delete Modal -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">Delete Candidate</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to delete <strong id="candidateName"></strong>?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Delete</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <!-- Global delete modal -->
+
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Ta bort</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+      </div>
+      <div class="modal-body">
+        Är du säker på att du vill ta bort <strong id="modalItemName">detta objekt</strong>?
+      </div>
+      <div class="modal-footer">
+        <!-- För formbaserad DELETE -->
+        <form id="deleteForm" method="post" action="" style="display: none;">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Ta bort</button>
+        </form>
+        <!-- För länkbaserad DELETE -->
+        <a id="confirmDeleteBtn" href="#" class="btn btn-danger" style="display: none;">Ta bort</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+      </div>
+    </div>
+  </div>
+</div>
+
             {% endblock %}
             {% block extra_js %}{% endblock %}
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -369,25 +377,5 @@
             <script src="{% static 'js/scripts.v2.js' %}"></script>
             <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-
-            <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const modal = document.getElementById('deleteModal');
-                const jobTitleElement = document.getElementById('modalJobTitle');
-                const form = document.getElementById('deleteForm');
-
-                document.querySelectorAll('.open-delete-modal').forEach(button => {
-                    button.addEventListener('click', function () {
-                        const title = this.getAttribute('data-title');
-                        const url = this.getAttribute('data-url');
-
-                        jobTitleElement.textContent = title;
-                        form.action = url;
-
-                        console.log("🔴 Modal öppnas för jobb:", title);
-                    });
-                });
-            });
-            </script>
         </body>
     </html>
