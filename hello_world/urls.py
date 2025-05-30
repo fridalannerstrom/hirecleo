@@ -30,4 +30,9 @@ urlpatterns = [
     path('testtolkare/upload/', views.upload_test_result, name='upload_test_result'),
     path('testtolkare/result/<int:pk>/', views.test_result_detail, name='test_result_detail'),
     path("testtolkare/api/stream/<int:pk>/", views.testtolkare_stream_response, name="testtolkare_stream"),
+    path('candidates/<slug:slug>/save-test/', views.save_test_to_candidate, name='save_test_to_candidate'),
+    path('candidates/create-from-test/', views.create_new_candidate_from_test, name='create_new_candidate_from_test'),
+    path("api/find-matching-candidate/", views.find_matching_candidate, name="find_matching_candidate"),
+    path("api/save-summary-to-existing/", views.save_summary_to_existing, name="save_summary_to_existing"),
+    path("api/save-summary-as-new-candidate/", views.save_summary_as_new_candidate, name="save_summary_as_new_candidate"),
 ]

@@ -79,9 +79,12 @@
                                         </td>
                                         <td>{{ candidate.created_on|date:"d M Y" }}</td>
                                         <td>
+                                            {% if candidate.slug %}
                                             <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="{% url 'edit_candidate' candidate.slug %}">
                                                 <i data-feather="edit"></i>
                                             </a>
+                                            {% endif %}
+                                            {% if candidate.slug %}
                                         <a 
                                             class="btn btn-datatable btn-icon btn-transparent-dark open-delete-modal"
                                             href="#"
@@ -91,6 +94,7 @@
                                             data-url="{% url 'delete_candidate' candidate.slug %}">
                                             <i data-feather="trash-2"></i>
                                         </a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 {% empty %}

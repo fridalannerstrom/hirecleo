@@ -25,8 +25,14 @@
             <div class="card shadow-sm">
                 <div class="card-header fw-bold">AI:s sammanfattning</div>
                 <div class="card-body">
-                    <pre style="white-space: pre-wrap;">{{ test_result.ai_summary }}</pre>
+                    <pre id="ai-summary" style="white-space: pre-wrap;">{{ test_result.ai_summary }}</pre>
                 </div>
+            </div>
+
+            <div class="mt-4">
+            <button id="save-summary-btn" class="btn btn-dark">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Spara AI-sammanfattning
+            </button>
             </div>
         </div>
 
@@ -46,10 +52,34 @@
     </div>
 </div>
 
+<!-- MODAL FOR SAVING SUMMARY -->
+<div class="modal fade" id="saveSummaryModal" tabindex="-1" aria-labelledby="saveSummaryLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="saveSummaryLabel">Spara AI-sammanfattning</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+      </div>
+      <div class="modal-body">
+        AI-tolkningen verkar tillhöra <strong id="modalCandidateName">kandidaten</strong>. Vill du spara sammanfattningen till den profilen, eller skapa en ny kandidat?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+        <button id="save-to-existing-btn" type="button" class="btn btn-success">Spara till befintlig</button>
+        <button id="save-as-new-btn" type="button" class="btn btn-primary">Ny kandidat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     const testResultId = {{ test_result.id }};
     const cleoAvatar = "{% static 'assets/img/cleo-icon.png' %}";
+    const testSummary = document.getElementById("ai-summary").innerText;
+    const firstName = "{{ test_result.candidate.first_name|default:'' }}";
+    const lastName = "{{ test_result.candidate.last_name|default:'' }}";
+    const fullName = `${firstName} ${lastName}`.trim();
 
     function getCookie(name) {
         let cookieValue = null;
@@ -66,97 +96,76 @@
         return cookieValue;
     }
 
-    function safeParseMarkdown(text) {
-        const openCount = (text.match(/\*\*/g) || []).length;
-        if (openCount % 2 === 0) {
-            return marked.parse(text);
-        } else {
-            return marked.parse(text + '**');
-        }
-    }
-
-    function appendMessage(sender, text) {
-        const div = document.createElement("div");
-
-        if (sender === "cleo") {
-            div.className = "d-flex mb-3 align-items-start";
-            div.innerHTML = `
-                <img src="${cleoAvatar}" class="me-2 rounded-circle" width="32" height="32">
-                <div class="chat-bubble cleo">
-                    <div class="bubble-inner">${text}</div>
-                </div>
-            `;
-        } else {
-            div.className = "d-flex mb-3 justify-content-end";
-            div.innerHTML = `
-                <div class="chat-bubble user">
-                    <div class="bubble-inner">${text}</div>
-                </div>
-            `;
-        }
-
-        document.getElementById("chat-box").appendChild(div);
-        setTimeout(() => {
-            document.getElementById("chat-box").scrollTop = document.getElementById("chat-box").scrollHeight;
-        }, 50);
-    }
-
-    document.getElementById("send-btn").addEventListener("click", function () {
-        const input = document.getElementById("chat-input");
-        const chatBox = document.getElementById("chat-box");
-        const userMessage = input.value.trim();
-        if (!userMessage) return;
-
-        appendMessage("user", userMessage);
-        input.value = "";
-
-        const div = document.createElement("div");
-        div.className = "d-flex mb-3 align-items-start";
-        div.innerHTML = `
-            <img src="${cleoAvatar}" class="me-2 rounded-circle" width="32" height="32">
-            <div class="chat-bubble cleo">
-                <div class="bubble-inner"></div>
-            </div>
-        `;
-        chatBox.appendChild(div);
-        const bubble = div.querySelector(".bubble-inner");
-
-        let accumulated = "";
-
-        fetch(`/testtolkare/api/stream/${testResultId}/`, {
+    document.getElementById("save-summary-btn").addEventListener("click", () => {
+        fetch("/api/find-matching-candidate/", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
                 "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json"
             },
-            body: JSON.stringify({ message: userMessage })
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName
+            })
         })
-        .then(res => {
-            const reader = res.body.getReader();
-            const decoder = new TextDecoder();
-
-            function read() {
-                reader.read().then(({ done, value }) => {
-                    if (done) {
-                        bubble.innerHTML = marked.parse(accumulated);
-                        chatBox.scrollTop = chatBox.scrollHeight;
-                        return;
-                    }
-
-                    const chunk = decoder.decode(value);
-                    accumulated += chunk;
-                    bubble.innerHTML = safeParseMarkdown(accumulated);
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                    read();
-                });
+        .then(res => res.json())
+        .then(data => {
+            if (data.found) {
+                document.getElementById("modalCandidateName").innerText = `${data.full_name}`;
+                document.getElementById("save-to-existing-btn").style.display = "inline-block";
+                const modal = new bootstrap.Modal(document.getElementById("saveSummaryModal"));
+                modal.show();
+            } else {
+                // Spara direkt som ny kandidat
+                fetch("/api/save-summary-as-new-candidate/", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        summary: testSummary
+                    })
+                })
+                .then(res => res.json())
+                .then(data => window.location.href = data.redirect_url);
             }
-
-            read();
-        })
-        .catch(err => {
-            appendMessage("cleo", "Något gick fel 😢");
-            console.error(err);
         });
+    });
+
+    document.getElementById("save-to-existing-btn").addEventListener("click", () => {
+        fetch("/api/save-summary-to-existing/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName,
+                summary: testSummary
+            })
+        })
+        .then(() => location.reload());
+    });
+
+    document.getElementById("save-as-new-btn").addEventListener("click", () => {
+        fetch("/api/save-summary-as-new-candidate/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName,
+                summary: testSummary
+            })
+        })
+        .then(res => res.json())
+        .then(data => window.location.href = data.redirect_url);
     });
 </script>
 

@@ -49,6 +49,9 @@ class Candidate(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+    def get_absolute_url(self):
+        return reverse("candidate_detail", kwargs={"slug": self.slug})
 
     def save(self, *args, **kwargs):
         if not self.slug:

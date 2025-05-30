@@ -243,6 +243,7 @@ def chat(request):
 @login_required
 def candidate_detail(request, slug):
     candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+    candidate_cv = candidate.cv_text or ""
     cv_html = markdown.markdown(candidate.cv_text)
     return render(request, 'your-candidates-profile.html', {
         'candidate': candidate,
@@ -1076,3 +1077,97 @@ Svara som rekryteringsexpert.
         ChatMessage.objects.create(session=session, sender="cleo", message=accumulated)
 
     return StreamingHttpResponse(generate(), content_type="text/plain")
+
+@csrf_exempt
+@login_required
+def save_test_to_candidate(request, slug):
+    if request.method == "POST":
+        candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+        test_summary = request.POST.get("test_summary")
+
+        if not test_summary:
+            return JsonResponse({"error": "Missing test summary"}, status=400)
+
+        candidate.test_results = (candidate.test_results or "") + f"\n\n{test_summary}"
+        candidate.save()
+
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"error": "Invalid method"}, status=405)
+
+@csrf_exempt
+@login_required
+def create_new_candidate_from_test(request):
+    if request.method == "POST":
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        test_summary = request.POST.get("test_summary")
+
+        if not all([first_name, last_name, test_summary]):
+            return JsonResponse({"error": "Missing required fields"}, status=400)
+
+        slug_base = slugify(f"{first_name}-{last_name}")
+        slug = slug_base
+        counter = 1
+        while Candidate.objects.filter(slug=slug).exists():
+            slug = f"{slug_base}-{counter}"
+            counter += 1
+
+        new_candidate = Candidate.objects.create(
+            user=request.user,
+            first_name=first_name,
+            last_name=last_name,
+            test_results=test_summary,
+            slug=slug
+        )
+
+        return JsonResponse({
+            "success": True,
+            "redirect_url": f"/candidate/{slug}/"
+        })
+
+    return JsonResponse({"error": "Invalid method"}, status=405)
+
+@csrf_exempt
+@login_required
+def find_matching_candidate(request):
+    data = json.loads(request.body)
+    first_name = data.get("first_name", "").strip()
+    last_name = data.get("last_name", "").strip()
+
+    match = Candidate.objects.filter(first_name__iexact=first_name, last_name__iexact=last_name, user=request.user).first()
+    if match:
+        return JsonResponse({"found": True, "full_name": f"{match.first_name} {match.last_name}"})
+    else:
+        return JsonResponse({"found": False})
+
+@csrf_exempt
+@login_required
+def save_summary_to_existing(request):
+    data = json.loads(request.body)
+    first_name = data.get("first_name", "").strip()
+    last_name = data.get("last_name", "").strip()
+    summary = data.get("summary", "")
+
+    candidate = Candidate.objects.filter(first_name__iexact=first_name, last_name__iexact=last_name, user=request.user).first()
+    if candidate:
+        candidate.test_results = (candidate.test_results or "") + f"\n\n{summary}"
+        candidate.save()
+        return JsonResponse({"status": "saved"})
+    return JsonResponse({"error": "Candidate not found"}, status=404)
+
+@csrf_exempt
+@login_required
+def save_summary_as_new_candidate(request):
+    data = json.loads(request.body)
+    first_name = data.get("first_name", "").strip()
+    last_name = data.get("last_name", "").strip()
+    summary = data.get("summary", "")
+
+    candidate = Candidate.objects.create(
+        user=request.user,
+        first_name=first_name,
+        last_name=last_name,
+        test_results=summary
+    )
+    return JsonResponse({"redirect_url": candidate.get_absolute_url()})
