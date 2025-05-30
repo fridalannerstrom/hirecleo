@@ -23,7 +23,7 @@ class Job(models.Model):
 
     def get_absolute_url(self):
         return reverse('job_detail', args=[str(self.slug)])
-
+    
 # === Kandidat ===
 class Candidate(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidates")
@@ -63,6 +63,14 @@ class Candidate(models.Model):
 
     class Meta:
         ordering = ['-created_on']
+    
+class TestResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    candidate = models.ForeignKey(Candidate, on_delete=models.SET_NULL, null=True, blank=True)
+    uploaded_file = models.FileField(upload_to='test_results/')
+    extracted_text = models.TextField(blank=True)
+    ai_summary = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
 
 # === Profil ===
 class Profile(models.Model):
@@ -87,6 +95,7 @@ class ChatSession(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_sessions')
     title = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    test_result = models.ForeignKey(TestResult, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} – {self.title} ({self.created_at.strftime('%Y-%m-%d %H:%M')})"
@@ -119,3 +128,4 @@ class JobAd(models.Model):
 
     def get_absolute_url(self):
         return reverse('jobad_detail', args=[str(self.id)])
+

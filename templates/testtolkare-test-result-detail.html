@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Testresultat - Cleo{% endblock %}
+{% block content %}
+
+<div class="container-xl px-4 mt-4">
+    <h1 class="mb-4"><i class="fa-solid fa-brain me-2"></i>AI-tolkning av testresultat</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Sammanfattning</strong> från AI
+        </div>
+        <div class="card-body">
+            <p>{{ test_result.ai_summary|linebreaks }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <strong>Ställ följdfrågor till Cleo</strong>
+        </div>
+        <div class="card-body">
+            <form method="post" class="mb-3">
+                {% csrf_token %}
+                <input type="hidden" name="test_id" value="{{ test_result.id }}">
+                <textarea class="form-control mb-2" name="message" rows="3" placeholder="Ex: Hur påverkar detta personens förmåga att leda andra?" required></textarea>
+                <button type="submit" class="btn btn-primary">Ställ fråga</button>
+            </form>
+
+            <div class="chat-history">
+                {% for msg in chat_messages %}
+                    <div class="mb-2">
+                        <strong>{{ msg.sender }}:</strong> {{ msg.message|linebreaks }}
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Inga tidigare frågor än.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

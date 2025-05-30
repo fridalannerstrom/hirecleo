@@ -27,4 +27,6 @@ urlpatterns = [
     path('api/generate-jobad/', views.generate_jobad_api, name='generate_jobad_api'),
     path("compare-candidates/", views.compare_candidates_page, name="compare_candidates"),
     path("compare-candidates/api/", views.compare_candidates_api, name="compare_candidates_api"),
+    path('testtolkare/upload/', views.upload_test_result, name='upload_test_result'),
+    path('testtolkare/result/<int:pk>/', views.test_result_detail, name='test_result_detail'),
 ]

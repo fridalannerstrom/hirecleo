@@ -23,6 +23,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import View
 from django.shortcuts import render, redirect
 from bs4 import BeautifulSoup
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import TestResult
+from openai import OpenAI
+from PyPDF2 import PdfReader
+from .forms import TestChatMessageForm  # valfritt om du vill ha ett formulärobjekt
+import uuid
 
 client = OpenAI()
 
@@ -918,3 +925,96 @@ def compare_candidates_page(request):
     jobs = Job.objects.filter(user=request.user)
     candidates = Candidate.objects.filter(user=request.user)
     return render(request, "compare-candidates.html", {"jobs": jobs, "candidates": candidates})
+
+
+def read_pdf_text(file):
+    text = ''
+    pdf = PdfReader(file)
+    for page in pdf.pages:
+        text += page.extract_text() or ''
+    return text
+
+@login_required
+def upload_test_result(request):
+    if request.method == 'POST':
+        file = request.FILES.get('uploaded_file')
+        test = TestResult(user=request.user, uploaded_file=file)
+
+        # Extrahera text från PDF
+        text = read_pdf_text(file)
+        test.extracted_text = text
+
+        # Skicka till OpenAI för tolkning
+        prompt = f"""
+Här är ett testresultat från ett rekryteringstest (t.ex. personlighet, logik, motivation):
+
+\"\"\"{text[:2000]}\"\"\"
+
+Tolka testet och ge en kort sammanfattning om personen – styrkor, utmaningar och vad som sticker ut.
+Svara på svenska.
+"""
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=[
+                    {"role": "system", "content": "Du är en rekryteringsexpert som tolkar testresultat."},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            test.ai_summary = response.choices[0].message.content.strip()
+        except Exception as e:
+            test.ai_summary = "❌ AI-tolkningen misslyckades: " + str(e)
+
+        test.save()
+        return redirect('test_result_detail', pk=test.pk)
+
+    return render(request, 'testtolkare-upload.html')
+
+
+@login_required
+def test_result_detail(request, pk):
+    test_result = get_object_or_404(TestResult, pk=pk, user=request.user)
+
+    # 🟢 Skapa (eller hämta) en chatt-session för detta test
+    session, created = ChatSession.objects.get_or_create(
+        user=request.user,
+        test_result=test_result,
+        defaults={'title': f"Testtolkning {test_result.id}"}
+    )
+
+    if request.method == 'POST':
+        question = request.POST.get('message')
+
+        prompt = f"""
+Detta är resultatet från ett test:
+
+\"\"\"{test_result.extracted_text[:2000]}\"\"\"
+
+Tidigare AI-tolkning:
+\"\"\"{test_result.ai_summary}\"\"\"
+
+Fråga från användaren:
+\"\"\"{question}\"\"\"
+
+Svara som rekryteringsexpert.
+"""
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": "Du är en AI-expert på psykometriska tester i rekrytering."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        answer = response.choices[0].message.content.strip()
+
+        # 📝 Spara fråga och svar i sessionen
+        ChatMessage.objects.create(session=session, sender="user", message=question)
+        ChatMessage.objects.create(session=session, sender="cleo", message=answer)
+
+    # 💬 Hämta historiken kopplad till denna test-session
+    chat_messages = ChatMessage.objects.filter(session__test_result=test_result).order_by("timestamp")
+
+    return render(request, 'testtolkare-test-result-detail.html', {
+        "test_result": test_result,
+        "chat_messages": chat_messages
+    })
