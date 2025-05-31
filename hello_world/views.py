@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileImageForm
-from .models import Candidate, Profile, ChatSession, ChatMessage, Job, JobAd
+from .models import Profile, ChatSession, ChatMessage
 from django.utils.text import slugify
 import uuid
 from openai import OpenAI
@@ -30,6 +30,8 @@ from openai import OpenAI
 from PyPDF2 import PdfReader
 from .forms import TestChatMessageForm  # valfritt om du vill ha ett formulärobjekt
 import uuid
+from candidates.models import Candidate
+from jobs.models import Job, JobAd
 
 client = OpenAI()
 
@@ -124,52 +126,6 @@ def account_profile(request):
     })
 
 @login_required
-def add_candidates_manually(request):
-    if request.method == 'POST':
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
-        phone_number = request.POST.get('phone_number')
-        linkedin_url = request.POST.get('linkedin_url')
-        top_skills_raw = request.POST.get('top_skills', '')
-        top_skills = [skill.strip() for skill in top_skills_raw.split(',') if skill.strip()]
-        cv_text = request.POST.get('cv_text')
-        interview_notes = request.POST.get('interview_notes')
-        test_results = request.POST.get('test_results')
-
-        # Generera unik slug
-        base_slug = slugify(f"{first_name}-{last_name}")
-        slug = base_slug
-        counter = 1
-        while Candidate.objects.filter(slug=slug).exists():
-            slug = f"{base_slug}-{counter}"
-            counter += 1
-
-        # Skapa kandidat
-        Candidate.objects.create(
-            user=request.user,
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-            phone_number=phone_number,
-            linkedin_url=linkedin_url,
-            top_skills=top_skills,
-            cv_text=cv_text,
-            interview_notes=interview_notes,
-            test_results=test_results,
-            slug=slug,
-        )
-
-        return redirect('your_candidates') 
-
-    return render(request, 'add-candidates-manually.html')
-
-@login_required
-def your_candidates(request):
-    candidates = Candidate.objects.filter(user=request.user).order_by('-created_on')
-    return render(request, 'your-candidates.html', {'candidates': candidates})
-
-@login_required
 def your_jobs(request):
     jobs = Job.objects.filter(user=request.user).order_by('-created_on')
     return render(request, 'your-jobs.html', {'jobs': jobs})
@@ -240,44 +196,6 @@ def add_jobs_pdf(request):
 def chat(request):
     return render(request, 'chat.html')
 
-@login_required
-def candidate_detail(request, slug):
-    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
-    candidate_cv = candidate.cv_text or ""
-    cv_html = markdown.markdown(candidate.cv_text)
-    return render(request, 'your-candidates-profile.html', {
-        'candidate': candidate,
-        'cv_html': cv_html
-    })
-
-@login_required
-def edit_candidate(request, slug):
-    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
-
-    if request.method == 'POST':
-        candidate.first_name = request.POST.get('first_name')
-        candidate.last_name = request.POST.get('last_name')
-        candidate.email = request.POST.get('email')
-        candidate.phone_number = request.POST.get('phone_number')
-        candidate.linkedin_url = request.POST.get('linkedin_url')
-        candidate.cv_text = request.POST.get('cv_text')
-        candidate.interview_notes = request.POST.get('interview_notes')
-        candidate.test_results = request.POST.get('test_results')
-
-        top_skills_raw = request.POST.get('top_skills', '')
-        candidate.top_skills = [s.strip() for s in top_skills_raw.split(',') if s.strip()]
-
-        candidate.save()
-        return redirect('candidate_detail', slug=candidate.slug)
-
-    return render(request, 'your-candidates-edit.html', {'candidate': candidate})
-
-@login_required
-def delete_candidate(request, slug):
-    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
-    candidate.delete()
-    return redirect('your_candidates')
-
 def extract_text_from_pdf(pdf_file):
     text = ""
     with fitz.open(stream=pdf_file.read(), filetype="pdf") as doc:
@@ -342,63 +260,6 @@ def read_pdf_text(pdf_file):
         text += page.extract_text() or ''
     return text
 
-@login_required
-def add_candidates_pdf(request):
-    if request.method == 'POST':
-        files = request.FILES.getlist('uploaded_pdf')  # ⬅️ direkt från request
-
-        for pdf_file in files:
-            candidate = Candidate(uploaded_pdf=pdf_file, user=request.user)
-
-            # 📄 Läs CV-text från PDF
-            candidate.cv_text = read_pdf_text(pdf_file)
-
-            # 🧠 Extrahera data med OpenAI
-            try:
-                import json
-                import re
-
-                result = extract_data_with_openai(candidate.cv_text)
-                print("🔍 RAW RESULT FROM OPENAI:\n", result)
-
-                cleaned_result = re.sub(r"```json|```", "", result).strip()
-                try:
-                    data = json.loads(cleaned_result)
-                    print("✅ Parsed JSON:\n", data)
-                except json.JSONDecodeError as e:
-                    print("❌ JSONDecodeError:", e)
-                    data = {}
-
-                candidate.first_name = data.get('Förnamn', '')
-                candidate.last_name = data.get('Efternamn', '')
-                candidate.email = data.get('E-postadress', '')
-                candidate.phone_number = data.get('Telefonnummer', '')
-                candidate.linkedin_url = data.get('LinkedIn-länk', '')
-                candidate.top_skills = data.get('Top Skills', [])
-
-                # 1. Rensa bort kontaktinfo
-                candidate.cv_text = clean_cv_text(
-                    candidate.cv_text,
-                    phone=candidate.phone_number,
-                    email=candidate.email,
-                    linkedin=candidate.linkedin_url,
-                )
-
-                # 2. Skicka till OpenAI för snygg formatering
-                candidate.cv_text = reformat_cv_text_with_openai(candidate.cv_text)
-            except Exception as e:
-                print("🔥 OpenAI error:", e)
-
-            print("💾 Sparar kandidat:", candidate.first_name, candidate.last_name)
-            candidate.save()
-
-        return redirect('add_candidates_pdf')
-
-    # GET-request: visa formuläret och befintliga kandidater
-    candidates = Candidate.objects.filter(uploaded_pdf__isnull=False).order_by('-created_on')
-    return render(request, 'add-candidates-pdf.html', {
-        'candidates': candidates
-    })
 
 
 @login_required
@@ -1077,97 +938,3 @@ Svara som rekryteringsexpert.
         ChatMessage.objects.create(session=session, sender="cleo", message=accumulated)
 
     return StreamingHttpResponse(generate(), content_type="text/plain")
-
-@csrf_exempt
-@login_required
-def save_test_to_candidate(request, slug):
-    if request.method == "POST":
-        candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
-        test_summary = request.POST.get("test_summary")
-
-        if not test_summary:
-            return JsonResponse({"error": "Missing test summary"}, status=400)
-
-        candidate.test_results = (candidate.test_results or "") + f"\n\n{test_summary}"
-        candidate.save()
-
-        return JsonResponse({"success": True})
-
-    return JsonResponse({"error": "Invalid method"}, status=405)
-
-@csrf_exempt
-@login_required
-def create_new_candidate_from_test(request):
-    if request.method == "POST":
-        first_name = request.POST.get("first_name")
-        last_name = request.POST.get("last_name")
-        test_summary = request.POST.get("test_summary")
-
-        if not all([first_name, last_name, test_summary]):
-            return JsonResponse({"error": "Missing required fields"}, status=400)
-
-        slug_base = slugify(f"{first_name}-{last_name}")
-        slug = slug_base
-        counter = 1
-        while Candidate.objects.filter(slug=slug).exists():
-            slug = f"{slug_base}-{counter}"
-            counter += 1
-
-        new_candidate = Candidate.objects.create(
-            user=request.user,
-            first_name=first_name,
-            last_name=last_name,
-            test_results=test_summary,
-            slug=slug
-        )
-
-        return JsonResponse({
-            "success": True,
-            "redirect_url": f"/candidate/{slug}/"
-        })
-
-    return JsonResponse({"error": "Invalid method"}, status=405)
-
-@csrf_exempt
-@login_required
-def find_matching_candidate(request):
-    data = json.loads(request.body)
-    first_name = data.get("first_name", "").strip()
-    last_name = data.get("last_name", "").strip()
-
-    match = Candidate.objects.filter(first_name__iexact=first_name, last_name__iexact=last_name, user=request.user).first()
-    if match:
-        return JsonResponse({"found": True, "full_name": f"{match.first_name} {match.last_name}"})
-    else:
-        return JsonResponse({"found": False})
-
-@csrf_exempt
-@login_required
-def save_summary_to_existing(request):
-    data = json.loads(request.body)
-    first_name = data.get("first_name", "").strip()
-    last_name = data.get("last_name", "").strip()
-    summary = data.get("summary", "")
-
-    candidate = Candidate.objects.filter(first_name__iexact=first_name, last_name__iexact=last_name, user=request.user).first()
-    if candidate:
-        candidate.test_results = (candidate.test_results or "") + f"\n\n{summary}"
-        candidate.save()
-        return JsonResponse({"status": "saved"})
-    return JsonResponse({"error": "Candidate not found"}, status=404)
-
-@csrf_exempt
-@login_required
-def save_summary_as_new_candidate(request):
-    data = json.loads(request.body)
-    first_name = data.get("first_name", "").strip()
-    last_name = data.get("last_name", "").strip()
-    summary = data.get("summary", "")
-
-    candidate = Candidate.objects.create(
-        user=request.user,
-        first_name=first_name,
-        last_name=last_name,
-        test_results=summary
-    )
-    return JsonResponse({"redirect_url": candidate.get_absolute_url()})
