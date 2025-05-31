@@ -10,7 +10,4 @@ urlpatterns = [
     path('account/', views.account_profile, name='account_profile'),
     path('chat/', views.chat, name='chat'),
     path('skapa-konto/', views.RegisterView.as_view(), name='register'),
-    path('testtolkare/upload/', views.upload_test_result, name='upload_test_result'),
-    path('testtolkare/result/<int:pk>/', views.test_result_detail, name='test_result_detail'),
-    path("testtolkare/api/stream/<int:pk>/", views.testtolkare_stream_response, name="testtolkare_stream"),
 ]

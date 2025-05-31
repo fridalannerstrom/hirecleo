@@ -169,4 +169,47 @@
     });
 </script>
 
+<script>
+document.getElementById("send-btn").addEventListener("click", () => {
+    const input = document.getElementById("chat-input");
+    const message = input.value.trim();
+    if (!message) return;
+
+    // Visa användarens meddelande direkt
+    const chatBox = document.getElementById("chat-box");
+    const userBubble = document.createElement("div");
+    userBubble.className = "mb-2 p-2 bg-primary text-white rounded";
+    userBubble.innerText = message;
+    chatBox.appendChild(userBubble);
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    input.value = "";
+
+    // Skicka till Django-stream-endpoint
+    fetch(`/testanalyzer/api/stream/${testResultId}/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({ message: message })
+    }).then(async response => {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let aiText = "";
+        const aiBubble = document.createElement("div");
+        aiBubble.className = "mb-2 p-2 bg-light border rounded";
+        chatBox.appendChild(aiBubble);
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            aiText += decoder.decode(value);
+            aiBubble.innerText = aiText;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    });
+});
+</script>
+
 {% endblock %}
