@@ -80,12 +80,12 @@ def add_candidates_pdf(request):
                 print("✅ Parsed JSON:", data)
 
                 # 🧍 Fyll i kandidatens fält
-                candidate.first_name = data.get('Förnamn', '').strip()
-                candidate.last_name = data.get('Efternamn', '').strip()
-                candidate.email = data.get('E-postadress', '').strip()
-                candidate.phone_number = data.get('Telefonnummer', '').strip()
-                candidate.linkedin_url = data.get('LinkedIn-länk', '').strip()
-                candidate.top_skills = data.get('Top Skills', [])
+                candidate.first_name = (data.get('Förnamn') or '').strip()
+                candidate.last_name = (data.get('Efternamn') or '').strip()
+                candidate.email = (data.get('E-postadress') or '').strip()
+                candidate.phone_number = (data.get('Telefonnummer') or '').strip()
+                candidate.linkedin_url = (data.get('LinkedIn-länk') or '').strip()
+                candidate.top_skills = data.get('Top Skills') or []
 
                 # 🧼 Rensa och ✨ formatera CV
                 candidate.cv_text = clean_cv_text(
