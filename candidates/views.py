@@ -59,7 +59,7 @@ def add_candidates_manually(request):
 
         return redirect('your_candidates')
 
-    return render(request, 'add-candidates-manually.html')
+    return render(request, 'candidates/add-candidates-manually.html')
 
 
 @login_required
@@ -115,14 +115,14 @@ def add_candidates_pdf(request):
         return redirect('add_candidates_pdf')
 
     candidates = Candidate.objects.filter(user=request.user).order_by('-created_on')
-    return render(request, 'add-candidates-pdf.html', {'candidates': candidates})
+    return render(request, 'candidates/add-candidates-pdf.html', {'candidates': candidates})
 
 
 @login_required
 def candidate_detail(request, slug):
     candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
     cv_html = markdown.markdown(candidate.cv_text)
-    return render(request, 'your-candidates-profile.html', {
+    return render(request, 'candidates/your-candidates-profile.html', {
         'candidate': candidate,
         'cv_html': cv_html
     })
@@ -148,7 +148,7 @@ def edit_candidate(request, slug):
         candidate.save()
         return redirect('candidate_detail', slug=candidate.slug)
 
-    return render(request, 'your-candidates-edit.html', {'candidate': candidate})
+    return render(request, 'candidates/your-candidates-edit.html', {'candidate': candidate})
 
 
 @login_required
@@ -161,7 +161,7 @@ def delete_candidate(request, slug):
 @login_required
 def your_candidates(request):
     candidates = Candidate.objects.filter(user=request.user).order_by('-created_on')
-    return render(request, 'your-candidates.html', {'candidates': candidates})
+    return render(request, 'candidates/your-candidates.html', {'candidates': candidates})
 
 
 @csrf_exempt

@@ -30,6 +30,8 @@ urlpatterns = [
     path('api/', include('hello_world.api_urls')),  # API-endpoints separerade
     path("api/test/", lambda request: HttpResponse("Hej från test!")),
     path('candidates/', include('candidates.urls')),
+    path('generator/', include('generator.urls')),
+    path('jobs/', include('jobs.urls')),
 ]
 
 if settings.DEBUG:
