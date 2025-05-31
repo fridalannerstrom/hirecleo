@@ -33,6 +33,7 @@ urlpatterns = [
     path('generator/', include('generator.urls')),
     path('jobs/', include('jobs.urls')),
     path('compare-candidates/', include('comparator.urls')),
+    path('testanalyzer/', include('testanalyzer.urls')),
 ]
 
 if settings.DEBUG:

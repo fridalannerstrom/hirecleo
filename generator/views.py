@@ -169,4 +169,4 @@ Här är input:
 @login_required
 def jobad_detail(request, pk):
     ad = get_object_or_404(JobAd, pk=pk, user=request.user)
-    return render(request, 'jobads/jobad_detail.html', {'ad': ad})
+    return render(request, 'generator/jobads/jobad_detail.html', {'ad': ad})

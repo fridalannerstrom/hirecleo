@@ -45,12 +45,3 @@ class Candidate(models.Model):
 
     class Meta:
         ordering = ['-created_on']
-
-
-class TestResult(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    candidate = models.ForeignKey(Candidate, on_delete=models.SET_NULL, null=True, blank=True)
-    uploaded_file = models.FileField(upload_to='test_results/')
-    extracted_text = models.TextField(blank=True)
-    ai_summary = models.TextField(blank=True)
-    created_on = models.DateTimeField(auto_now_add=True)

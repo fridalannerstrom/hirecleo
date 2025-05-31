@@ -2,8 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
 from django.urls import reverse
-from candidates.models import TestResult, Candidate
+from candidates.models import Candidate
 from jobs.models import Job, JobAd
+from testanalyzer.models import TestResult
 
 # === Profil ===
 class Profile(models.Model):

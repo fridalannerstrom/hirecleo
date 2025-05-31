@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'jobs',
     'generator',
     'comparator',
+    'testanalyzer',
 ]
 
 MIDDLEWARE = [

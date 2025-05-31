@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Testtolkare - Cleo{% endblock %}
+{% block content %}
+
+<header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+    <div class="container-xl px-4">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-between pt-3">
+                <div class="col-auto mb-3">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i class="fa-regular fa-vial"></i></div>
+                        Testtolkare
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container-xl px-4 mt-4">
+    <div class="row">
+        <!-- Vänsterkolumn: Resultat -->
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header fw-bold">AI:s sammanfattning</div>
+                <div class="card-body">
+                    <pre id="ai-summary" style="white-space: pre-wrap;">{{ test_result.ai_summary }}</pre>
+                </div>
+            </div>
+
+            <div class="mt-4">
+            <button id="save-summary-btn" class="btn btn-dark">
+                <i class="fa-solid fa-floppy-disk me-1"></i> Spara AI-sammanfattning
+            </button>
+            </div>
+        </div>
+
+        <!-- Högerkolumn: Chatt -->
+        <div class="col-md-6 d-flex flex-column">
+            <div class="card shadow-sm flex-grow-1 d-flex flex-column">
+                <div class="card-header fw-bold">Ställ följdfrågor</div>
+                <div class="card-body overflow-auto" id="chat-box" style="height: 400px;"></div>
+                <div class="card-footer">
+                    <div class="input-group">
+                        <input type="text" id="chat-input" class="form-control" placeholder="Ställ en fråga...">
+                        <button id="send-btn" class="btn btn-dark">Skicka</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL FOR SAVING SUMMARY -->
+<div class="modal fade" id="saveSummaryModal" tabindex="-1" aria-labelledby="saveSummaryLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="saveSummaryLabel">Spara AI-sammanfattning</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Stäng"></button>
+      </div>
+      <div class="modal-body">
+        AI-tolkningen verkar tillhöra <strong id="modalCandidateName">kandidaten</strong>. Vill du spara sammanfattningen till den profilen, eller skapa en ny kandidat?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+        <button id="save-to-existing-btn" type="button" class="btn btn-success">Spara till befintlig</button>
+        <button id="save-as-new-btn" type="button" class="btn btn-primary">Ny kandidat</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    const testResultId = {{ test_result.id }};
+    const cleoAvatar = "{% static 'assets/img/cleo-icon.png' %}";
+    const testSummary = document.getElementById("ai-summary").innerText;
+    const firstName = "{{ test_result.candidate.first_name|default:'' }}";
+    const lastName = "{{ test_result.candidate.last_name|default:'' }}";
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document !== "") {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    document.getElementById("save-summary-btn").addEventListener("click", () => {
+        fetch("/api/find-matching-candidate/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.found) {
+                document.getElementById("modalCandidateName").innerText = `${data.full_name}`;
+                document.getElementById("save-to-existing-btn").style.display = "inline-block";
+                const modal = new bootstrap.Modal(document.getElementById("saveSummaryModal"));
+                modal.show();
+            } else {
+                // Spara direkt som ny kandidat
+                fetch("/api/save-summary-as-new-candidate/", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie("csrftoken"),
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        first_name: firstName,
+                        last_name: lastName,
+                        summary: testSummary
+                    })
+                })
+                .then(res => res.json())
+                .then(data => window.location.href = data.redirect_url);
+            }
+        });
+    });
+
+    document.getElementById("save-to-existing-btn").addEventListener("click", () => {
+        fetch("/api/save-summary-to-existing/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName,
+                summary: testSummary
+            })
+        })
+        .then(() => location.reload());
+    });
+
+    document.getElementById("save-as-new-btn").addEventListener("click", () => {
+        fetch("/api/save-summary-as-new-candidate/", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                first_name: firstName,
+                last_name: lastName,
+                summary: testSummary
+            })
+        })
+        .then(res => res.json())
+        .then(data => window.location.href = data.redirect_url);
+    });
+</script>
+
+{% endblock %}
