@@ -251,3 +251,5 @@ def chat_response(request):
                 yield delta
 
     return StreamingHttpResponse(generate(), content_type='text/plain')
+
+

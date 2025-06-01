@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'testanalyzer',
     'core',
     'users',
+    'interviewprep',
 ]
 
 MIDDLEWARE = [

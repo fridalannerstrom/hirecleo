@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Intervjuförberedelse{% endblock %}
+{% block content %}
+
+<div class="container-xl mt-5">
+    <h2>Förbered intervjun</h2>
+
+    <form id="interviewForm" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- === TABBAR === -->
+        <ul class="nav nav-tabs mb-4" id="inputTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab-text-tab" data-bs-toggle="tab" data-bs-target="#tab-text" type="button" role="tab">Skriv fritt</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-job-tab" data-bs-toggle="tab" data-bs-target="#tab-job" type="button" role="tab">Välj jobb</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab-upload-tab" data-bs-toggle="tab" data-bs-target="#tab-upload" type="button" role="tab">Ladda upp fil</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="inputTabsContent">
+            <!-- ✍️ Fritext -->
+            <div class="tab-pane fade show active" id="tab-text" role="tabpanel">
+                <label class="form-label">Beskriv jobbet med egna ord</label>
+                <textarea class="form-control" name="prompt" rows="5" placeholder="Ex: Vi söker en analytisk person..."></textarea>
+            </div>
+
+            <!-- 📋 Välj befintligt jobb -->
+            <div class="tab-pane fade" id="tab-job" role="tabpanel">
+                <label class="form-label mt-3">Välj ett jobb från din lista</label>
+                <select class="form-select" name="job_id">
+                    <option value="">-- Välj --</option>
+                    {% for job in jobs %}
+                        <option value="{{ job.id }}">{{ job.title }} – {{ job.company }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- 📎 Ladda upp fil -->
+            <div class="tab-pane fade" id="tab-upload" role="tabpanel">
+                <label class="form-label mt-3">Ladda upp en fil</label>
+                <input type="file" class="form-control" name="job_file" accept=".pdf,.docx,.txt">
+            </div>
+        </div>
+
+        <hr class="mt-5">
+
+        <label class="form-label">Vill du anpassa efter kandidat? (valfritt)</label>
+        <select class="form-select" name="candidate_id">
+            <option value="">-- Ingen --</option>
+            {% for c in candidates %}
+                <option value="{{ c.id }}">{{ c.first_name }} {{ c.last_name }}</option>
+            {% endfor %}
+        </select>
+
+        <button class="btn btn-primary mt-4">🎯 Generera intervjufrågor</button>
+    </form>
+</div>
+
+{% endblock %}
