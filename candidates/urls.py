@@ -13,4 +13,7 @@ urlpatterns = [
     path('find-matching-candidate/', views.find_matching_candidate, name='find_matching_candidate'),
     path('save-summary-to-existing/', views.save_summary_to_existing, name='save_summary_to_existing'),
     path('save-summary-as-new/', views.save_summary_as_new_candidate, name='save_summary_as_new_candidate'),
+    path('<slug:slug>/upload-test/', views.upload_test_result, name='upload_test_result'),
+    path('<slug:slug>/summarize-tests/', views.summarize_test_results, name='summarize_test_results'),
+    path('delete-test/<int:id>/', views.delete_test_result, name='delete_test_result'),
 ]

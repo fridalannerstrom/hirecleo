@@ -122,9 +122,11 @@ def add_candidates_pdf(request):
 def candidate_detail(request, slug):
     candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
     cv_html = markdown.markdown(candidate.cv_text)
+    test_html = markdown.markdown(candidate.test_results or "")
     return render(request, 'candidates/your-candidates-profile.html', {
         'candidate': candidate,
-        'cv_html': cv_html
+        'cv_html': cv_html,
+        'test_html': test_html
     })
 
 
@@ -261,3 +263,81 @@ def save_summary_as_new_candidate(request):
         test_results=summary
     )
     return JsonResponse({"redirect_url": candidate.get_absolute_url()})
+
+@login_required
+def upload_test_result(request, slug):
+    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+
+    if request.method == "POST" and request.FILES.get("test_file"):
+        test_file = request.FILES["test_file"]
+        TestResult.objects.create(
+            user=request.user,  # 👈 detta saknades
+            candidate=candidate,
+            uploaded_file=test_file
+)
+    
+    return redirect("candidate_detail", slug=slug)
+
+from core.views import read_pdf_text, normalize_pdf_text, client  # se till att OpenAI är importerat
+
+@login_required
+def summarize_test_results(request, slug):
+    candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
+
+    # Läs all text från testresultat
+    texts = []
+    for result in candidate.testresult_set.all():
+        if not result.extracted_text:
+            raw = read_pdf_text(result.uploaded_file)
+            result.extracted_text = normalize_pdf_text(raw)
+            result.save()
+        texts.append(result.extracted_text)
+
+    full_text = "\n\n".join(texts).strip()
+
+    if not full_text:
+        return JsonResponse({"error": "Inget innehåll hittades i testfilerna."}, status=400)
+
+    # Skicka till GPT
+    prompt = f"""
+Här är olika testresultat för en kandidat:
+
+\"\"\"{full_text}\"\"\"
+
+Analysera dem och skriv en sammanfattning av:
+- Kandidatens styrkor
+- Eventuella utvecklingsområden
+- Vad testresultaten visar om arbetsstil, förmågor och lämplighet
+- Om möjligt, ge ett helhetsintryck med tydliga rubriker.
+
+Skriv professionellt på svenska.
+"""
+
+    print("📤 Prompt till GPT:\n", prompt[:10000])
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "Du är en expert på testanalys inom rekrytering."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=1000
+    )
+
+    summary = response.choices[0].message.content.strip()
+    candidate.test_results = summary
+    candidate.save()
+
+    return redirect("candidate_detail", slug=slug)
+
+@login_required
+def delete_test_result(request, id):
+    result = get_object_or_404(TestResult, id=id, user=request.user)
+
+    slug = result.candidate.slug if result.candidate else None
+    result.uploaded_file.delete(save=False)  # Ta bort filen från media
+    result.delete()
+
+    if slug:
+        return redirect('candidate_detail', slug=slug)
+    return redirect('your_candidates')

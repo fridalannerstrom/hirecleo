@@ -75,7 +75,62 @@
           
               <!-- TEST RESULTS -->
               <div class="tab-pane fade" id="tests" role="tabpanel" aria-labelledby="tests-tab">
-                <p class="mt-3">{{ candidate.test_results|linebreaksbr }}</p>
+                <div class="mt-3">{{ test_html|safe }}</div>
+
+                <h5 class="mt-4 mb-3">Testresultatfiler</h5>
+
+                <table class="table table-bordered table-hover">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Fil</th>
+                      <th>Uppladdad</th>
+                      <th>Åtgärder</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for result in candidate.testresult_set.all %}
+                    <tr>
+                      <td>
+                        <a href="{{ result.uploaded_file.url }}" target="_blank">{{ result.uploaded_file.name }}</a>
+                      </td>
+                      <td>{{ result.created_at|date:"Y-m-d H:i" }}</td>
+                      <td>
+                        <form method="post" action="{% url 'delete_test_result' result.id %}" onsubmit="return confirm('Radera testresultat?');">
+                          {% csrf_token %}
+                          <a 
+                            class="btn btn-datatable btn-icon btn-transparent-dark open-delete-modal"
+                            href="#"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
+                            data-name="{{ result.uploaded_file.name }}"
+                            data-url="{% url 'delete_test_result' result.id %}">
+                            <i data-feather="trash-2"></i>
+                          </a>
+                        </form>
+                      </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-muted">Inga testresultat uppladdade</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+
+                <!-- Filuppladdning -->
+                <form method="post" enctype="multipart/form-data" action="{% url 'upload_test_result' slug=candidate.slug %}">
+                  {% csrf_token %}
+                  <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="test_file" required>
+                    <button class="btn btn-outline-primary" type="submit">Ladda upp testresultat</button>
+                  </div>
+                </form>
+
+                <!-- Sammanfatta alla -->
+                <form method="post" action="{% url 'summarize_test_results' slug=candidate.slug %}">
+                  {% csrf_token %}
+                  <button class="btn btn-success" type="submit">
+                    🧠 Sammanfatta alla testresultat
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -121,5 +176,31 @@
 
   </div>
 </div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+  const deleteModal = document.getElementById('deleteModal');
+  const deleteForm = document.getElementById('deleteForm');
+  const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  const modalItemName = document.getElementById('modalItemName');
+
+  document.querySelectorAll('.open-delete-modal').forEach(button => {
+    button.addEventListener('click', function () {
+      const name = this.dataset.name || 'detta objekt';
+      const url = this.dataset.url;
+
+      modalItemName.textContent = name;
+      deleteForm.action = url;
+      confirmDeleteBtn.href = url;
+
+      // Visa endast formulärknapp (POST) – om du använder länk-DELETE, visa confirmDeleteBtn istället
+      deleteForm.style.display = 'block';
+      confirmDeleteBtn.style.display = 'none';
+    });
+  });
+});
+
+</script>
 
 {% endblock %}
