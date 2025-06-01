@@ -10,8 +10,8 @@ import logging
 import markdown
 import json
 
-from core.pdf_utils import read_pdf_text
-from core.openai_utils import (
+from core.views import read_pdf_text
+from core.views import (
     extract_candidate_data_with_openai,
     extract_job_data_with_openai,
     clean_cv_text,

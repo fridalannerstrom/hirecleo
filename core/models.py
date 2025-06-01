@@ -25,3 +25,12 @@ class ChatMessage(models.Model):
     def __str__(self):
         return f"{self.timestamp.strftime('%H:%M')} {self.sender}: {self.message[:30]}"
 
+# === Cleo-dokument (för embedding/AI) ===
+class CleoDocument(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    embedding_id = models.CharField(max_length=255, blank=True, null=True)  # Pinecone ID
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

@@ -42,12 +42,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'hello_world',
     'candidates',
     'jobs',
     'generator',
     'comparator',
     'testanalyzer',
+    'core',
+    'users',
 ]
 
 MIDDLEWARE = [

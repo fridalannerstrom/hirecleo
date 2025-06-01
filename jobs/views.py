@@ -9,8 +9,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from openai import OpenAI
 from jobs.models import Job, JobAd
-from core.pdf_utils import read_pdf_text
-from core.openai_utils import (
+from core.views import read_pdf_text
+from core.views import (
     extract_candidate_data_with_openai,
     extract_job_data_with_openai,
     clean_cv_text,
@@ -141,3 +141,30 @@ def edit_job(request, slug):
 def jobad_detail(request, pk):
     ad = get_object_or_404(JobAd, pk=pk, user=request.user)
     return render(request, 'jobads/jobad_detail.html', {'ad': ad})
+
+
+def extract_job_data_with_openai(text):
+    prompt = f"""
+Här är en jobbannons i textformat:
+
+\"\"\"{text}\"\"\"
+
+Extrahera följande som JSON:
+- Titel
+- Företag
+- Plats
+- Anställningsform
+- Beskrivning (kort, renskriven version)
+
+Returnera bara JSON, utan kommentarer.
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "Du är en expert på att tolka jobbannonser."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=600
+    )
+    return response.choices[0].message.content

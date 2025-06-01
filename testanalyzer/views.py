@@ -8,6 +8,8 @@ from PyPDF2 import PdfReader
 from openai import OpenAI
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from core.models import ChatSession, ChatMessage
+from django.http import StreamingHttpResponse
 
 client = OpenAI()
 

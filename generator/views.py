@@ -6,8 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from jobs.models import Job, JobAd
 from openai import OpenAI
 from candidates.models import Candidate
-from core.pdf_utils import read_pdf_text
-from core.openai_utils import (
+from core.views import read_pdf_text
+from core.views import (
     extract_candidate_data_with_openai,
     extract_job_data_with_openai,
     clean_cv_text,
