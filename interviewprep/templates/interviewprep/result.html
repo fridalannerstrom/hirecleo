@@ -11,10 +11,12 @@
             <p class="text-muted">Här är dina intervjufrågor blabla lite text</p>
 
             <div class="p-4 border rounded shadow-sm bg-white" style="min-height: 400px;">
-                <div class="interview-output" style="white-space: pre-wrap;">
+                <div class="interview-output" id="resultContent">
                     {{ result|safe }}
                 </div>
             </div>
+
+        <button id="saveQuestionsBtn" class="btn btn-success mt-4">💾 Spara intervjufrågor till detta jobb</button>
         </div>
 
         <!-- Tips till intervjuaren -->
@@ -23,9 +25,9 @@
                 <div class="bg-white border rounded shadow-sm p-4">
                     <p class="text-muted small mb-1">Tänk på detta när du intervjuar</p>
                     {% if candidate %}
-                        <h6 class="fw-bold">{{ candidate.first_name }}</h6>
+                        <h6 class="fw-bold">{{ candidate.first_name }} {{ candidate.last_name }}</h6>
                     {% endif %}
-                    <div class="text-muted mt-2" style="white-space: pre-wrap;">
+                    <div class="text-muted mt-2">
                         {{ candidate_summary|safe }}
                     </div>
                 </div>
@@ -33,5 +35,32 @@
         </div>
     </div>
 </div>
+
+<script>
+  document.getElementById("saveQuestionsBtn").addEventListener("click", () => {
+    const content = document.querySelector("#resultContent").innerHTML;
+
+    fetch("{% url 'save_interview_questions' job.id %}", {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({ questions: content })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.redirect_url) {
+        window.location.href = data.redirect_url;  // 👈 Redirect direkt till jobbet
+      } else {
+        alert("Något gick fel när frågorna skulle sparas.");
+      }
+    })
+    .catch(err => {
+      console.error("Fel:", err);
+      alert("Ett fel uppstod vid sparning.");
+    });
+  });
+</script>
 
 {% endblock %}

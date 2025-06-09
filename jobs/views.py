@@ -17,6 +17,7 @@ from core.views import (
     reformat_cv_text_with_openai,
     parse_json_result
 )
+from django.urls import reverse
 
 client = OpenAI()
 
@@ -168,3 +169,22 @@ Returnera bara JSON, utan kommentarer.
         max_tokens=600
     )
     return response.choices[0].message.content
+
+@csrf_exempt
+@login_required
+def save_interview_questions(request, job_id):
+    if request.method == "POST":
+        job = get_object_or_404(Job, id=job_id, user=request.user)
+        content = request.POST.get("questions", "").strip()
+
+        if content:
+            job.interview_questions = content
+            job.save()
+            return JsonResponse({
+                "success": True,
+                "redirect_url": reverse("job_detail", args=[job.id])
+            })
+
+        return JsonResponse({"success": False, "error": "Inget innehåll"})
+    
+    return JsonResponse({"error": "Invalid request"}, status=400)

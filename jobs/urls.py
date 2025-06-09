@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import save_interview_questions
 
 urlpatterns = [
     path('your-jobs/', views.your_jobs, name='your_jobs'),
@@ -9,4 +10,5 @@ urlpatterns = [
     path('<slug:slug>/edit/', views.edit_job, name='edit_job'),
     path('<slug:slug>/delete/', views.delete_job, name='delete_job'),
     path('<slug:slug>/', views.job_detail, name='job_detail'), 
+    path('<int:job_id>/save-questions/', save_interview_questions, name='save_interview_questions'),
 ]

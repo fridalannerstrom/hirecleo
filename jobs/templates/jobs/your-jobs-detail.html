@@ -40,6 +40,11 @@
             Jobbannons
           </button>
         </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="interview-tab" data-bs-toggle="tab" data-bs-target="#interview-tab-pane" type="button" role="tab">
+            Intervjufrågor
+          </button>
+        </li>
       </ul>
 
       <div class="tab-content pt-3" id="jobTabsContent">
@@ -88,6 +93,19 @@
                 </div>
               {% else %}
                 <p class="text-muted">Ingen jobbannons har skapats för detta jobb ännu.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Intervjufrågor -->
+        <div class="tab-pane fade" id="interview-tab-pane" role="tabpanel">
+          <div class="card mb-4">
+            <div class="card-body">
+              {% if job.interview_questions %}
+                {{ job.interview_questions|safe }}
+              {% else %}
+                <p class="text-muted">Inga intervjufrågor har sparats för detta jobb ännu.</p>
               {% endif %}
             </div>
           </div>

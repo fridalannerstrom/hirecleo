@@ -61,4 +61,15 @@
     </form>
 </div>
 
+<script>
+    function showCleoModal() {
+        const modal = new bootstrap.Modal(document.getElementById('cleoLoadingModal'));
+        modal.show();
+    }
+
+    document.getElementById('interviewForm').addEventListener('submit', function () {
+        showCleoModal(); // visa modalen direkt vid submit
+    });
+</script>
+
 {% endblock %}
