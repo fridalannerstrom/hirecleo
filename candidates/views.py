@@ -19,6 +19,9 @@ from core.views import (
     parse_json_result
 )
 
+from core.utils import generate_unique_slug
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,12 +39,7 @@ def add_candidates_manually(request):
         interview_notes = request.POST.get('interview_notes')
         test_results = request.POST.get('test_results')
 
-        base_slug = slugify(f"{first_name}-{last_name}")
-        slug = base_slug
-        counter = 1
-        while Candidate.objects.filter(slug=slug).exists():
-            slug = f"{base_slug}-{counter}"
-            counter += 1
+        slug = generate_unique_slug(Candidate, [first_name, last_name])
 
         Candidate.objects.create(
             user=request.user,
@@ -68,6 +66,8 @@ def add_candidates_pdf(request):
         files = request.FILES.getlist('uploaded_pdf')
 
         for pdf_file in files:
+            pdf_file.seek(0) 
+            
             candidate = Candidate(uploaded_pdf=pdf_file, user=request.user)
 
             # 📄 Extrahera text från PDF
@@ -96,14 +96,7 @@ def add_candidates_pdf(request):
                 )
                 candidate.cv_text = reformat_cv_text_with_openai(candidate.cv_text)
 
-                # 🐌 Generera unik slug
-                base_slug = f"{candidate.first_name}-{candidate.last_name}".lower().replace(" ", "-")
-                slug = base_slug
-                counter = 1
-                while Candidate.objects.filter(slug=slug).exists():
-                    slug = f"{base_slug}-{counter}"
-                    counter += 1
-                candidate.slug = slug
+                candidate.slug = generate_unique_slug(Candidate, [candidate.first_name, candidate.last_name])
 
             except Exception as e:
                 logger.warning("❌ Fel vid AI-tolkning: %s", str(e))
@@ -195,12 +188,7 @@ def create_new_candidate_from_test(request):
         if not all([first_name, last_name, test_summary]):
             return JsonResponse({"error": "Missing required fields"}, status=400)
 
-        slug_base = slugify(f"{first_name}-{last_name}")
-        slug = slug_base
-        counter = 1
-        while Candidate.objects.filter(slug=slug).exists():
-            slug = f"{slug_base}-{counter}"
-            counter += 1
+        slug = generate_unique_slug(Candidate, [first_name, last_name])
 
         new_candidate = Candidate.objects.create(
             user=request.user,

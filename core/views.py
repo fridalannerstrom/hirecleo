@@ -20,6 +20,9 @@ from .models import TestResult, ChatSession, ChatMessage
 from candidates.models import Candidate
 from jobs.models import Job, JobAd
 
+from django.utils.text import slugify
+from unidecode import unidecode
+
 
 # === Initiering ===
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
@@ -251,5 +254,3 @@ def chat_response(request):
                 yield delta
 
     return StreamingHttpResponse(generate(), content_type='text/plain')
-
-
