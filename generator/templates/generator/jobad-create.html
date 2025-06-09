@@ -79,47 +79,62 @@
         $('#jobadContent').trumbowyg();
     });
 
-    function generateJobAd() {
-        const promptEl = document.querySelector('textarea[name="prompt"]');
-        const jobEl = document.querySelector('select[name="job"]');
-        const fileEl = document.querySelector('input[name="job_file"]');
-
-        const prompt = promptEl ? promptEl.value : "";
-        const jobId = jobEl ? jobEl.value : "";
-        const file = fileEl && fileEl.files.length > 0 ? fileEl.files[0] : null;
-
-        const formData = new FormData();
-        if (prompt) formData.append("prompt", prompt);
-        if (jobId) formData.append("job_id", jobId);
-        if (file) formData.append("job_file", file);
-
-        // Visa loader
-        document.querySelector("#jobadLoader").style.display = "block";
-
-        fetch("{% url 'generate_jobad_api' %}", {
-            method: "POST",
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            document.querySelector("#jobadLoader").style.display = "none";
-
-            if (data.error) {
-                alert("Fel: " + data.error);
-                return;
-            }
-
-            $('#jobadContent').trumbowyg('html', data.content);
-            document.querySelector("#jobadOutput").style.display = "block";  // Visa outputfältet
-        })
-        .catch(error => {
-            document.querySelector("#jobadLoader").style.display = "none";
-            alert("Något gick fel: " + error);
-            console.error(error);
-        });
+        // Visa Cleo-popup
+    function showCleoModal() {
+        const modal = new bootstrap.Modal(document.getElementById('cleoLoadingModal'));
+        modal.show();
     }
+
+    // Dölj Cleo-popup
+    function hideCleoModal() {
+        const modalElement = document.getElementById('cleoLoadingModal');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+    }
+
+function generateJobAd() {
+    const promptEl = document.querySelector('textarea[name="prompt"]');
+    const jobEl = document.querySelector('select[name="job"]');
+    const fileEl = document.querySelector('input[name="job_file"]');
+
+    const prompt = promptEl ? promptEl.value : "";
+    const jobId = jobEl ? jobEl.value : "";
+    const file = fileEl && fileEl.files.length > 0 ? fileEl.files[0] : null;
+
+    const formData = new FormData();
+    if (prompt) formData.append("prompt", prompt);
+    if (jobId) formData.append("job_id", jobId);
+    if (file) formData.append("job_file", file);
+
+    // Visa Cleo-modal istället för loader
+    showCleoModal();
+
+    fetch("{% url 'generate_jobad_api' %}", {
+        method: "POST",
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        hideCleoModal();
+
+        if (data.error) {
+            alert("Fel: " + data.error);
+            return;
+        }
+
+        $('#jobadContent').trumbowyg('html', data.content);
+        document.querySelector("#jobadOutput").style.display = "block";
+    })
+    .catch(error => {
+        hideCleoModal();
+        alert("Något gick fel: " + error);
+        console.error(error);
+    });
+}
 </script>
 {% endblock %}

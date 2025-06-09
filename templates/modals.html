@@ -1,0 +1,16 @@
+{% load static %}
+
+<!-- cleo-loading-modal -->
+<div class="modal fade" id="cleoLoadingModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center p-4">
+      <div>
+        <!-- 💡 Byt ut denna bild till din egen Cleo-bild -->
+        <img src="{% static 'assets\img\cleo-writing.png' %}" alt="Cleo skriver..." style="width: 200px; height: auto;">
+        <h4 class="mt-3">Cleo skriver...</h4>
+        <p>Det här kan ta några sekunder. Håll ut!</p>
+      </div>
+    </div>
+  </div>
+</div>
+

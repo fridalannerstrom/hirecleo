@@ -366,6 +366,7 @@
 
             {% endblock %}
             {% block extra_js %}{% endblock %}
+            {% include 'modals.html' %}
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" crossorigin="anonymous"></script>
             <script src="{% static 'assets/demo/chart-area-demo.js' %}"></script>
@@ -376,6 +377,22 @@
             <script src="{% static 'js/litepicker.js' %}"></script>
             <script src="{% static 'js/scripts.v2.js' %}"></script>
             <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+            <script>
+    // Visa Cleo-popuprutan
+function showCleoModal() {
+  const modal = new bootstrap.Modal(document.getElementById('cleoLoadingModal'));
+  modal.show();
+}
+
+// Dölj Cleo-popuprutan
+function hideCleoModal() {
+  const modalElement = document.getElementById('cleoLoadingModal');
+  const modalInstance = bootstrap.Modal.getInstance(modalElement);
+  if (modalInstance) {
+    modalInstance.hide();
+  }
+}
+</script>
 
         </body>
     </html>
