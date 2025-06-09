@@ -101,16 +101,16 @@ def save_message(request):
 
 def reformat_cv_text_with_openai(raw_text):
     prompt = f"""
-You are an expert at writing CV excerpts from PDF files.
-Structure the text with proper headings, remove formatting issues, and shorten the result.
-Do not include name, email, phone or LinkedIn. Write in English.
+Du är expert på att skriva CV-utdrag från PDF-filer.
+Strukturera texten med tydliga rubriker, ta bort formateringsproblem och förkorta innehållet.
+Inkludera inte namn, e-post, telefonnummer eller LinkedIn. Skriv på svenska.
 
 {raw_text}
 """
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are an experienced and skilled CV writer."},
+            {"role": "system", "content": "Du är expert på att tolka och strukturera CV-innehåll."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.4,
