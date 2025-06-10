@@ -52,9 +52,20 @@ Beskrivning: {job.description}"""
 Namn: {candidate.first_name} {candidate.last_name}
 E-post: {candidate.email or '-'}
 LinkedIn: {candidate.linkedin_url or '-'}
-CV-text: {candidate.cv_text or '-'}
-Intervjunoter: {candidate.interview_notes or '-'}
-Testresultat: {candidate.test_results or '-'}
+CV-text: 
+<<< 
+{candidate.cv_text or '-'}
+>>>
+
+Intervjunoter:
+<<< 
+{candidate.interview_notes or '-'}
+>>>
+
+TESTRESULTAT:
+<<< 
+{candidate.test_results or '-'}
+>>>
 """
 
             prompt = f"""
