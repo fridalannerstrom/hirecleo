@@ -54,25 +54,27 @@ E-post: {candidate.email or '-'}
 LinkedIn: {candidate.linkedin_url or '-'}
 CV-text: {candidate.cv_text or '-'}
 Intervjunoter: {candidate.interview_notes or '-'}
-Testrapporter: {candidate.test_results or '-'}
+Testresultat: {candidate.test_results or '-'}
 """
 
             prompt = f"""
-Du är en rekryteringsexpert. Baserat på följande jobbannons och information om kandidaten, ge:
+            Du är en rekryteringsexpert. Baserat på följande jobbannons och kandidatinfo, ge:
 
-1. En **matchningsscore mellan 0 och 100**
-2. En **kort kommentar** som förklarar varför kandidaten är (eller inte är) en bra match.
+            1. En kort sammanfattning av kandidatens styrkor och utvecklingsområden (max 3 meningar)
+            2. En kort sammanfattning av testresultatet (max 2 meningar). Om testresultat inte finns, skriv "Inga testresultat tillgängliga".
+            3. En rekommendation: "🟢 Rekommenderas" eller "🟠 Rekommenderas inte" för jobbet
 
-Formatet på svaret ska vara exakt så här:
-Score: [siffra]
-Kommentar: [text]
+            Returnera som JSON med nycklarna:
+            "Sammanfattning", "Testresultat", "Rekommendation"
 
-JOBB:
-{job_text}
+            JOBB:
+            {job_text}
 
-KANDIDAT:
-{summary}
-"""
+            KANDIDAT:
+            {summary}
+            """
+
+            print("📤 PROMPT TILL GPT:\n", prompt)
 
             response = client.chat.completions.create(
                 model="gpt-4o",
@@ -83,20 +85,20 @@ KANDIDAT:
             )
 
             content = response.choices[0].message.content.strip()
+            print("📥 SVAR FRÅN GPT:\n", content)
 
-            # Enkel parsing
-            score = None
-            comment = None
-            for line in content.splitlines():
-                if line.lower().startswith("score:"):
-                    score = int(''.join(filter(str.isdigit, line)))
-                elif line.lower().startswith("kommentar:"):
-                    comment = line.split(":", 1)[-1].strip()
+            try:
+                parsed = json.loads(re.sub(r"```json|```", "", content).strip())
+            except json.JSONDecodeError:
+                parsed = {}
 
             results.append({
                 "candidate_name": f"{candidate.first_name} {candidate.last_name}",
-                "score": score if score is not None else 0,
-                "summary": comment or "Kommentar saknas"
+                "title": candidate.title or "Ingen titel",
+                "top_skills": candidate.top_skills or [],
+                "test_summary": parsed.get("Testresultat", "–"),
+                "summary": parsed.get("Sammanfattning", "–"),
+                "recommendation": parsed.get("Rekommendation", "–"),
             })
 
         return JsonResponse({"results": results})

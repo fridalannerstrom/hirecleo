@@ -72,23 +72,40 @@ function compareCandidates() {
         button.disabled = false;
 
         if (data.results && Array.isArray(data.results)) {
-            // SORTERA från högst till lägst score
-            data.results.sort((a, b) => b.score - a.score);
+        data.results.sort((a, b) => b.score - a.score);
 
-            data.results.forEach(r => {
-                resultBox.innerHTML += `
-                    <div class="card mb-3 border-start border-success border-4 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title mb-1">${r.candidate_name}</h5>
-                            <p class="mb-1"><strong>Matchningsscore:</strong> ${r.score}/100</p>
-                            <p class="text-muted">${r.summary}</p>
-                        </div>
-                    </div>
-                `;
-            });
-        } else {
-            resultBox.innerHTML = `<div class="alert alert-danger">Något gick fel: ${data.error || "okänt fel"}</div>`;
-        }
+        let tableHTML = `
+          <table class="table table-bordered mt-4">
+            <thead class="table-light">
+              <tr>
+                <th>Namn</th>
+                <th>Titel</th>
+                <th>Kompetenser</th>
+                <th>Testresultat</th>
+                <th>Sammanfattning</th>
+                <th>Rekommendation</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        data.results.forEach(r => {
+            const skills = r.top_skills.map(skill => `<span class="badge bg-secondary me-1">${skill}</span>`).join('');
+            tableHTML += `
+              <tr>
+                <td>${r.candidate_name}</td>
+                <td>${r.title}</td>
+                <td>${skills || '<span class="text-muted">–</span>'}</td>
+                <td>${r.test_summary}</td>
+                <td>${r.summary}</td>
+                <td><strong>${r.recommendation}</strong></td>
+              </tr>
+            `;
+        });
+
+        tableHTML += `</tbody></table>`;
+        resultBox.innerHTML = tableHTML;
+    }
     })
     .catch(error => {
         loader.style.display = "none";
