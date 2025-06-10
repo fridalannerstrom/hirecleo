@@ -86,6 +86,7 @@ def add_candidates_pdf(request):
                 candidate.phone_number = (data.get('Telefonnummer') or '').strip()
                 candidate.linkedin_url = (data.get('LinkedIn-länk') or '').strip()
                 candidate.top_skills = data.get('Top Skills') or []
+                candidate.title = (data.get('Titel') or '').strip()
 
                 # 🧼 Rensa och ✨ formatera CV
                 candidate.cv_text = clean_cv_text(

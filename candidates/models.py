@@ -15,6 +15,7 @@ class Candidate(models.Model):
     cv_text = models.TextField(blank=True, null=True)
     interview_notes = models.TextField(blank=True, null=True)
     test_results = models.TextField(blank=True, null=True)
+    title = models.CharField(max_length=100, blank=True, null=True)
     
     jobs = models.ManyToManyField(Job, related_name="candidates", blank=True)
     

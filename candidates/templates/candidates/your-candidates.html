@@ -37,6 +37,7 @@
                             <thead>
                                 <tr>
                                     <th>Namn</th>
+                                    <th>Titel</th>
                                     <th>E-post</th>
                                     <th>Telefon</th>
                                     <th>Top Skills</th>
@@ -47,6 +48,7 @@
                             <tfoot>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Title</th>
                                     <th>Email</th>
                                     <th>Phone</th>
                                     <th>Top Skills</th>
@@ -68,6 +70,13 @@
                                             {% endif %}
                                         </div>
                                         </td>
+                                        <td>
+                                            {% if candidate.title %}
+                                                {{ candidate.title }}
+                                            {% else %}
+                                                <span class="text-muted fst-italic">Ingen titel</span>
+                                            {% endif %}
+                                            </td>
                                         <td>{{ candidate.email }}</td>
                                         <td>{{ candidate.phone_number }}</td> <!-- Eller visa nåt från modellen om du har det -->
                                         <td>

@@ -125,9 +125,10 @@ Här är innehållet från ett CV:
 
 \"\"\"{text}\"\"\"
 
-Extrahera: Förnamn, Efternamn, E-postadress, Telefonnummer, LinkedIn-länk (om finns), 3 top skills (på engelska).
+Extrahera: Förnamn, Efternamn, E-postadress, Telefonnummer, LinkedIn-länk (om finns), 3 top skills (på svenska), samt en passande *titel* (ex. 'Frontend-utvecklare', 'HR-specialist') baserat på det senaste eller mest relevanta jobbet.
+
 Returnera som JSON med exakt dessa nycklar:
-"Förnamn", "Efternamn", "E-postadress", "Telefonnummer", "LinkedIn-länk", "Top Skills"
+"Förnamn", "Efternamn", "E-postadress", "Telefonnummer", "LinkedIn-länk", "Top Skills", "Titel"
 """
     response = client.chat.completions.create(
         model="gpt-4o",
