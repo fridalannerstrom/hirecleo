@@ -17,19 +17,14 @@
   <form method="post" action="{% url 'register' %}" class="auth-form">
     {% csrf_token %}
   
-    <!-- Username -->
-    <div class="mb-3">
-      <label for="{{ form.username.id_for_label }}">Användarnamn</label>
-      {{ form.username }}
-      {% if form.username.help_text %}
-      <div id="id_username_helptext" class="form-text">
-        {{ form.username.help_text|safe }}
-      </div>
-      {% endif %}
-      {% for error in form.username.errors %}
-      <div class="text-danger small">{{ error }}</div>
-      {% endfor %}
-    </div>
+<!-- Email -->
+<div class="mb-3">
+  <label for="{{ form.email.id_for_label }}">E-postadress</label>
+  {{ form.email }}
+  {% for error in form.email.errors %}
+    <div class="text-danger small">{{ error }}</div>
+  {% endfor %}
+</div>
   
     <!-- Password 1 -->
     <div class="mb-3">

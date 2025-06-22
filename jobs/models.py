@@ -1,9 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.urls import reverse
 
 class Job(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     company = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
@@ -24,7 +24,7 @@ class Job(models.Model):
 
 
 class JobAd(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255)
     content = models.TextField()  # AI-genererad + ev. redigerad text

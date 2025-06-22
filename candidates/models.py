@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils.text import slugify
 from django.urls import reverse
 from jobs.models import Job  # Du behöver importera Job här eftersom det är en relation
 
 class Candidate(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="candidates")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="candidates")
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
 

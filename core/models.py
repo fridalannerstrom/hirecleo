@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.utils.text import slugify
 from django.urls import reverse
 from candidates.models import Candidate
@@ -8,7 +8,7 @@ from testanalyzer.models import TestResult
 
 # === Chatfunktioner ===
 class ChatSession(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_sessions')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='chat_sessions')
     title = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     test_result = models.ForeignKey(TestResult, on_delete=models.CASCADE, null=True, blank=True)

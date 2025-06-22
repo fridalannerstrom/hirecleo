@@ -1,10 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from candidates.models import Candidate
 
 
 class TestResult(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     uploaded_file = models.FileField(upload_to='test_results/')
     extracted_text = models.TextField(blank=True, null=True)
     ai_summary = models.TextField(blank=True, null=True)

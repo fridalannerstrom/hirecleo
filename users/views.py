@@ -30,22 +30,36 @@ from .forms import TestChatMessageForm  # valfritt om du vill ha ett formulärob
 import uuid
 from candidates.models import Candidate
 from jobs.models import Job, JobAd
+from .forms import CustomUserCreationForm
 
 
 def dashboard(request):
     return render(request, 'dashboard.html')
 
 
+class RegisterView(View):
+    def get(self, request):
+        form = CustomUserCreationForm()
+        return render(request, 'auth-register-basic.html', {'form': form})
+
+    def post(self, request):
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # logga in direkt efter skapande
+            return redirect('dashboard')
+        return render(request, 'auth-register-basic.html', {'form': form})
+
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')  # eller 'email' om du använder det
+        email = request.POST.get('email')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('dashboard')  # namnet på din url
+            return redirect('dashboard')
         else:
-            return render(request, 'auth-login-basic.html', {'error': 'Invalid credentials'})
+            return render(request, 'auth-login-basic.html', {'error': 'Fel e-post eller lösenord'})
     return render(request, 'auth-login-basic.html')
 
 def logout_view(request):
