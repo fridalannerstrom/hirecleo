@@ -40,7 +40,7 @@ def dashboard(request):
 class RegisterView(View):
     def get(self, request):
         form = CustomUserCreationForm()
-        return render(request, 'auth-register-basic.html', {'form': form})
+        return render(request, 'users/auth-register-basic.html', {'form': form})
 
     def post(self, request):
         form = CustomUserCreationForm(request.POST)
@@ -48,7 +48,7 @@ class RegisterView(View):
             user = form.save()
             login(request, user)  # logga in direkt efter skapande
             return redirect('dashboard')
-        return render(request, 'auth-register-basic.html', {'form': form})
+        return render(request, 'users/auth-register-basic.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -59,24 +59,12 @@ def login_view(request):
             login(request, user)
             return redirect('dashboard')
         else:
-            return render(request, 'auth-login-basic.html', {'error': 'Fel e-post eller lösenord'})
-    return render(request, 'auth-login-basic.html')
+            return render(request, 'users/auth-login-basic.html', {'error': 'Fel e-post eller lösenord'})
+    return render(request, 'users/auth-login-basic.html')
 
 def logout_view(request):
     logout(request)
     return redirect('login')  # Skicka användaren till inloggningssidan efter logout
-
-class RegisterView(View):
-    def get(self, request):
-        form = UserCreationForm()
-        return render(request, 'auth-register-basic.html', {'form': form})
-
-    def post(self, request):
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('dashboard') 
-        return render(request, 'auth-register-basic.html', {'form': form})
 
 @login_required
 def dashboard_view(request):

@@ -27,7 +27,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', auth_views.LoginView.as_view(template_name='auth-login-basic.html'), name='login'),
+    path('', auth_views.LoginView.as_view(template_name='users/auth-login-basic.html'), name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('core.urls')),  # Dashboard, kandidater, etc
     path('candidates/', include('candidates.urls')),
@@ -40,9 +40,6 @@ urlpatterns = [
 
     # Root-nivå-vyer från users
     path('dashboard/', user_views.dashboard, name='dashboard'),
-    path('login/', auth_views.LoginView.as_view(template_name='auth-login-basic.html'), name='login'),
-    path('logout/', user_views.logout_view, name='logout'),
-    path('skapa-konto/', user_views.RegisterView.as_view(), name='register'),
 ]
 
 if settings.DEBUG:
