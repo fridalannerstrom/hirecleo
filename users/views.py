@@ -31,10 +31,16 @@ import uuid
 from candidates.models import Candidate
 from jobs.models import Job, JobAd
 from .forms import CustomUserCreationForm
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from .models import Profile
+
 
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    show_modal = not profile.full_name and profile.show_modal
+    return render(request, 'dashboard.html', {'show_modal': show_modal})
 
 
 class RegisterView(View):
@@ -70,3 +76,12 @@ def logout_view(request):
 def dashboard_view(request):
     return render(request, 'dashboard.html')
 
+
+@require_POST
+@login_required
+def save_name(request):
+    name = request.POST.get("full_name")
+    profile = request.user.profile
+    profile.full_name = name
+    profile.save()
+    return redirect('dashboard')

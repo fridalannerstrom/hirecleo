@@ -20,7 +20,7 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-# Register the profile too, if you want to edit it in admin
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("user",)
+    list_display = ("user", "full_name", "show_modal")
+    list_editable = ("show_modal",)

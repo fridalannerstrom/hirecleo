@@ -13,9 +13,11 @@ from testanalyzer.models import TestResult
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profile_pics/', default='default.png')
+    full_name = models.CharField(max_length=100, blank=True, null=True) 
+    show_modal = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'{self.user.email} Profile'  # om du använder e-post som identifierare
+        return self.user.email
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
