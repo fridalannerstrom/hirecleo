@@ -22,5 +22,5 @@ Cleo is an AI-powered recruitment platform designed to help recruiters manage ca
   - Knowledge uploads (e.g., internal documents or templates for Cleo to learn from)
 
 Cleo is built to streamline the recruitment process, providing valuable insights and automation, with a strong focus on psychometrics, potential analysis, and smart interpretation of test data.
-
+This is just an addon
 ---
