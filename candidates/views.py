@@ -21,7 +21,6 @@ from core.views import (
 
 from core.utils import generate_unique_slug
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -76,7 +75,13 @@ def add_candidates_pdf(request):
 
             try:
                 # 🧠 Extrahera kandidatdata via GPT (JSON som dict)
-                data = extract_candidate_data_with_openai(raw_text)
+                try:
+                    print("🧠 Skickar till extract_candidate_data_with_openai...")
+                    data = extract_candidate_data_with_openai(raw_text)
+                    print("✅ AI-resultat mottaget:", data)
+                except Exception as e:
+                    print("❌ Exception i kandidatparsing:", e)
+                    data = {}  # sätt fallback så resten kan fortsätta
                 print("✅ Parsed JSON:", data)
 
                 # 🧍 Fyll i kandidatens fält

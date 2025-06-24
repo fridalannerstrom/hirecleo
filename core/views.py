@@ -22,7 +22,7 @@ from jobs.models import Job, JobAd
 
 from django.utils.text import slugify
 from unidecode import unidecode
-
+from io import BytesIO
 
 # === Initiering ===
 client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
@@ -33,21 +33,33 @@ index = pc.Index(os.environ["PINECONE_INDEX"])
 # === PDF-hantering ===
 
 def read_pdf_text(file):
+    print("🔍 Startar read_pdf_text...")
     try:
-        pdf = PdfReader(file)
+        print("📥 Läser in filen till minne...")
+        memory_file = BytesIO(file.read())
+        print("✅ Filen inläst till memory_file")
+
+        print("🧪 Försöker PyPDF2...")
+        pdf = PdfReader(memory_file)
         text = ''.join(page.extract_text() or '' for page in pdf.pages)
+        print(f"📄 PyPDF2 extraherade {len(text)} tecken")
         if text.strip():
             return text
     except Exception as e:
         print("❌ PyPDF2 misslyckades:", e)
 
     try:
+        print("🔁 Försöker fitz (PyMuPDF)...")
         file.seek(0)
-        doc = fitz.open(stream=file.read(), filetype="pdf")
-        return "\n".join([page.get_text() for page in doc])
+        memory_file = BytesIO(file.read())
+        doc = fitz.open(stream=memory_file, filetype="pdf")
+        text = "\n".join([page.get_text() for page in doc])
+        print(f"📄 fitz extraherade {len(text)} tecken")
+        return text
     except Exception as e:
         print("❌ fitz också misslyckades:", e)
 
+    print("⚠️ Ingen text kunde extraheras")
     return ""
 
 

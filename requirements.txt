@@ -43,3 +43,5 @@ tzdata==2025.2
 Unidecode==1.4.0
 urllib3==2.4.0
 whitenoise==6.9.0
+django-storages
+azure-storage-blob
