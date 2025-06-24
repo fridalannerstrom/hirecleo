@@ -45,3 +45,4 @@ urllib3==2.4.0
 whitenoise==6.9.0
 django-storages
 azure-storage-blob
+psycopg2-binary

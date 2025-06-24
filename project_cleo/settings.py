@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+if os.path.isfile('env.py'):
+    import env
 
 if os.path.exists("env.py"):
     import env
@@ -28,9 +30,9 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['.herokuapp.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 
 
 # Application definition
@@ -97,7 +99,7 @@ WSGI_APPLICATION = 'project_cleo.wsgi.application'
 # }
 
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
 CSRF_TRUSTED_ORIGINS = [
