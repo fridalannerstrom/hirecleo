@@ -292,3 +292,17 @@ def chat_response(request):
                 yield delta
 
     return StreamingHttpResponse(generate(), content_type='text/plain')
+
+
+def parse_json_result(result):
+    """
+    Tar en sträng från OpenAI som kan innehålla ```json-taggar,
+    rensar dessa och returnerar resultatet som en Python-dict.
+    """
+    try:
+        # Ta bort ev. ```json-taggar och onödiga whitespace
+        cleaned = re.sub(r"```json|```", "", result).strip()
+        return json.loads(cleaned)
+    except json.JSONDecodeError as e:
+        print("❌ JSONDecodeError i parse_json_result:", e)
+        return {}
