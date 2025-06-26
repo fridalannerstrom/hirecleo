@@ -25,9 +25,9 @@ from unidecode import unidecode
 from io import BytesIO
 
 # === Initiering ===
-client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-pc = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
-index = pc.Index(os.environ["PINECONE_INDEX"])
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
+index = pc.Index(os.environ.get("PINECONE_INDEX"))
 
 
 # === PDF-hantering ===
