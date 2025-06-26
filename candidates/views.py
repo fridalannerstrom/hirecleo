@@ -15,8 +15,7 @@ from core.views import (
     extract_candidate_data_with_openai,
     extract_job_data_with_openai,
     clean_cv_text,
-    reformat_cv_text_with_openai,
-    parse_json_result
+    reformat_cv_text_with_openai
 )
 
 from core.utils import generate_unique_slug
