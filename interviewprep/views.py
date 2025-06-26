@@ -6,6 +6,7 @@ from core.views import read_pdf_text, normalize_pdf_text
 import markdown
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from core.views import get_clients
 
 def clean_markdown(text):
     return text.replace("```markdown", "").replace("```", "").strip()
@@ -59,10 +60,16 @@ def prepare_interview(request):
         'candidates': Candidate.objects.all()
     })
 
-from openai import OpenAI
-client = OpenAI()
 
 def generate_interview_questions(job_text, candidate=None):
+    from openai import OpenAI
+    import os
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise EnvironmentError("OPENAI_API_KEY is not set.")
+    client = OpenAI(api_key=api_key)
+
     if candidate:
         candidate_info = f"""
         Kandidatens namn: {candidate.first_name} {candidate.last_name}
@@ -111,7 +118,6 @@ def generate_interview_questions(job_text, candidate=None):
     Svara på **svenska** och använd **korrekt Markdown-format**.
     """
 
-    # 👇 DEBUG: visa vad som skickas in
     print("🧠 PROMPT TILL OPENAI:\n", prompt)
 
     response = client.chat.completions.create(
@@ -123,7 +129,6 @@ def generate_interview_questions(job_text, candidate=None):
     )
     full_text = response.choices[0].message.content.strip()
 
-    # 👇 DEBUG: visa vad som kommer tillbaka
     print("✅ SVAR FRÅN OPENAI:\n", full_text)
 
     if "### Tänk på detta" in full_text:

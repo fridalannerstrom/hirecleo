@@ -4,11 +4,19 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from openai import OpenAI
 from jobs.models import Job
 from candidates.models import Candidate
 
-client = OpenAI()
+
+def get_openai_client():
+    from openai import OpenAI
+    import os
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise EnvironmentError("OPENAI_API_KEY is not set.")
+    
+    return OpenAI(api_key=api_key)
 
 # 🌐 Sida: HTML-vy för att visa kandidatjämförelseformuläret
 @login_required
@@ -87,6 +95,7 @@ TESTRESULTAT:
 
             print("📤 PROMPT TILL GPT:\n", prompt)
 
+            client = get_openai_client()
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[

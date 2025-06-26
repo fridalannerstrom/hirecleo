@@ -272,8 +272,6 @@ def upload_test_result(request, slug):
     
     return redirect("candidate_detail", slug=slug)
 
-from core.views import read_pdf_text, normalize_pdf_text, client  # se till att OpenAI är importerat
-
 @login_required
 def summarize_test_results(request, slug):
     candidate = get_object_or_404(Candidate, slug=slug, user=request.user)
@@ -309,6 +307,8 @@ Skriv professionellt på svenska.
 
     print("📤 Prompt till GPT:\n", prompt[:10000])
 
+    from core.views import get_clients
+    client, _ = get_clients()
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[

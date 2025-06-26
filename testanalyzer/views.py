@@ -11,7 +11,13 @@ from django.views.decorators.csrf import csrf_exempt
 from core.models import ChatSession, ChatMessage
 from django.http import StreamingHttpResponse
 
-client = OpenAI()
+def get_openai_client():
+    from openai import OpenAI
+    import os
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise EnvironmentError("OPENAI_API_KEY is not set.")
+    return OpenAI(api_key=api_key)
 
 def read_pdf_text(file):
     text = ''
@@ -36,6 +42,7 @@ Tolka testet och ge en sammanfattning på svenska.
 """
 
         try:
+            client = get_openai_client()
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
@@ -94,6 +101,7 @@ Svara som rekryteringsexpert.
 """
 
     def generate():
+        client = get_openai_client()
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[

@@ -20,10 +20,20 @@ import re
 import json
 from bs4 import BeautifulSoup
 
-client = OpenAI()
+
+def get_openai_client():
+    from openai import OpenAI
+    import os
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise EnvironmentError("OPENAI_API_KEY is not set.")
+    return OpenAI(api_key=api_key)
+
 
 @login_required
 def create_jobad(request):
+    from core.views import get_clients  # ✅ Importera funktionen som hämtar OpenAI-klient säkert
     jobs = Job.objects.filter(user=request.user)
 
     if request.method == 'POST':
@@ -37,6 +47,9 @@ def create_jobad(request):
             soup = BeautifulSoup(content or "", "html.parser")
             plain_text = soup.get_text()
             try:
+                # ✅ Initiera client säkert precis före användning
+                client, _ = get_clients()
+
                 ai_summary_prompt = f"""
 Här är en jobbannons. Extrahera följande information:
 - Titel
@@ -101,6 +114,7 @@ Jobbannons:
 @csrf_exempt
 @login_required
 def generate_jobad_api(request):
+    from core.views import get_clients  # ✅ Importera korrekt
     if request.method != 'POST':
         return JsonResponse({"error": "Endast POST tillåtet."}, status=405)
 
@@ -142,7 +156,9 @@ Beskrivning: {job.description}
         return JsonResponse({"error": "Ingen input hittades."}, status=400)
 
     # 4. Skicka till OpenAI
-    ai_prompt = f"""
+    try:
+        client, _ = get_clients()  # ✅ Initiera klient säkert
+        ai_prompt = f"""
 Du är en expert på att skriva jobbannonser. Skapa en färdigformaterad annons i ren HTML (använd <h2>, <ul>, <p>, <strong>, etc).
 Använd rubriker för sektioner, punktlistor och korta stycken.
 
@@ -150,8 +166,6 @@ Här är input:
 
 \"\"\"{prompt}\"\"\"
 """
-
-    try:
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
@@ -163,6 +177,7 @@ Här är input:
         content = re.sub(r"```html|```", "", content).strip()
 
         return JsonResponse({"content": content, "suggested_title": "Jobbannons"})
+
     except Exception as e:
         return JsonResponse({"error": f"OpenAI-fel: {str(e)}"}, status=500)
 

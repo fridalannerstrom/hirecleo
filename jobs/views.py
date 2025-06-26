@@ -19,8 +19,6 @@ from core.views import (
 )
 from django.urls import reverse
 
-client = OpenAI()
-
 
 @login_required
 def your_jobs(request):

@@ -3,8 +3,6 @@ import re
 import json
 from PyPDF2 import PdfReader
 import fitz  # PyMuPDF
-from openai import OpenAI
-from pinecone import Pinecone
 
 from django.http import (
     HttpResponse,
@@ -24,10 +22,24 @@ from django.utils.text import slugify
 from unidecode import unidecode
 from io import BytesIO
 
-# === Initiering ===
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
-index = pc.Index(os.environ.get("PINECONE_INDEX"))
+
+# === Initieringsfunktion ===
+def get_clients():
+    from openai import OpenAI
+    from pinecone import Pinecone
+
+    openai_key = os.environ.get("OPENAI_API_KEY")
+    pinecone_key = os.environ.get("PINECONE_API_KEY")
+    pinecone_index = os.environ.get("PINECONE_INDEX")
+
+    if not all([openai_key, pinecone_key, pinecone_index]):
+        raise EnvironmentError("❌ Nödvändiga API-nycklar saknas.")
+
+    client = OpenAI(api_key=openai_key)
+    pc = Pinecone(api_key=pinecone_key)
+    index = pc.Index(pinecone_index)
+
+    return client, index
 
 
 # === PDF-hantering ===
@@ -112,6 +124,7 @@ def save_message(request):
 # === AI-tolkning ===
 
 def reformat_cv_text_with_openai(raw_text):
+    client, _ = get_clients()
     prompt = f"""
 Du är expert på att skriva CV-utdrag från PDF-filer.
 Strukturera texten med tydliga rubriker, ta bort formateringsproblem och förkorta innehållet.
@@ -132,6 +145,7 @@ Inkludera inte namn, e-post, telefonnummer eller LinkedIn. Skriv på svenska.
 
 
 def extract_candidate_data_with_openai(text):
+    client, _ = get_clients()
     prompt = f"""
 Här är innehållet från ett CV:
 
@@ -154,13 +168,29 @@ Returnera som JSON med exakt dessa nycklar:
 
 
 def extract_job_data_with_openai(text):
+    from openai import OpenAI
+    import os
+
+    api_key = os.environ.get("OPENAI_API_KEY")
+    if not api_key:
+        raise EnvironmentError("OPENAI_API_KEY is not set.")
+    client = OpenAI(api_key=api_key)
+
     prompt = f"""
-Här är en jobbannons:
+Här är en jobbannons i textformat:
 
-\"\"\"{text}\"\"\"
+\"\"\"{text}\"\"\"  
 
-Extrahera som JSON: Titel, Företag, Plats, Anställningsform, Beskrivning (kort).
+Extrahera följande som JSON:
+- Titel  
+- Företag  
+- Plats  
+- Anställningsform  
+- Beskrivning (kort, renskriven version)
+
+Returnera bara JSON, utan kommentarer.
 """
+
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -169,21 +199,12 @@ Extrahera som JSON: Titel, Företag, Plats, Anställningsform, Beskrivning (kort
         ],
         max_tokens=600
     )
-    return parse_json_result(response.choices[0].message.content)
-
-
-def parse_json_result(raw_result):
-    try:
-        cleaned = re.sub(r"```json|```", "", raw_result).strip()
-        return json.loads(cleaned)
-    except json.JSONDecodeError as e:
-        print("❌ JSONDecodeError:", e)
-        raise
-
+    return response.choices[0].message.content
 
 # === Pinecone ===
 
 def upsert_to_pinecone(doc):
+    client, index = get_clients()
     embedding_response = client.embeddings.create(
         model="text-embedding-3-small",
         input=doc.content
@@ -212,6 +233,7 @@ def upsert_to_pinecone(doc):
 def chat(request):
     return render(request, 'chat.html')
 
+
 @csrf_exempt
 @login_required
 def start_new_session(request):
@@ -222,11 +244,14 @@ def start_new_session(request):
         return JsonResponse({"session_id": session.id})
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+
 @csrf_exempt
 @login_required
 def chat_response(request):
     if request.method != 'POST':
         return JsonResponse({"error": "Invalid request"}, status=400)
+
+    client, index = get_clients()
 
     data = json.loads(request.body)
     user_message = data.get("message", "")

@@ -21,11 +21,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.views import View
 from django.shortcuts import render, redirect
 from bs4 import BeautifulSoup
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from .models import TestResult
-from openai import OpenAI
-from PyPDF2 import PdfReader
 from .forms import TestChatMessageForm  # valfritt om du vill ha ett formulärobjekt
 import uuid
 from candidates.models import Candidate
