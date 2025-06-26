@@ -163,3 +163,7 @@ AZURE_ACCOUNT_NAME = os.getenv("AZURE_ACCOUNT_NAME")
 AZURE_ACCOUNT_KEY = os.getenv("AZURE_ACCOUNT_KEY")
 AZURE_CONTAINER = os.getenv("AZURE_CONTAINER", "candidate-pdfs")
 AZURE_CONNECTION_STRING = os.getenv("AZURE_CONNECTION_STRING")  # används av vissa versioner
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://hirecleo-app-bvc6heevdyeubxh4.swedencentral-01.azurewebsites.net"
+]
