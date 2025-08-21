@@ -1,5 +1,11 @@
 ## Cleo – Your AI Recruiting Assistant
 
+![Django](https://img.shields.io/badge/Django-5.x-092E20?logo=django)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-336791?logo=postgresql)
+![Azure](https://img.shields.io/badge/Hosting-Azure-0089D6?logo=microsoftazure)
+![OpenAI](https://img.shields.io/badge/OpenAI-Integration-black?logo=openai)
+![Recruitment](https://img.shields.io/badge/Domain-Recruitment-4CAF50)
+
 Cleo is an AI-powered recruitment platform designed to help recruiters manage candidates and job listings more efficiently. By combining a structured database with advanced AI tools, Cleo enables recruiters to upload, analyze, and act on candidate data in smarter ways.
 
 ### Key Features
