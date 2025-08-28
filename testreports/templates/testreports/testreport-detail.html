@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Test Report Details{% endblock %}
+
+{% block content %}
+<div class="container-xl mt-5">
+    <h1 class="mb-4">
+        <i class="fa-solid fa-file-lines"></i> Test Report #{{ report.id }}
+    </h1>
+
+    <div class="mb-3">
+        <strong>Uploaded file:</strong>
+        <a href="{{ report.uploaded_file.url }}" target="_blank">{{ report.uploaded_file.name }}</a>
+    </div>
+
+    <div class="mb-3">
+        <strong>Uploaded on:</strong> {{ report.created_on|date:"Y-m-d H:i" }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Linked job:</strong>
+        {% if report.linked_job %}
+            {{ report.linked_job.title }}
+        {% else %}
+            <span class="text-muted">No job linked</span>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <h4>AI Summary:</h4>
+    {% if report.summary %}
+        <div class="bg-light p-3 border rounded">
+            {{ report.summary|linebreaks }}
+        </div>
+    {% else %}
+        <p class="text-muted fst-italic">No AI summary available for this report.</p>
+    {% endif %}
+
+    <hr>
+
+    <h4>Extracted text (raw):</h4>
+    {% if report.extracted_text %}
+        <pre class="bg-dark text-white p-3 rounded" style="white-space: pre-wrap;">{{ report.extracted_text }}</pre>
+    {% else %}
+        <p class="text-muted fst-italic">No text extracted from this report.</p>
+    {% endif %}
+
+    <a href="{% url 'your_testreports' %}" class="btn btn-secondary mt-4">Back to Reports</a>
+</div>
+{% endblock %}

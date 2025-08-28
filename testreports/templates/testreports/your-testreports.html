@@ -3,115 +3,78 @@
 {% block title %}Dashboard - Cleo{% endblock %}
 {% block content %}
 
-    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-        <div class="container-xl px-4">
-            <div class="page-header-content">
-                <div class="row align-items-center justify-content-between pt-3">
-                    <div class="col-auto mb-3 mt-3">
-                        <h1 class="page-header-title">
-                            <div class="page-header-icon"><i class="fa-regular fa-file-pdf"></i></div>
-                            Dina Testrapporter
-                        </h1>
-                    </div>
-                    <div class="col-12 col-xl-auto mb-3 gap-5">
-                        <a class="btn btn-sm btn-light text-primary" href="{% url 'upload_testreport' %}">
-                            <i class="fa-regular fa-file-pdf"></i>
-                            Ladda upp testrapport
-                        </a>
-                    </div>
+<header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+    <div class="container-xl px-4">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-between pt-3">
+                <div class="col-auto mb-3 mt-3">
+                    <h1 class="page-header-title">
+                        <div class="page-header-icon"><i class="fa-regular fa-file-pdf"></i></div>
+                        Dina Testrapporter
+                    </h1>
                 </div>
-            </div>
-        </div>
-    </header>
-    <!-- Main page content-->
-    <div class="container-xl px-4 mt-4">
-        <div class="row">
-            <div class="container-fluid px-4">
-                <div>
-                    <div class="card-body">
-                        <table id="datatablesSimple">
-                            <thead>
-                                <tr>
-                                    <th>Namn</th>
-                                    <th>Titel</th>
-                                    <th>E-post</th>
-                                    <th>Telefon</th>
-                                    <th>Top Skills</th>
-                                    <th>Tillagd</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Title</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Top Skills</th>
-                                    <th>Added date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </tfoot>
-                            <tbody>
-                                {% for candidate in candidates %}
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                {% if candidate.slug %}
-                                                <a href="{% url 'candidate_detail' candidate.slug %}" class="text-dark fw-bold text-decoration-none">
-                                                    {{ candidate.first_name }} {{ candidate.last_name }}
-                                                </a>
-                                            {% else %}
-                                                <span class="text-muted">{{ candidate.first_name }} {{ candidate.last_name }} (No slug)</span>
-                                            {% endif %}
-                                        </div>
-                                        </td>
-                                        <td>
-                                            {% if candidate.title %}
-                                                {{ candidate.title }}
-                                            {% else %}
-                                                <span class="text-muted fst-italic">Ingen titel</span>
-                                            {% endif %}
-                                            </td>
-                                        <td>{{ candidate.email }}</td>
-                                        <td>{{ candidate.phone_number }}</td> <!-- Eller visa nåt från modellen om du har det -->
-                                        <td>
-                                            {% for skill in candidate.top_skills %}
-                                                <span class="badge bg-secondary text-white">{{ skill }}</span>
-                                            {% empty %}
-                                                <span class="text-muted">No skills</span>
-                                            {% endfor %}
-                                        </td>
-                                        <td>{{ candidate.created_on|date:"d M Y" }}</td>
-                                        <td>
-                                            {% if candidate.slug %}
-                                            <a class="btn btn-datatable btn-icon btn-transparent-dark me-2" href="{% url 'edit_candidate' candidate.slug %}">
-                                                <i data-feather="edit"></i>
-                                            </a>
-                                            {% endif %}
-                                            {% if candidate.slug %}
-                                        <a 
-                                            class="btn btn-datatable btn-icon btn-transparent-dark open-delete-modal"
-                                            href="#"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal"
-                                            data-name="{{ candidate.first_name }} {{ candidate.last_name }}"
-                                            data-url="{% url 'delete_candidate' candidate.slug %}">
-                                            <i data-feather="trash-2"></i>
-                                        </a>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% empty %}
-                                    <tr>
-                                        <td colspan="6">You have no candidates yet.</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="col-12 col-xl-auto mb-3 gap-5">
+                    <a class="btn btn-sm btn-light text-primary" href="{% url 'upload_testreport' %}">
+                        <i class="fa-regular fa-file-pdf"></i>
+                        Ladda upp testrapport
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+</header>
+
+<!-- Main page content-->
+<div class="container-xl px-4 mt-4">
+    <div class="row">
+        <div class="container-fluid px-4">
+            <div class="card-body">
+                <table id="datatablesSimple">
+                    <thead>
+                        <tr>
+                            <th>Filnamn</th>
+                            <th>Datum</th>
+                            <th>AI-sammanfattning</th>
+                            <th>Visa</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>File name</th>
+                            <th>Date</th>
+                            <th>Summary</th>
+                            <th>Actions</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {% for report in reports %}
+                            <tr>
+                                <td>{{ report.uploaded_file.name|truncatechars:40 }}</td>
+                                <td>{{ report.created_on|date:"Y-m-d H:i" }}</td>
+                                <td>
+                                    {% if report.summary %}
+                                        ✅
+                                    {% else %}
+                                        <span class="text-muted">Ej genererad</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-secondary"
+                                       href="{% url 'testreport_detail' report.id %}">
+                                        Öppna
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4">Inga testrapporter har laddats upp ännu.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

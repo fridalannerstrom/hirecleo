@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Upload Test Report{% endblock %}
+
+{% block content %}
+<div class="container-xl mt-5">
+    <h1 class="mb-4"><i class="fa-regular fa-file-pdf"></i> Upload a Test Report</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="uploaded_file" class="form-label">Select a test report file (PDF, Word, etc):</label>
+            <input type="file" name="uploaded_file" id="uploaded_file" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-upload"></i> Upload Report
+        </button>
+        <a href="{% url 'your_testreports' %}" class="btn btn-secondary ms-2">Back to List</a>
+    </form>
+</div>
+{% endblock %}
