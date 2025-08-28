@@ -37,6 +37,7 @@ urlpatterns = [
     path('testanalyzer/', include('testanalyzer.urls')),
     path('users/', include('users.urls')),
     path('intervju/', include('interviewprep.urls')),
+    path('testreports/', include('testreports.urls')),
 
     # Root-nivå-vyer från users
     path('dashboard/', user_views.dashboard, name='dashboard'),

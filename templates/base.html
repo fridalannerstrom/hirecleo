@@ -246,6 +246,19 @@
                                     <a class="nav-link" href="{% url 'add_candidates_pdf' %}">Lägg till kandidater</a>
                                 </nav>
                             </div>
+                            <!-- Sidenav Accordion (Candidates)-->
+                            <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseTestreports" aria-expanded="false" aria-controls="collapseCandidates">
+                                <div class="nav-link-icon"><i class="fa-regular fa-user"></i></div>
+                                Testrapporter
+                                <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseTestreports" data-bs-parent="#accordionSidenav">
+                                <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavCandidatesMenu">
+                                    <!-- Nested Sidenav Accordion (Candidates) -->
+                                    <a class="nav-link" href="{% url 'your_testreports' %}">Dina Testrapporter</a>
+                                    <a class="nav-link" href="{% url 'add_candidates_pdf' %}">Lägg till kandidater</a>
+                                </nav>
+                            </div>
                             <!-- Sidenav Accordion (Jobs)-->
                             <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseJobs" aria-expanded="false" aria-controls="collapseJobs">
                                 <div class="nav-link-icon"><i class="fa-regular fa-file-lines"></i></div>

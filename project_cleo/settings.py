@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'users',
     'interviewprep',
     'storages',
+    'testreports',
 ]
 
 MIDDLEWARE = [
